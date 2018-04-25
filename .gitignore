@@ -1,3 +1,4 @@
+.idea
 conf/config.php
 /vendor/
 composer.lock
