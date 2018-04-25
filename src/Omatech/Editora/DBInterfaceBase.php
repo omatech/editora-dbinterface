@@ -36,6 +36,7 @@ class DBInterfaceBase {
 				'driver' => 'pdo_mysql',
 				'charset' => 'utf8mb4'
 			);
+			print_r($connectionParams);
 			$conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 		}
 		$this->conn = $conn;
