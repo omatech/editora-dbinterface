@@ -37,7 +37,7 @@ class DBInterfaceBase {
 				'charset' => 'utf8mb4'
 			);
 			//print_r($connectionParams);
-			$conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
+			$conn = \Doctrine\DBAL\DriverManager::getConnection($conn, $config);
 		}
 		$this->conn = $conn;
 
