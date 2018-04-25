@@ -53,7 +53,7 @@ final class ExtractorTest extends PHPUnit_Framework_TestCase {
 						});
 				  return array_merge($submenus, $groups);	
 				});
-				
+			
 				
 				$this->assertEquals(array(), $res);
 				
