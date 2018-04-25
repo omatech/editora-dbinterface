@@ -27,21 +27,10 @@ class DBInterfaceBase {
 			if ($this->debug) {
 				$config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
 			}			
-			//..
-			$connectionParams = array(
-				'dbname' => $conn['dbname'],
-				'user' => $conn['dbuser'],
-				'password' => $conn['dbpass'],
-				'host' => $conn['dbhost'],
-				'driver' => 'pdo_mysql',
-				'charset' => 'utf8mb4'
-			);
-			//print_r($connectionParams);
+			//print_r($conn);
 			$conn = \Doctrine\DBAL\DriverManager::getConnection($conn, $config);
 		}
 		$this->conn = $conn;
-
-
 	}
 
 	public function findClassIDFromInstID($inst_id) {
