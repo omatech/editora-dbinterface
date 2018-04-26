@@ -1,7 +1,6 @@
 <?php
 /**
  * Created by Omatech
- * User: aroca
  * Date: 25/04/18 13:44
  */
 
