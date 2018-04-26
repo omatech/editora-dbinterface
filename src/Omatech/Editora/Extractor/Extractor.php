@@ -353,7 +353,11 @@ class Extractor extends DBInterfaceBase {
 
 		if ($callback != null) {
 			$this->debug("Voy a hacer el callback con inst_id=$inst_id\n");
-			$instance['relations'] = $callback($inst_id);
+			$relations=$callback($inst_id);
+			if ($relations)
+			{
+				$instance['relations'] = $relations;
+			}
 		}
 
 		if ($this->metadata && $this->timings) {
