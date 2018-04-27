@@ -152,20 +152,6 @@ class Loader extends DBInterfaceBase {
 		return false;
 	}
 	
-	public function startTransaction()
-	{
-		$this->conn->executeQuery('start transaction');		
-	}
-	public function commit()
-	{
-		$this->conn->executeQuery('commit');		
-	}
-	
-	public function rollback()
-	{
-		$this->conn->executeQuery('rollback');		
-	}
-
 	public function updateInstance($inst_id, $nom_intern, $values, $status = 'O', $publishing_begins = null, $publishing_ends = null) {
 		if (!$this->existInstance($inst_id))
 			return false;
