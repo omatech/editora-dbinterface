@@ -27,20 +27,10 @@ class DBInterfaceBase {
 			if ($this->debug) {
 				$config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
 			}			
-			//..
-			$connectionParams = array(
-				'dbname' => $conn['dbname'],
-				'user' => $conn['dbuser'],
-				'password' => $conn['dbpass'],
-				'host' => $conn['dbhost'],
-				'driver' => 'pdo_mysql',
-				'charset' => 'utf8mb4'
-			);
-			$conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
+			//print_r($conn);
+			$conn = \Doctrine\DBAL\DriverManager::getConnection($conn, $config);
 		}
 		$this->conn = $conn;
-
-
 	}
 
 	public function findClassIDFromInstID($inst_id) {
@@ -102,7 +92,13 @@ class DBInterfaceBase {
 				$link = '/' . $this->lang . '/' . $niceurl_row['niceurl'];
 			}
 		} else {
-			$link = '/' . $inst_id;
+			if ($this->lang == 'ALL') {
+				$link = '/' . $inst_id;
+			}
+			else
+			{
+				$link = '/' . $this->lang . '/' .$inst_id;
+			}
 		}
 
 		return $link;
@@ -290,6 +286,16 @@ class DBInterfaceBase {
 		return -1;
 	}
 	
+	
+	public function getInstIDFromNiceURL($nice_url, $language) {
+		return $this->getInstIDFromURLNice($nice_url, $language);
+	}
+		public function getInstIDFromURLNice($nice_url, $language) {
+		$sql = "select inst_id from omp_niceurl where niceurl='$nice_url' and language='$language'";
+		$inst_id = $this->conn->fetchColumn($sql);
+		return $inst_id;
+	}
+	
 	public function getInstanceRowAndExistingValues($inst_id) {
 		$sql = "select * 
 				from omp_instances
@@ -324,7 +330,11 @@ class DBInterfaceBase {
 		return $inst_id;
 	}	
 	
-	public function existsUrlNice($nice_url, $language) {
+	public function existsNiceURL($nice_url, $language) { 
+		return $this->existsURLNice($nice_url, $language);  
+	}
+	
+	public function existsURLNice($nice_url, $language) {
 		$sql = "select count(*) num from omp_niceurl where niceurl='$nice_url' and language='$language'";
 		$num = $this->conn->fetchColumn($sql);
 		return $num > 0;
