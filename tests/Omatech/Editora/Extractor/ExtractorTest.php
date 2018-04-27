@@ -40,7 +40,7 @@ final class ExtractorTest extends PHPUnit_Framework_TestCase {
 					, 'timings' => true
         ];			
 				
-				$e=new Extractor($conn, $params);
+				$e=new Extractor($conn, $params);   
 				$res=$e->findInstanceById($id, null, function($i) use ($e)
 				{//page
 					$submenus=$e->findRelatedInstances($i, 'obc_section_pages', 1, ['alias'=>'submenu'], function($i) use ($e){
@@ -53,6 +53,7 @@ final class ExtractorTest extends PHPUnit_Framework_TestCase {
 						});
 				  return array_merge($submenus, $groups);	
 				});
+			
 				
 				$this->assertEquals(array(), $res);
 				
