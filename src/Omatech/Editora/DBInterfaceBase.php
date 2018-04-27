@@ -286,6 +286,16 @@ class DBInterfaceBase {
 		return -1;
 	}
 	
+	
+	public function getInstIDFromNiceURL($nice_url, $language) {
+		return $this->getInstIDFromURLNice($nice_url, $language);
+	}
+		public function getInstIDFromURLNice($nice_url, $language) {
+		$sql = "select inst_id from omp_niceurl where niceurl='$nice_url' and language='$language'";
+		$inst_id = $this->conn->fetchColumn($sql);
+		return $inst_id;
+	}
+	
 	public function getInstanceRowAndExistingValues($inst_id) {
 		$sql = "select * 
 				from omp_instances
@@ -320,7 +330,11 @@ class DBInterfaceBase {
 		return $inst_id;
 	}	
 	
-	public function existsUrlNice($nice_url, $language) {
+	public function existsNiceURL($nice_url, $language) { 
+		return $this->existsURLNice($nice_url, $language);  
+	}
+	
+	public function existsURLNice($nice_url, $language) {
 		$sql = "select count(*) num from omp_niceurl where niceurl='$nice_url' and language='$language'";
 		$num = $this->conn->fetchColumn($sql);
 		return $num > 0;

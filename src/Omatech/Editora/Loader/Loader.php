@@ -223,7 +223,7 @@ class Loader extends DBInterfaceBase {
 
 
 	public function updateUrlNice($nice_url, $inst_id, $language) {
-		if ($this->existsUrlNice($nice_url, $language))
+		if ($this->existsURLNice($nice_url, $language))
 			return -1;
 
 		$sql = "update omp_niceurl set niceurl='$nice_url' where inst_id=$inst_id and language='$language'";
@@ -233,7 +233,7 @@ class Loader extends DBInterfaceBase {
 	}
 
 	public function insertUrlNice($nice_url, $inst_id, $language) {
-		if ($this->existsUrlNice($nice_url, $language))
+		if ($this->existsURLNice($nice_url, $language))
 			return -1;
 
 		$sql = "insert into omp_niceurl 
