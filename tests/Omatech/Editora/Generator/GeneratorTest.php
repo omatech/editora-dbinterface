@@ -152,9 +152,10 @@ class GeneratorTest extends TestCaseBase
 
         $Generator = new Generator($this->connection, $params);
 
-        $editora = $Generator->createEditora($data);
+        $created = $Generator->createEditora($data);
 
-        var_dump($editora); die;
+        $this->assertTrue($created);
+
 
     }
 }
