@@ -17,6 +17,11 @@ class Generator extends DBInterfaceBase
         parent::__construct($conn, $params);
     }
 
+    /**
+     * @param $data
+     * @throws \Doctrine\DBAL\DBALException
+     * @throws \Exception
+     */
     public function createEditora($data)
     {
         $this->data = array_merge($this->editoraDefaultData(),$data);
@@ -337,7 +342,21 @@ class Generator extends DBInterfaceBase
             }
         }
 
-        return $this->queries;
+        $this->startTransaction();
+
+        foreach($this->queries as $aQuery)
+        {
+            try{
+                $this->conn->executeQuery($aQuery);
+            }catch (\Exception $exception){
+                $this->rollback();
+                return false;
+            }
+        }
+
+        $this->commit();
+
+        return true;
     }
 
     private function editoraDefaultData(){
