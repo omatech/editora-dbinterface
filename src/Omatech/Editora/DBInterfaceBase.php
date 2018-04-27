@@ -467,5 +467,19 @@ class DBInterfaceBase {
 	protected function getIDsListFilter($inst_ids) {
 		return " and i.id in (" . $inst_ids . ") ";
 	}
+
+    public function startTransaction()
+    {
+        $this->conn->executeQuery('start transaction');
+    }
+    public function commit()
+    {
+        $this->conn->executeQuery('commit');
+    }
+
+    public function rollback()
+    {
+        $this->conn->executeQuery('rollback');
+    }
 	
 }
