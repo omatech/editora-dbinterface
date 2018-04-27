@@ -157,6 +157,7 @@ class Extractor extends DBInterfaceBase {
 
 		$relation_row = $this->findRelation($relation);
 		$rel_id = $relation_row['id'];
+		if (!$rel_id) return array();
 
 		if (isset($params['alias'])) {
 			$tag = $params['alias'];
@@ -209,6 +210,7 @@ class Extractor extends DBInterfaceBase {
 
 		$relation_row = $this->findRelation($relation);
 		$rel_id = $relation_row['id'];
+		if (!$rel_id) return array();
 
 		if (isset($params['alias'])) {
 			$tag = $params['alias'];
@@ -351,7 +353,11 @@ class Extractor extends DBInterfaceBase {
 
 		if ($callback != null) {
 			$this->debug("Voy a hacer el callback con inst_id=$inst_id\n");
-			$instance['relations'] = $callback($inst_id);
+			$relations=$callback($inst_id);
+			if ($relations)
+			{
+				$instance['relations'] = $relations;
+			}
 		}
 
 		if ($this->metadata && $this->timings) {

@@ -9,7 +9,7 @@ $connectionParams = array(
     'password' => dbpass,
     'host' => dbhost,
     'driver' => 'pdo_mysql',
-		'charset' => 'utf8'
+		'charset' => 'utf8mb4'
 );
 $conn = \Doctrine\DBAL\DriverManager::getConnection($connectionParams, $config);
 
