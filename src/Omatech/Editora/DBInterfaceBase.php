@@ -92,7 +92,13 @@ class DBInterfaceBase {
 				$link = '/' . $this->lang . '/' . $niceurl_row['niceurl'];
 			}
 		} else {
-			$link = '/' . $inst_id;
+			if ($this->lang == 'ALL') {
+				$link = '/' . $inst_id;
+			}
+			else
+			{
+				$link = '/' . $this->lang . '/' .$inst_id;
+			}
 		}
 
 		return $link;
