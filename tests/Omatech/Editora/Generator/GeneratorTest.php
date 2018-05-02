@@ -8,14 +8,22 @@
 require_once __DIR__ . '/../TestCaseBase.php';
 
 use Omatech\Editora\Generator\Generator;
+use Omatech\Editora\Clear\Clear;
 
 class GeneratorTest extends TestCaseBase
 {
-    public function testGenerateEditoraSuccessfully()
+    protected function setUp()
     {
-        $data = array(
+        $Clear = new Clear($this->connection, array());
+        $Clear->truncateAllTables();
+        parent::setUp();
+    }
+
+    private function getTestData()
+    {
+        return array(
             'nomintern_id' => 1,
-            'nomintern_name' => 'test_editora',
+            'nomintern_name' => 'test_editora'.rand(),
             'niceurl_id' => 2,
             'niceurl_name' => 'test-editora',
             'localized_attributes' => array(),
@@ -141,21 +149,19 @@ class GeneratorTest extends TestCaseBase
                 60=>'200,500,607-608'
             )
         );
+    }
 
-        $params = array(
-            'lang' => 'ca'
-            , 'debug' => true
-            , 'metadata' => true
-            , 'show_inmediate_debug' => true
-            , 'timings' => true
-        );
+    //Tests
 
-        $Generator = new Generator($this->connection, $params);
+    public function testGenerateEditoraSuccessfully()
+    {
+        $data = $this->getTestData();
+
+        $Generator = new Generator($this->connection, array());
 
         $created = $Generator->createEditora($data);
 
         $this->assertTrue($created);
-
 
     }
 }
