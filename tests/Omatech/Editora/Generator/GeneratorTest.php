@@ -164,4 +164,18 @@ class GeneratorTest extends TestCaseBase
         $this->assertTrue($created);
 
     }
+
+    public function testGenerateEditoraCheckNomInternName()
+    {
+        $data = $this->getTestData();
+        $nomintern_name = $data['nomintern_name'];
+
+        $Generator = new Generator($this->connection, array());
+
+        $created = $Generator->createEditora($data);
+
+        $query_result = $this->connection->fetchAssoc("select * from omp_attributes a where a.name='$nomintern_name' limit 1;");
+
+        $this->assertTrue(!empty($query_result['name']));
+    }
 }
