@@ -165,17 +165,44 @@ class GeneratorTest extends TestCaseBase
 
     }
 
-    public function testGenerateEditoraCheckNomInternName()
+    public function testGenerateEditoraCheckNomIntern()
     {
         $data = $this->getTestData();
+        $nomintern_id = $data['nomintern_id'];
         $nomintern_name = $data['nomintern_name'];
 
         $Generator = new Generator($this->connection, array());
-
-        $created = $Generator->createEditora($data);
+        $Generator->createEditora($data);
 
         $query_result = $this->connection->fetchAssoc("select * from omp_attributes a where a.name='$nomintern_name' limit 1;");
 
         $this->assertTrue(!empty($query_result['name']));
+        $this->assertTrue(!empty($query_result['id']) && $query_result['id'] == $nomintern_id);
+    }
+
+    public function testGenerateEditoraCheckLanguages()
+    {
+        $data = $this->getTestData();
+        $languages = $data['languages'];
+
+        $Generator = new Generator($this->connection, array());
+        $Generator->createEditora($data);
+
+        $query_result = $this->connection->fetchAll("SELECT language FROM omp_attributes where language != 'ALL' group by language;");
+
+        $this->assertNotEmpty($query_result);
+        $this->assertTrue(is_array($query_result));
+
+        if(is_array($query_result)) {
+            $dbLanguages = array();
+
+            foreach ($query_result as $aResult) {
+                array_push($dbLanguages, reset($aResult));
+            }
+
+            foreach ($languages as $aLanguage) {
+                $this->assertTrue(in_array($aLanguage, $dbLanguages));
+            }
+        }
     }
 }
