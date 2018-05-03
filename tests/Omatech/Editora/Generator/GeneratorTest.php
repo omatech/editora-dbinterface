@@ -27,8 +27,8 @@ class GeneratorTest extends TestCaseBase
     private function getTestData()
     {
         return array(
-            'nomintern_id' => 1,
-            'nomintern_name' => 'test_editora'.rand(),
+            'nomintern_id' => $this->Generator->editoraDefaultNomInternId(),
+            'nomintern_name' => $this->Generator->editoraDefaultNomInternName(),
             'niceurl_id' => 2,
             'niceurl_name' => 'test-editora',
             'localized_attributes' => array(),
@@ -171,7 +171,6 @@ class GeneratorTest extends TestCaseBase
     public function testGenerateEditoraCheckNomIntern()
     {
         $data = $this->getTestData();
-        $nomintern_id = $data['nomintern_id'];
         $nomintern_name = $data['nomintern_name'];
 
         $this->Generator->createEditora($data);
@@ -179,7 +178,57 @@ class GeneratorTest extends TestCaseBase
         $query_result = $this->connection->fetchAssoc("select * from omp_attributes a where a.name='$nomintern_name' limit 1;");
 
         $this->assertTrue(!empty($query_result['name']));
-        $this->assertTrue(!empty($query_result['id']) && $query_result['id'] == $nomintern_id);
+        $this->assertTrue(!empty($query_result['id']) && $query_result['id'] == $data['nomintern_id']);
+    }
+
+    public function testGenerateEditoraDefaultNomIntern()
+    {
+        $data = $this->getTestData();
+        $data['nomintern_id'] = rand(100, 1000);
+        $data['nomintern_name'] = 'another_name_'.rand();
+
+        $nomintern_id = $data['nomintern_id'];
+        $default_nomintern_id = $this->Generator->editoraDefaultNomInternId();
+        $nomintern_name = $data['nomintern_name'];
+        $default_nomintern_name = $this->Generator->editoraDefaultNomInternName();
+
+        $this->Generator->createEditora($data);
+
+        $query_result = $this->connection->fetchAssoc("select * from omp_attributes a where a.name='$nomintern_name' limit 1;");
+
+        $this->assertFalse($query_result);
+
+        $query_result = $this->connection->fetchAssoc("select * from omp_attributes a where a.id='$nomintern_id' limit 1;");
+
+        $this->assertFalse($query_result);
+
+        $query_result = $this->connection->fetchAssoc("select * from omp_attributes a where a.name='$default_nomintern_name' limit 1;");
+
+        $this->assertTrue(!empty($query_result['name']) && $query_result['name'] != $nomintern_name && $query_result['name'] == $default_nomintern_name);
+
+        $query_result = $this->connection->fetchAssoc("select * from omp_attributes a where a.id='$default_nomintern_id' limit 1;");
+
+        $this->assertTrue(!empty($query_result['id']) && $query_result['id'] != $nomintern_id && $query_result['id'] == $default_nomintern_id);
+    }
+
+    public function testGenerateEditoraDataWithoutNomIntern()
+    {
+        $data = $this->getTestData();
+        unset($data['nomintern_id']);
+        unset($data['nomintern_name']);
+
+        $default_nomintern_id = $this->Generator->editoraDefaultNomInternId();
+        $default_nomintern_name = $this->Generator->editoraDefaultNomInternName();
+
+        $this->Generator->createEditora($data);
+
+        $query_result = $this->connection->fetchAssoc("select * from omp_attributes a where a.name='$default_nomintern_name' limit 1;");
+
+        $this->assertTrue(!empty($query_result['name']) && $query_result['name'] == $default_nomintern_name);
+
+        $query_result = $this->connection->fetchAssoc("select * from omp_attributes a where a.id='$default_nomintern_id' limit 1;");
+
+        $this->assertTrue(!empty($query_result['id']) && $query_result['id'] == $default_nomintern_id);
     }
 
     public function testGenerateEditoraCheckLanguages()
