@@ -14,17 +14,27 @@ class Clear extends DBInterfaceBase
     /**
      * Remove all data from database without deleting tables.
      */
-    public function truncateAllTables()
+    public function truncateTables()
     {
         $database_name = $this->conn->getDatabase();
+        $tables_to_truncate = array(
+            'omp_attributes',
+            'omp_class_attributes',
+            'omp_class_groups',
+            'omp_classes',
+            'omp_lookups',
+            'omp_lookups_values',
+            'omp_relations',
+            'omp_roles_classes',
+            'omp_tabs',
+            'omp_users'
+        );
 
-        $tables_query = 'SELECT concat(\'TRUNCATE TABLE \',table_schema,\'.\',TABLE_NAME, \';\') FROM INFORMATION_SCHEMA.TABLES Where table_schema IN (\''.$database_name.'\')';
-        $tables_truncate_queries_array = $this->conn->fetchAll($tables_query);
         $tables_truncate_queries = '';
 
-        foreach ($tables_truncate_queries_array as $aTableTruncateQuery)
+        foreach ($tables_to_truncate as $aTable)
         {
-            $tables_truncate_queries .= reset($aTableTruncateQuery);
+            $tables_truncate_queries .= 'TRUNCATE TABLE '.$database_name.'.'.$aTable.';';
         }
 
         $commands = 'SET FOREIGN_KEY_CHECKS=0;'.$tables_truncate_queries.'SET FOREIGN_KEY_CHECKS=1;';
