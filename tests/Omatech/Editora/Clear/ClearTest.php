@@ -19,7 +19,7 @@ class ClearTest extends TestCaseBase
         parent::setUp();
     }
 
-    public function testTruncateAllTablesSuccessfully()
+    public function testTruncateTablesSuccessfully()
     {
         $class = 'test_class_'.rand();
         $query = "select c.id class_id, c.name, c.tag from omp_classes c where c.tag='$class' limit 1;";
@@ -36,7 +36,7 @@ class ClearTest extends TestCaseBase
             $this->assertTrue(false);
         }
 
-        $this->Clear->truncateAllTables();
+        $this->Clear->truncateTables();
 
         $query_result = $this->connection->fetchAssoc($query);
 

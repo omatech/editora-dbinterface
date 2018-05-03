@@ -17,7 +17,7 @@ class GeneratorTest extends TestCaseBase
     protected function setUp()
     {
         $Clear = new Clear($this->connection, array());
-        $Clear->truncateAllTables();
+        $Clear->truncateTables();
 
         $this->Generator = new Generator($this->connection, array());
 
