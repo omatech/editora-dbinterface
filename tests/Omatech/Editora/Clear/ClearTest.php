@@ -10,6 +10,14 @@ use Omatech\Editora\Clear\Clear;
 
 class ClearTest extends TestCaseBase
 {
+    protected $Clear;
+
+    protected function setUp()
+    {
+        $this->Clear = new Clear($this->connection, array());
+
+        parent::setUp();
+    }
 
     public function testTruncateAllTablesSuccessfully()
     {
@@ -28,9 +36,7 @@ class ClearTest extends TestCaseBase
             $this->assertTrue(false);
         }
 
-        $Clear = new Clear($this->connection, array());
-
-        $Clear->truncateAllTables();
+        $this->Clear->truncateAllTables();
 
         $query_result = $this->connection->fetchAssoc($query);
 
