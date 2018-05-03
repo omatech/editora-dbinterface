@@ -12,10 +12,15 @@ use Omatech\Editora\Clear\Clear;
 
 class GeneratorTest extends TestCaseBase
 {
+    protected $Generator;
+
     protected function setUp()
     {
         $Clear = new Clear($this->connection, array());
         $Clear->truncateAllTables();
+
+        $this->Generator = new Generator($this->connection, array());
+
         parent::setUp();
     }
 
@@ -157,9 +162,7 @@ class GeneratorTest extends TestCaseBase
     {
         $data = $this->getTestData();
 
-        $Generator = new Generator($this->connection, array());
-
-        $created = $Generator->createEditora($data);
+        $created = $this->Generator->createEditora($data);
 
         $this->assertTrue($created);
 
@@ -171,8 +174,7 @@ class GeneratorTest extends TestCaseBase
         $nomintern_id = $data['nomintern_id'];
         $nomintern_name = $data['nomintern_name'];
 
-        $Generator = new Generator($this->connection, array());
-        $Generator->createEditora($data);
+        $this->Generator->createEditora($data);
 
         $query_result = $this->connection->fetchAssoc("select * from omp_attributes a where a.name='$nomintern_name' limit 1;");
 
@@ -185,8 +187,7 @@ class GeneratorTest extends TestCaseBase
         $data = $this->getTestData();
         $languages = $data['languages'];
 
-        $Generator = new Generator($this->connection, array());
-        $Generator->createEditora($data);
+        $this->Generator->createEditora($data);
 
         $query_result = $this->connection->fetchAll("SELECT language FROM omp_attributes where language != 'ALL' group by language;");
 
