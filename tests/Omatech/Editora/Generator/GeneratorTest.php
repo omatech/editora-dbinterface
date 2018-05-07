@@ -295,11 +295,56 @@ class GeneratorTest extends TestCaseBase
 
     public function testsGenerateEditoraDefaultRoles()
     {
-        //TODO
+        $data = $this->getTestData();
+
+        $this->Generator->createEditora($data);
+
+        $query_result = $this->connection->fetchAll("select * from omp_roles;");
+
+        $this->assertTrue(is_array($query_result));
+
+        $check_admin = $check_user = false;
+
+        foreach ($query_result as $aRole)
+        {
+            if($aRole['id'] == 1 && $aRole['rol_name'] == 'admin')
+            {
+                $check_admin = true;
+            }elseif ($aRole['id'] == 2 && $aRole['rol_name'] == 'user'){
+                $check_user = true;
+            }
+        }
+
+        $this->assertTrue($check_admin);
+        $this->assertTrue($check_user);
+
     }
 
     public function testsGenerateEditoraDataWithoutRoles()
     {
-        //TODO
+        $data = $this->getTestData();
+        unset($data['roles']);
+
+        $this->Generator->createEditora($data);
+
+        $query_result = $this->connection->fetchAll("select * from omp_roles;");
+
+        $this->assertTrue(is_array($query_result));
+        $this->assertTrue(count($query_result) == 2);
+
+        $check_admin = $check_user = false;
+
+        foreach ($query_result as $aRole)
+        {
+            if($aRole['id'] == 1 && $aRole['rol_name'] == 'admin')
+            {
+                $check_admin = true;
+            }elseif ($aRole['id'] == 2 && $aRole['rol_name'] == 'user'){
+                $check_user = true;
+            }
+        }
+
+        $this->assertTrue($check_admin);
+        $this->assertTrue($check_user);
     }
 }
