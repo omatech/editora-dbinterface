@@ -152,6 +152,9 @@ class GeneratorTest extends TestCaseBase
                 40=>'200,105,212-201,400',
                 50=>'213,207-208,401,214-215',
                 60=>'200,500,607-608'
+            ),
+            'roles' => array(
+                array('id' => 3, 'name' => 'testrole', 'classes' => ''),
             )
         );
     }
@@ -168,6 +171,8 @@ class GeneratorTest extends TestCaseBase
 
     }
 
+    //Tests nom intern
+    
     public function testGenerateEditoraCheckNomIntern()
     {
         $data = $this->getTestData();
@@ -231,6 +236,8 @@ class GeneratorTest extends TestCaseBase
         $this->assertTrue(!empty($query_result['id']) && $query_result['id'] == $default_nomintern_id);
     }
 
+    //Tests languages
+    
     public function testGenerateEditoraCheckLanguages()
     {
         $data = $this->getTestData();
@@ -254,5 +261,45 @@ class GeneratorTest extends TestCaseBase
                 $this->assertTrue(in_array($aLanguage, $dbLanguages));
             }
         }
+    }
+    
+    //Tests Roles
+
+    public function testsGenerateEditoraCheckRoles()
+    {
+        $data = $this->getTestData();
+        $testRoleId = rand(3, 10);
+        $testRoleName = 'test'.rand(1, 10);
+        $data['roles'] = array(array('id' => $testRoleId, 'name' => $testRoleName));
+
+        $this->Generator->createEditora($data);
+
+        $query_result = $this->connection->fetchAll("select * from omp_roles;");
+
+        $this->assertTrue(is_array($query_result));
+
+        $new_role_exists = false;
+
+        foreach ($query_result as $aRole)
+        {
+            if($aRole['id'] == $testRoleId && $aRole['rol_name'] == $testRoleName)
+            {
+                $new_role_exists = true;
+                break;
+            }
+        }
+
+        $this->assertTrue($new_role_exists);
+
+    }
+
+    public function testsGenerateEditoraDefaultRoles()
+    {
+        //TODO
+    }
+
+    public function testsGenerateEditoraDataWithoutRoles()
+    {
+        //TODO
     }
 }

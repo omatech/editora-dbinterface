@@ -25,6 +25,7 @@ class Clear extends DBInterfaceBase
             'omp_lookups',
             'omp_lookups_values',
             'omp_relations',
+            'omp_roles',
             'omp_roles_classes',
             'omp_tabs',
             'omp_users'
