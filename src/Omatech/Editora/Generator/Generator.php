@@ -43,6 +43,20 @@ class Generator extends DBInterfaceBase
             $this->create_tab($key_lang, $val_lang, $i++);
         }
 
+        if(isset($roles) && is_array($roles))
+        {
+            foreach ($roles as $aRole){
+
+                if(!isset($aRole['id']) || !isset($aRole['name'])){
+                    //TODO throw
+                }
+
+                array_push($this->queries, 'INSERT INTO `omp_roles` VALUES (\''.$aRole['id'].'\', \''.$aRole['name'].'\', \'Y\');');
+            }
+        }else{
+            //TODO throw
+        }
+
         if (isset($groups) && isset($classes))
         {// new method
             array_push($this->queries, "delete from omp_class_groups;");
@@ -402,6 +416,7 @@ class Generator extends DBInterfaceBase
             'relations' => array(),
             'relation_names' => array(),
             'attributes_classes' => array(),
+            'roles' => $this->editoraDefaultRoles(),
             'other_classes' => array(),
             'tabs' => array(
                 1 => 'data'
@@ -432,6 +447,14 @@ INSERT INTO `omp_users` VALUES ('1', 'admin', 'password', 'Omatech', '1', 'ca', 
         return 'nom_intern';
     }
 
+    public function editoraDefaultRoles()
+    {
+        return array(
+            array('id' => 1, 'name' => 'admin'),
+            array('id' => 2, 'name' => 'user'),
+        );
+    }
+
     public function editoraPrepareData($data)
     {
         $defaultData = $this->editoraDefaultData();
@@ -448,14 +471,15 @@ INSERT INTO `omp_users` VALUES ('1', 'admin', 'password', 'Omatech', '1', 'ca', 
                     $data[$aDefaultDataKey] = $aDefaultDataValue;
                 }else{
                     $data[$aDefaultDataKey] = array_merge($aDefaultDataValue, $data[$aDefaultDataKey]);
+
                 }
 
                 unset($defaultData[$aDefaultDataKey]);
             }
         }
-
         return array_merge($defaultData, $data);
     }
+
 
     // funcions auxiliars
 
