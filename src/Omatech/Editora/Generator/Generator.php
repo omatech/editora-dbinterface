@@ -75,10 +75,10 @@ class Generator extends DBInterfaceBase
                         if(array_key_exists($key,$classes_caption)){
                             $caption = $classes_caption[$key];
                         }else{
-                            $caption=key_to_title($val);
+                            $caption=$this->key_to_title($val);
                         }
                     }else{
-                        $caption=key_to_title($val);
+                        $caption=$this->key_to_title($val);
                     }
 
                     $this->create_class($key, $val, $groups[$group_key], $i++, $caption);
@@ -427,8 +427,6 @@ class Generator extends DBInterfaceBase
         /*
 
 INSERT INTO `omp_attributes` VALUES ('1', 'nom_intern', 'Nom Intern', 'Nom Intern', 'nom_intern', 'S', null, null, null, '0', null, null, 'ALL', 'Nom Intern', 'Nombre Interno', 'Internal Name');
-INSERT INTO `omp_roles` VALUES ('1', 'admin', 'Y');
-INSERT INTO `omp_roles` VALUES ('2', 'user', 'Y');
 INSERT INTO `omp_tabs` VALUES ('1', 'dades', 'Dades', 'Datos', 'Data', '1');
 INSERT INTO `omp_users` VALUES ('1', 'admin', 'password', 'Omatech', '1', 'ca', 'O'); //Todo pensa
 
@@ -569,9 +567,35 @@ INSERT INTO `omp_users` VALUES ('1', 'admin', 'password', 'Omatech', '1', 'ca', 
             $caption = $name;
         }
         $key = $this->title_to_key($key);
+
         array_push($this->queries, "insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values ($id, '$key', '$key', $grp_id, $grp_order, '$caption', '$caption', '$caption', 'N');");
-        array_push($this->queries, "insert into omp_roles_classes (id, class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values ($id, $id, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');");
-        array_push($this->queries, "insert into omp_roles_classes (id, class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (".($id+1000).", $id, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');");
+        array_push($this->queries, "insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values ($id, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');");
+        array_push($this->queries, "insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values ($id, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');");
+
+        if(!empty($this->data['roles']))
+        {
+            $roles = $this->data['roles'];
+
+            foreach ($roles as $aRole)
+            {
+                if(empty($aRole['id']) || in_array($aRole['id'], array(1, 2)) || empty($aRole['classes'])){
+                    continue;
+                }
+
+                $roleClassesId = explode(',', $aRole['classes']);
+
+                if(empty($roleClassesId))
+                    continue;
+
+                $currentRoleId = $aRole['id'];
+
+                if(in_array($id, $roleClassesId))
+                {
+                    array_push($this->queries, "insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values ($id, $currentRoleId, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');");
+                }
+            }
+        }
+
     }
 
     function create_attribute($id, $key, $type, $language_id=0, $language='ALL', $lookup_id=0, $caption=null)
