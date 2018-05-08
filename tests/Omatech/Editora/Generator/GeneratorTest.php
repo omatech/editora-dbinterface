@@ -154,7 +154,7 @@ class GeneratorTest extends TestCaseBase
                 60=>'200,500,607-608'
             ),
             'roles' => array(
-                array('id' => 3, 'name' => 'testrole', 'classes' => ''),
+                array('id' => 3, 'name' => 'testrole', 'classes' => '10,20,30'),
             )
         );
     }
@@ -346,5 +346,82 @@ class GeneratorTest extends TestCaseBase
 
         $this->assertTrue($check_admin);
         $this->assertTrue($check_user);
+    }
+
+    public function testsGenerateEditoraSaveRolesWithClasses()
+    {
+        $data = $this->getTestData();
+
+        $randomNumOfNewClasses = rand(1, 4);
+
+        $randomClassIds = array();
+
+        for ($i = 0; $i < $randomNumOfNewClasses; $i++)
+        {
+            $randomClassId = rand(100*$i+101,100*($i+1)+100);
+            $randomClassName = 'testclass'.substr(md5(rand()), 0, 5);
+
+            $data['classes']['Secondary'][$randomClassId] = $randomClassName;
+
+            array_push($randomClassIds, $randomClassId);
+        }
+
+        $testRoleId = rand(3, 10);
+        $testRoleName = 'test'.rand(1, 10);
+        $testRoleClasses = implode(',',$randomClassIds);
+        $data['roles'] = array(
+            array(
+                'id' => $testRoleId,
+                'name' => $testRoleName,
+                'classes' => $testRoleClasses
+            )
+        );
+
+        $this->Generator->createEditora($data);
+
+        $query_result = $this->connection->fetchAll("select * from omp_roles_classes where rol_id IN ($testRoleId) and class_id IN ($testRoleClasses);");
+
+        $this->assertTrue(is_array($query_result));
+        $this->assertTrue(!empty($query_result));
+        $this->assertTrue(count($query_result) == $randomNumOfNewClasses);
+
+        $role_classes_relation_count = 0;
+
+        foreach ($query_result as $aRoleClassRelation)
+        {
+            foreach ($randomClassIds as $aRandomClassIdKey => $aRandomClassId)
+            {
+                if($aRoleClassRelation['class_id'] == $aRandomClassId)
+                {
+                    $role_classes_relation_count++;
+                    unset($randomClassIds[$aRandomClassIdKey]);
+                    break;
+                }
+            }
+        }
+
+        $this->assertTrue($role_classes_relation_count == $randomNumOfNewClasses);
+    }
+
+    public function testsGenerateEditoraSaveRolesWithoutClasses()
+    {
+        $data = $this->getTestData();
+
+        $testRoleId = rand(3, 10);
+        $testRoleName = 'test'.rand(1, 10);
+        $data['roles'] = array(
+            array(
+                'id' => $testRoleId,
+                'name' => $testRoleName,
+                'classes' => ''
+            )
+        );
+
+        $this->Generator->createEditora($data);
+
+        $query_result = $this->connection->fetchAll("select * from omp_roles_classes where rol_id IN ($testRoleId);");
+
+        $this->assertTrue(is_array($query_result));
+        $this->assertTrue(empty($query_result));
     }
 }
