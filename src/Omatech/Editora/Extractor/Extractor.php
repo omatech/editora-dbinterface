@@ -387,7 +387,7 @@ class Extractor extends DBInterfaceBase {
 		if (isset($params['filter']))
 			$filter = $params['filter'];
 
-		$memcache_key = $this->conn->getDatabase() . '.dbinterface:' . $inst_id . ':' . $filter;
+		$memcache_key = $this->conn->getDatabase() . "dbinterface:$lang:$inst_id:$filter";
 		$this->debug("MEMCACHE:: using key $memcache_key instance update_timestamp=$update_timestamp\n");
 		if (!$this->avoid_cache) {
 			$this->debug("CACHE:: avoid_cache desactivado\n");
