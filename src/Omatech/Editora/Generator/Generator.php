@@ -5,6 +5,7 @@
  */
 
 namespace Omatech\Editora\Generator;
+use Omatech\Editora\Clear\Clear;
 use \Omatech\Editora\DBInterfaceBase;
 
 class Generator extends DBInterfaceBase
@@ -22,11 +23,14 @@ class Generator extends DBInterfaceBase
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      */
-    public function createEditora($data)
+    public function createEditora(array $data)
     {
 
         $this->data = $this->editoraPrepareData($data);
         $this->queries = array();
+
+        $editora_structure = file_get_contents(__DIR__ .'/../../../../sql/editora.sql');
+        array_push($this->queries, $editora_structure);
 
         extract(
             $this->data,
@@ -356,6 +360,10 @@ class Generator extends DBInterfaceBase
                 array_push($this->queries, "update omp_attributes set img_height=".$arr_sizes[1]." where id=$key_size;");
             }
         }
+
+        //Clear generic tables
+        $Clear = new Clear($this->conn, array());
+        $Clear->truncateTables();
 
         $this->startTransaction();
 
