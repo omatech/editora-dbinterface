@@ -171,6 +171,53 @@ class GeneratorTest extends TestCaseBase
 
     }
 
+    public function testGenerateEditoraDbStructure()
+    {
+        $data = $this->getTestData();
+
+        $created = $this->Generator->createEditora($data);
+
+        $this->assertTrue($created);
+
+        $dbname = dbname;
+        $required_tables = array(
+            'omp_attributes',
+            'omp_class_attributes',
+            'omp_class_groups',
+            'omp_classes',
+            'omp_instances',
+            'omp_instances_backup',
+            'omp_instances_cache',
+            'omp_lookups',
+            'omp_lookups_values',
+            'omp_niceurl',
+            'omp_relation_instances',
+            'omp_relations',
+            'omp_roles',
+            'omp_roles_classes',
+            'omp_search',
+            'omp_static_text',
+            'omp_tabs',
+            'omp_user_instances',
+            'omp_users',
+            'omp_values'
+        );
+        $sql = "SELECT table_name FROM information_schema.tables WHERE table_schema = '$dbname';";
+
+        $query_result = $this->connection->fetchAll($sql);
+
+        $required_tables_in_results = 0;
+
+        foreach ($query_result as $aTable)
+        {
+            if(in_array($aTable['table_name'], $required_tables)){
+                $required_tables_in_results++;
+            }
+        }
+
+        $this->assertTrue(count($required_tables) == $required_tables_in_results);
+    }
+
     //Tests nom intern
     
     public function testGenerateEditoraCheckNomIntern()
