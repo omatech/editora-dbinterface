@@ -307,6 +307,7 @@ class Extractor extends DBInterfaceBase {
 
 		if ($this->metadata) {
 			$metadata = array();
+			$metadata['id'] = $inst_id;
 			$metadata['nom_intern'] = $row['nom_intern'];
 			if (isset($row['publishing_begins']))
 				$metadata['publishing_begins'] = $row['publishing_begins'];
