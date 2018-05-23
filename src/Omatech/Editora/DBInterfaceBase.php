@@ -56,13 +56,15 @@ class DBInterfaceBase {
 		return $row;
 	}
 
-	public function findRelation($relation) {
-		$this->debug("Extractor::findRelation relation=$relation\n");
+	public function findRelation($relation, $inst_id) {
+		$this->debug("Extractor::findRelation relation=$relation inst_id=$inst_id\n");
 
+		$class_id=$this->findClassIDFromInstID($inst_id);
 		$sql = "select r.id, r.tag, r.parent_class_id, r.child_class_id, r.multiple_child_class_id
 				from omp_relations r
 				where 1=1
 				" . $this->getRelationFilter($relation) . "
+				and ( r.child_class_id = $class_id OR FIND_IN_SET( $class_id, r.multiple_child_class_id ) OR r.parent_class_id = $class_id)
 				limit 1
 				";
 
@@ -73,8 +75,8 @@ class DBInterfaceBase {
 		return $row;
 	}
 
-	public function findRelationID($relation) {
-		return $this->findRelation($relation)['id'];
+	public function findRelationID($relation, $inst_id) {
+		return $this->findRelation($relation, $inst_id)['id'];
 	}
 
 	public function getInstanceLink($inst_id) {
