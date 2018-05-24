@@ -46,6 +46,10 @@ class Extractor extends DBInterfaceBase {
 		if (isset($params['order'])) {
 			$order_filter = $this->getOrderFilter($params['order'], $params['order_direction']);
 		}
+		else
+		{// si no tenemos order ordenamos por los publicados recientemente
+			$order_filter = $this->getOrderFilter('publishing_begins', 'desc');
+		}
 
 		$sql = $this->sql_select_instances . "  
 					from omp_instances i 
