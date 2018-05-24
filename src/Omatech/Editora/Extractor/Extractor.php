@@ -58,8 +58,8 @@ class Extractor extends DBInterfaceBase {
 					$class_filter
 					and c.id=i.class_id
 					" . $this->getPreviewFilter() . "
-					" . $this->getLimitFilter($num) . "
 				  $order_filter
+					" . $this->getLimitFilter($num) . "
 					";
 
 		$this->debug("SQL a findInstancesInClass\n");
