@@ -48,23 +48,15 @@ class GeneratorTest extends TestCaseBase
             ),
             'classes' => array(
                 'Main'=> array(
-                    10=>'Home'
+                    10=> 'Home'
                 ),
                 'Secondary'=> array(
-                    30=>'case_studies_categories',
-                    20=>'case_studies',
+                    30=> array('case_studies_categories', 'Categorías de casos de estudio'),
+                    20=> array('case_studies', 'Casos de estudio'),
                     40=>'job_offers',
                     50=>'people_section',
                     60=>'person'
                 )
-            ),
-            'classes_caption' => array(
-                10=>'Home',
-                20=>'case_studies_categories',
-                30=>'case_studies',
-                40=>'job_offers',
-                50=>'people_section',
-                60=>'person',
             ),
             'attributes_string' => array(
                 100=>array('title_unique', 'title_unique'),
@@ -75,7 +67,7 @@ class GeneratorTest extends TestCaseBase
                 105=>array('city','city')
             ),
             'attributes_multi_lang_string' => array(
-                200=>'title',
+                200=> 'title',
                 201=>'intro',
                 202=>'date',
                 203=>'kpi_text_1',
@@ -140,7 +132,7 @@ class GeneratorTest extends TestCaseBase
                 500001=>'50,60'
             ),
             'relation_names' => array(
-                100001=>array('case_studies', 'case_studies'),
+                100001=>array('case_studies', 'Caso de estudio'),
                 100002=>array('job_offers', 'job_offers'),
                 200001=>array('case_studies_categories', 'case_studies_categories'),
                 500001=>array('person', 'person')
@@ -470,5 +462,23 @@ class GeneratorTest extends TestCaseBase
 
         $this->assertTrue(is_array($query_result));
         $this->assertTrue(empty($query_result));
+    }
+
+    public function testGenerateEditoraSaveClassesCaptions()
+    {
+        $data = $this->getTestData();
+        $class_id = 40;
+        $name_ca = $name_es = $name_en = 'Ofertas de trabajo';
+        $data['classes']['Secondary'][$class_id] = array('job_offers', $name_ca);
+
+        $this->Generator->createEditora($data);
+
+        $query_result = $this->connection->fetchAll("select * from omp_classes where id=$class_id;");
+
+        $this->assertTrue(isset($query_result[0]));
+        $this->assertTrue($query_result[0]['name_ca'] == $name_ca);
+        $this->assertTrue($query_result[0]['name_es'] == $name_es);
+        $this->assertTrue($query_result[0]['name_en'] == $name_en);
+
     }
 }

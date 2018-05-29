@@ -75,28 +75,16 @@ class Generator extends DBInterfaceBase
             {
                 foreach ($group_val as $key=>$val)
                 {
-                    if(isset($classes_caption)){
-                        if(array_key_exists($key,$classes_caption)){
-                            $caption = $classes_caption[$key];
-                        }else{
-                            $caption=$this->key_to_title($val);
-                        }
+                    if(is_array($val)){
+                        $caption = isset($val[1]) ? $val[1] : $val[0];
+                        $val = $val[0];
                     }else{
-                        $caption=$this->key_to_title($val);
+                        $caption = $val;
                     }
 
                     $this->create_class($key, $val, $groups[$group_key], $i++, $caption);
                     $this->create_class_attribute($key, $nomintern_id, 0, 1, 1, 1, true, true);
-                    $need_url_nice=$groups[$group_key];
-                    /*
-                    if ($need_url_nice==1)
-                    {// Group amb url nice
-                            foreach ($languages as $key_lang=>$val_lang)
-                            {
-                                create_class_attribute($key, $key_lang+$niceurl_id, 0, $key_lang, 1, 2, false, false);
-                            }
-                    }
-                    */
+                    $need_url_nice=$groups[$group_key]; //TODO ????
                 }
             }
         }
@@ -402,7 +390,6 @@ class Generator extends DBInterfaceBase
             'languages' => array(),
             'groups' => array(),
             'classes' => array(),
-            'classes_caption' => array(),
             'attributes_string' => array(),
             'attributes_multi_lang_string' => array(),
             'attributes_multi_lang_textarea' => array(),
