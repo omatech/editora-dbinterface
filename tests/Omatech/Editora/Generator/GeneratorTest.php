@@ -461,8 +461,10 @@ class GeneratorTest extends TestCaseBase
         $query_result = $this->connection->fetchAll("select * from omp_roles_classes where rol_id IN ($testRoleId);");
 
         $this->assertTrue(is_array($query_result));
-        $this->assertTrue(empty($query_result));
+        $this->assertTrue(!empty($query_result));
     }
+
+    //Captions
 
     public function testGenerateEditoraSaveClassesCaptions()
     {

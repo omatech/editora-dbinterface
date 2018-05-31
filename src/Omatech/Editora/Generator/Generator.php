@@ -573,21 +573,28 @@ INSERT INTO `omp_users` VALUES ('1', 'admin', 'password', 'Omatech', '1', 'ca', 
 
             foreach ($roles as $aRole)
             {
-                if(empty($aRole['id']) || in_array($aRole['id'], array(1, 2)) || empty($aRole['classes'])){
+                if(empty($aRole['id']) || in_array($aRole['id'], array(1, 2))){
                     continue;
                 }
-
-                $roleClassesId = explode(',', $aRole['classes']);
-
-                if(empty($roleClassesId))
-                    continue;
 
                 $currentRoleId = $aRole['id'];
 
-                if(in_array($id, $roleClassesId))
-                {
+                if(empty($aRole['classes'])){
+
                     array_push($this->queries, "insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values ($id, $currentRoleId, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');");
+
+                }else{
+
+                    $roleClassesId = explode(',', $aRole['classes']);
+
+                    if(in_array($id, $roleClassesId))
+                    {
+                        array_push($this->queries, "insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values ($id, $currentRoleId, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');");
+                    }
                 }
+
+
+
             }
         }
 
