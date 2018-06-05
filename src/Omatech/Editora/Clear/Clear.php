@@ -35,12 +35,16 @@ class Clear extends DBInterfaceBase
 
         foreach ($tables_to_truncate as $aTable)
         {
-            $tables_truncate_queries .= 'TRUNCATE TABLE '.$database_name.'.'.$aTable.';';
+            $tables_truncate_queries .= 'DROP TABLE '.$database_name.'.'.$aTable.';';
         }
 
         $commands = 'SET FOREIGN_KEY_CHECKS=0;'.$tables_truncate_queries.'SET FOREIGN_KEY_CHECKS=1;';
 
         $this->conn->executeQuery($commands);
+
+        $editora_structure = file_get_contents(__DIR__ .'/../../../../sql/editora.sql');
+
+        $this->conn->executeQuery($editora_structure);
     }
 
 }
