@@ -12,7 +12,7 @@ class Clear extends DBInterfaceBase
 {
 
     /**
-     * Remove all data from database without deleting tables.
+     * Drop all data from non-sensitive tables.
      */
     public function truncateTables()
     {
@@ -41,6 +41,28 @@ class Clear extends DBInterfaceBase
         $commands = 'SET FOREIGN_KEY_CHECKS=0;'.$tables_truncate_queries.'SET FOREIGN_KEY_CHECKS=1;';
 
         $this->conn->executeQuery($commands);
+
+        $editora_structure = file_get_contents(__DIR__ .'/../../../../sql/editora.sql');
+
+        $this->conn->executeQuery($editora_structure);
+    }
+
+    /**
+     * Drop all data from database.
+     */
+    public function dropAllData()
+    {
+        $database_name = $this->conn->getDatabase();
+
+        $tables = $this->conn->query("SELECT concat('DROP TABLE IF EXISTS ', table_name, ';') FROM information_schema.tables WHERE table_schema = '$database_name';")->fetchAll();
+
+        $queries = 'SET FOREIGN_KEY_CHECKS=0;';
+
+        foreach ($tables as $aTable){
+            $queries .= reset($aTable);
+        }
+
+        $this->conn->executeQuery($queries);
 
         $editora_structure = file_get_contents(__DIR__ .'/../../../../sql/editora.sql');
 
