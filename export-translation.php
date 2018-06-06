@@ -44,25 +44,25 @@ Others:
 example: 
 	
 1) Export missing texts in spanish that exists in english from a editora version 4 to an excel file
-php export.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac --sourcelanguage=en --to=file --outputformat=excel --tofilename=missing_translation_from_en_to_es_panreac.xlsx --destinationlanguage=es --what=missing
+php export-translation.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac --sourcelanguage=en --to=file --outputformat=excel --tofilename=missing_translation_from_en_to_es_panreac.xlsx --destinationlanguage=es --what=missing
 
 2) Export missing texts in spanish that exists in english from a editora version 5 to excel file
-php export.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=file --outputformat=excel --tofilename=missing_translation_from_en_to_es_panreac5.xlsx --destinationlanguage=es --what=missing
+php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=file --outputformat=excel --tofilename=missing_translation_from_en_to_es_panreac5.xlsx --destinationlanguage=es --what=missing
 
 3) Export missing texts in spanish that exists in english from a editora version 5 to standard output in array format
-php export.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=output --outputformat=array --destinationlanguage=es --what=missing 
+php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=output --outputformat=array --destinationlanguage=es --what=missing 
 
 4) Export missing texts in spanish that exists in english from a editora version 5 to standard output in json format
-php export.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=output --outputformat=json --destinationlanguage=es --what=missing 
+php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=output --outputformat=json --destinationlanguage=es --what=missing 
 
 5) Export all texts in english from a editora version 4 to an excel file
-php export.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac --sourcelanguage=en --to=file --outputformat=excel --tofilename=all_en_panreac.xlsx --destinationlanguage=es --what=all
+php export-translation.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac --sourcelanguage=en --to=file --outputformat=excel --tofilename=all_en_panreac.xlsx --destinationlanguage=es --what=all
 
 6) Export all texts in english from a editora version 5 to an excel file
-php export.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=file --outputformat=excel --tofilename=all_en_panreac5.xlsx --destinationlanguage=es --what=all
+php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=file --outputformat=excel --tofilename=all_en_panreac5.xlsx --destinationlanguage=es --what=all
 
 4) Export all texts in english from a editora version 5 to the output using json
-php export.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=output --outputformat=json --destinationlanguage=es --what=missing 
+php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=output --outputformat=json --destinationlanguage=es --what=missing 
 
 ';
 die;

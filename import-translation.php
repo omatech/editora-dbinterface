@@ -39,16 +39,16 @@ Others:
 example: 
 	
 1) Import texts in spanish (from english) to an editora version 5 from an excel file
-php import.php --sourcelanguage=en --from=file --inputformat=excel --fromfilename=missing_translation_from_en_to_es_panreac.xlsx --to=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5  --destinationlanguage=es
+php import-translation.php --sourcelanguage=en --from=file --inputformat=excel --fromfilename=missing_translation_from_en_to_es_panreac.xlsx --to=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5  --destinationlanguage=es
 
 2) Import texts in spanish to an editora version 5 from a json file
-php import.php --sourcelanguage=en --from=file --inputformat=json --fromfilename=missing_translation_from_en_to_es_panreac.json --to=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5  --destinationlanguage=es
+php import-translation.php --sourcelanguage=en --from=file --inputformat=json --fromfilename=missing_translation_from_en_to_es_panreac.json --to=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5  --destinationlanguage=es
 
 3) Import texts in spanish to an editora version 5 from a json input
-php import.php --sourcelanguage=en --from=input --inputformat=json --to=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5  --destinationlanguage=es < missing_translation_from_en_to_es_panreac.json
+php import-translation.php --sourcelanguage=en --from=input --inputformat=json --to=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5  --destinationlanguage=es < missing_translation_from_en_to_es_panreac.json
 
 4) Pipe an export and an import from the missing spanish texts and fill them with it\'s english version using json
-php export.php --sourcelanguage=en --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --to=output --outputformat=json --destinationlanguage=es --what=missing | php import.php --from=input --inputformat=json --to=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --destinationlanguage=es 
+php export-translation.php --sourcelanguage=en --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --to=output --outputformat=json --destinationlanguage=es --what=missing | php import-translation.php --from=input --inputformat=json --to=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --destinationlanguage=es 
 
 ';
 die;
