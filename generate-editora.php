@@ -30,7 +30,7 @@ if (isset($options_array['help'])) {
 From parameters:
 --from= file | db4 | db5 (only file supported by now)
 --inputformat= array | json (only array supported by now)
---fromfilename= name of the configfile
+--inputfile= name of the configfile
 --dbfromhost= database host
 --dbfromuser= database user
 --dbfrompass= database password 
@@ -39,7 +39,7 @@ From parameters:
 To parameters:
 --to= db4 | file | json | db5 (only supported db4 by now)
 --outputformat= (excel, json, array)
---tofilename= name of the file to export
+--outputfile= name of the file to export
 --dbtohost= database host
 --dbtouser= database user
 --dbtopass= database password 
@@ -51,7 +51,7 @@ Others:
 example: 
 	
 1) Generate an editora from file
-php generate-editora.php --from=file --inputformat=array --fromfilename=../sql/sample_editora_array.php --to=db4 --dbtohost=localhost --dbtouser=root --dbtopass=xxx --dbtoname=intranetmutua 
+php generate-editora.php --from=file --inputformat=array --inputfile=../sql/sample_editora_array.php --to=db4 --dbtohost=localhost --dbtouser=root --dbtopass=xxx --dbtoname=intranetmutua 
 ';
 die;
 }
