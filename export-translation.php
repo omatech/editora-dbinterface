@@ -5,7 +5,7 @@ while (!is_file(__DIR__.$autoload_location)) { $autoload_location='/..'.$autoloa
 require_once __DIR__.$autoload_location;
 
 use \Doctrine\DBAL\Configuration;
-use \Omatech\Translator\TranslatorModel;
+use \Omatech\Editora\Translator\TranslatorModel;
 
 ini_set("memory_limit", "5000M");
 set_time_limit(0);
