@@ -1,8 +1,15 @@
 <?php
 
 $autoload_location = '/vendor/autoload.php';
-while (!is_file(__DIR__.$autoload_location)) { $autoload_location='/..'.$autoload_location;}
+$tries=0;
+while (!is_file(__DIR__.$autoload_location)) 
+{ 
+	$autoload_location='/..'.$autoload_location;
+	$tries++;
+	if ($tries>10) die("Error trying to find autoload file try to make a composer update first\n");
+}
 require_once __DIR__.$autoload_location;
+require_once __DIR__.'/conf/config.php';
 
 use \Doctrine\DBAL\Configuration;
 use \Omatech\Editora\Generator\Generator;
@@ -12,9 +19,9 @@ set_time_limit(0);
 
 $options_array = getopt(null, ['from::', 'to::'
 	, 'dbfromhost:', 'dbfromuser:', 'dbfrompass:', 'dbfromname:'
-	, 'inputformat:', 'fromfilename:'
+	, 'inputformat:', 'inputfile:'
 	, 'dbtohost:', 'dbtouser:', 'dbtopass:', 'dbtoname:'
-	, 'outputformat:', 'tofilename:'
+	, 'outputformat:', 'outputfile:'
 	, 'help', 'includemetadata']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
@@ -44,7 +51,7 @@ Others:
 example: 
 	
 1) Generate an editora from file
-php generate-editora.php --from=file --inputformat=array --fromfilename=intranetmutua.php --to=db4 --dbtohost=localhost --dbtouser=root --dbtopass=xxx --dbtoname=intranetmutua 
+php generate-editora.php --from=file --inputformat=array --fromfilename=../sql/sample_editora_array.php --to=db4 --dbtohost=localhost --dbtouser=root --dbtopass=xxx --dbtoname=intranetmutua 
 ';
 die;
 }
@@ -92,13 +99,20 @@ if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') {
 
 if ($options_array['inputformat']=='array')
 {
-	if (isset($options_array['inputfile']) && is_file($options_array['inputfile']))
+	if (isset($options_array['inputfile']))
 	{
-		require_once ($options_array['inputfile']);
+		if (is_file($options_array['inputfile']))
+		{
+			require_once ($options_array['inputfile']);
+		}
+		else
+		{
+			die("File not found ".$options_array['inputfile'])." see help for more info\n";
+		}
 	}
 	else
 	{
-		die("Missing inputfile or file not exists see help for more info\n");
+		die("Missing inputfile see help for more info\n");
 	}
 }
 else

@@ -4,7 +4,7 @@
 		"minimum-stability":"dev",
     "require": {
       "doctrine/orm": "2.5.x-dev",
-			"phpoffice/phpexcel": "^1.8.1",
+			"phpoffice/phpspreadsheet": "dev-master",
 			"google/cloud": "dev-master"		
     },
 		"require-dev": {
