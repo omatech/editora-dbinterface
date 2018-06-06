@@ -94,7 +94,7 @@ $params = [
 $result = array();
 
 
-$model = new \Omatech\Translator\TranslatorModel($conn, $conn, $params, false);
+$model = new TranslatorModel($conn, $conn, $params, false);
 
 
 if ($options_array['from']=='input')

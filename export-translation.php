@@ -116,7 +116,7 @@ $result['metadata']['params'] = $params;
 $result['metadata']['generated_at'] = time();
 $result['metadata']['generated_at_human'] = date('Y-m-d H:i:s');
 
-$model = new \Omatech\Translator\TranslatorModel($conn, $conn, $params, false);
+$model = new TranslatorModel($conn, $conn, $params, false);
 
 if ($options_array['what']=='missing')
 {
