@@ -14,7 +14,7 @@ class Clear extends DBInterfaceBase
     /**
      * Drop all data from non-sensitive tables.
      */
-    public function truncateTables()
+    public function truncateTables($truncate_users=false)
     {
         $database_name = $this->conn->getDatabase();
         $tables_to_truncate = array(
@@ -29,6 +29,10 @@ class Clear extends DBInterfaceBase
             'omp_roles_classes',
             'omp_tabs',
         );
+				if ($truncate_users)
+				{
+					$tables_to_truncate[]='omp_users';
+				}
 
         $tables_truncate_queries = '';
 

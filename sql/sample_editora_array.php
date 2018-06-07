@@ -3,6 +3,7 @@
 $data = array(
 	'localized_attributes' => array(),
 	'simple_attributes' => array(),
+	'truncate_users'=>true,
 	'original_localized_attributes' => array(),
 	'global_filas' => array(),
 	'users' => array(

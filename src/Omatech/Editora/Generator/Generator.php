@@ -112,7 +112,8 @@ class Generator extends DBInterfaceBase
                 $this->create_class_attribute($key, $nomintern_id, 0, 1, 1, 1, true, true);
                 foreach ($languages as $key_lang=>$val_lang)
                 {
-                    $this->create_class_attribute($key, $key_lang+$niceurl_id, 0, $key_lang, 1, 2, false, false);
+//echo "1. create_class_attribute $key, $key_lang+$niceurl_id, 0, $key_lang, 1, 2, false, false\n";
+                  $this->create_class_attribute($key, $key_lang+$niceurl_id, 0, $key_lang, 1, 2, false, false);
                 }
             }
 
@@ -294,17 +295,19 @@ class Generator extends DBInterfaceBase
                     $mandatory = false;
                 }
 
-                if (array_key_exists($atri_id, $original_localized_attributes))
+                if (array_key_exists($atri_id, $this->data['original_localized_attributes']))
                 {// es un atribut localized
                     foreach ($languages as $key_lang=>$val_lang)
                     {
+//echo "2. create_class_attribute $key, $atri_id+$key_lang, 0, $key_lang, $filas[$key_lang], 1, false, $mandatory\n";
                         $this->create_class_attribute($key, $atri_id+$key_lang, 0, $key_lang, $filas[$key_lang], 1, false, $mandatory);
                         $filas[$key_lang]=$filas[$key_lang]+1;
                     }
                 }
                 else
                 {
-                    $this->create_class_attribute($key, $atri_id, 0, 1, $filas[1], 1, false, $mandatory);
+//echo "3. create_class_attribute $key, $atri_id, 0, 1, $filas[1], 1, false, $mandatory\n";
+										$this->create_class_attribute($key, $atri_id, 0, 1, $filas[1], 1, false, $mandatory);
                     $filas[1]=$filas[1]+1;
                 }
 
@@ -317,15 +320,17 @@ class Generator extends DBInterfaceBase
                         $mandatory = false;
                     }
 
-                    if (array_key_exists($atri_id, $original_localized_attributes))
+                    if (array_key_exists($atri_id, $this->data['original_localized_attributes']))
                     {// es un atribut localized
                         foreach ($languages as $key_lang=>$val_lang)
                         {
+//echo "4. create_class_attribute $key, $atri_id+$key_lang, 0, $key_lang, $filas[$key_lang]-1, 2, false, $mandatory\n";
                             $this->create_class_attribute($key, $atri_id+$key_lang, 0, $key_lang, $filas[$key_lang]-1, 2, false, $mandatory);
                         }
                     }
                     else
                     {
+//echo "5. create_class_attribute $key, $atri_id, 0, 1, $filas[1]-1, 2, false, $mandatory\n";
                         $this->create_class_attribute($key, $atri_id, 0, 1, $filas[1]-1, 2, false, $mandatory);
                     }
                 }
@@ -372,7 +377,7 @@ class Generator extends DBInterfaceBase
 
         //Clear generic tables
         $Clear = new Clear($this->conn, array());
-        $Clear->truncateTables();
+        $Clear->truncateTables($data['truncate_users']);
 
         $this->startTransaction();
 
@@ -636,7 +641,7 @@ INSERT INTO `omp_tabs` VALUES ('1', 'dades', 'Dades', 'Datos', 'Data', '1');
     {
         $localized_attributes = $this->data['localized_attributes'];
         $simple_attributes = $this->data['simple_attributes'];
-        $original_localized_attributes = $this->data['original_localized_attributes'];
+        //$original_localized_attributes = $this->data['original_localized_attributes'];
 
         if($caption != null){
             $name = $this->key_to_title($caption);
@@ -650,15 +655,15 @@ INSERT INTO `omp_tabs` VALUES ('1', 'dades', 'Dades', 'Datos', 'Data', '1');
             $key=$key.'_'.$language;
             $original_id=$id;
             $id=$id+$language_id;
-            if (array_key_exists($id, array_merge($localized_attributes, $simple_attributes, $original_localized_attributes)))
+            if (array_key_exists($id, array_merge($localized_attributes, $simple_attributes, $this->data['original_localized_attributes'])))
             {
                 echo "Attribute $id already exists!!!!";
                 print_r($localized_attributes);
-                print_r($original_localized_attributes);
+                print_r($this->data['original_localized_attributes']);
                 print_r($simple_attributes);
                 die;
             }
-            $original_localized_attributes[$original_id]=$id;
+            $this->data['original_localized_attributes'][$original_id]=$id;
             $localized_attributes[$id]=$language_id;
         }
         else
@@ -710,7 +715,8 @@ INSERT INTO `omp_tabs` VALUES ('1', 'dades', 'Dades', 'Datos', 'Data', '1');
             $rel_id='null';
         }
 
-        array_push($this->queries,"insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) values ($class_id, $atri_id, $rel_id, $tab_id, $fila, $columna, 'left', $ordre_key, '$mandatory', 'N');");
+        array_push($this->queries,"insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values ($class_id, $atri_id, $rel_id, $tab_id, $fila, $columna, 'left', $ordre_key, '$mandatory', 'N');");
     }
 
     function create_tab($key, $val, $order)

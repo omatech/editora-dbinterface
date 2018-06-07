@@ -22,7 +22,7 @@ $options_array = getopt(null, ['from::', 'to::'
 	, 'inputformat:', 'inputfile:'
 	, 'dbtohost:', 'dbtouser:', 'dbtopass:', 'dbtoname:'
 	, 'outputformat:', 'outputfile:'
-	, 'help', 'includemetadata']);
+	, 'help']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
 	echo 'Export strings in one language from editora database to excel file or output
