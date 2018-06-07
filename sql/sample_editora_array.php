@@ -57,9 +57,9 @@ $data = array(
 		100 => array('nom', 'nom')
 	),
 	'attributes_multi_lang_string' => array(
-		200 => array('titol', 'Títol'),
-		201 => array('subtitol', 'Subtítol'),
-		202 => array('text_link', 'Text Link'),
+		200 => array('titol', 'Títol', 'Título', 'Title'),
+		201 => array('subtitol', 'Subtítol', 'Subtítulo', 'Subtitle'),
+		202 => array('text_link', 'Text de l\'enllaç', "Texto del enlace", "Text link"),
 		203 => array('text_adjunts', 'Text Adjunts aaa')
 	),
 	'attributes_multi_lang_textarea' => array(
