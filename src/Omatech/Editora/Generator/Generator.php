@@ -127,7 +127,7 @@ class Generator extends DBInterfaceBase
         foreach ($users as $user)
         {
             $password = substr(md5(rand()), 0, 7);
-            array_push($this->queries, "insert ignore into omp_users (username, password, complete_name, rol_id, language, tipus) values ('$user[0]', '$password', '$user[1]', 2, '$user[2]', '$user[2]');");
+            array_push($this->queries, "insert ignore into omp_users (username, password, complete_name, language, rol_id, tipus) values ('$user[0]', '$password', '$user[1]', '$user[2]', '$user[3]', '$user[4]');");
 						$this->users_passwords[$user[0]]=$password;
         }
 
@@ -405,9 +405,7 @@ class Generator extends DBInterfaceBase
             'original_localized_attributes' => array(),
             'global_filas' => array(),
             'classes_with_url_nice' => array(),
-            'users' => array(
-                array('omatech', 'Omatech', 'ca')
-            ),
+            'users' => array(),
             'languages' => array(),
             'groups' => array(),
             'classes' => array(),

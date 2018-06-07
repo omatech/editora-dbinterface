@@ -6,9 +6,9 @@ $data = array(
 	'original_localized_attributes' => array(),
 	'global_filas' => array(),
 	'users' => array(
-		// name, type, default lang, O|U (Omatech-super-admin or normal user)
-		array('omatech', 'Omatech super-admin', 'ca', 'O'),
-		array('test', 'Administrator', 'ca', 'U')
+		// name, type, default lang, rol_id, O|U (Omatech-super-admin or normal user)
+		array('omatech', 'Omatech super-admin', 'ca', 1, 'O'),
+		array('test', 'Administrator', 'ca', 2, 'U')
 	),
 	'languages' => array(
 		10000 => 'ca',
