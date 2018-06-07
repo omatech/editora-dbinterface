@@ -45,7 +45,14 @@ class Generator extends DBInterfaceBase
 
         $this->create_attribute($nomintern_id, $nomintern_name, 'S');
 
-
+				if(isset($tabs) && is_array($tabs))
+        {
+					foreach ($tabs as $key=>$tab)
+					{
+						$this->create_tab($key, $tab, $key);
+					}
+				}
+				
         $i=2;
         foreach ($languages as $key_lang=>$val_lang)
         {

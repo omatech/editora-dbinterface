@@ -318,14 +318,16 @@ CREATE TABLE IF NOT EXISTS `omp_user_instances` (
 CREATE TABLE IF NOT EXISTS `omp_users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL DEFAULT '',
-  `password` varchar(50) NOT NULL DEFAULT '',
+  `password` varchar(100) NOT NULL DEFAULT '',
   `complete_name` text,
   `rol_id` int(11) NOT NULL DEFAULT '0',
   `language` enum('ca','en','es') DEFAULT 'ca',
   `tipus` enum('U','O') NOT NULL DEFAULT 'U',
+  `hashed_password` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `omp_users_u1` (`username`,`password`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 -- ----------------------------
 -- Table structure for omp_values

@@ -9,7 +9,7 @@ while (!is_file(__DIR__.$autoload_location))
 	if ($tries>10) die("Error trying to find autoload file try to make a composer update first\n");
 }
 require_once __DIR__.$autoload_location;
-require_once __DIR__.'/conf/config.php';
+//require_once __DIR__.'/conf/config.php';
 
 use \Doctrine\DBAL\Configuration;
 use \Omatech\Editora\Generator\Generator;
