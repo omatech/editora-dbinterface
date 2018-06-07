@@ -56,21 +56,31 @@ $data = array(
 		]
 	),
 	'attributes_string' => array(
-		100 => array('nom', 'nom')
+		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
+		100 => array('nom', 'Nom', 'Nombre', 'Name')
 	),
 	'attributes_multi_lang_string' => array(
+		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
 		200 => ['titol', 'Títol', 'Título', 'Title'],
 		201 => ['subtitol', 'Subtítol', 'Subtítulo', 'Subtitle'],
 		202 => ['text_link', 'Text de l\'enllaç', "Texto del enlace", "Text link"],
 		203 => ['text_adjunts', 'Text Adjunts aaa']
 	),
 	'attributes_multi_lang_textarea' => array(
+		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
 		400 => 'text'
 	),
-	'attributes_textarea' => array(),
-	'attributes_text' => array(),
-	'attributes_multi_lang_image' => array(),
+	'attributes_textarea' => array(
+	//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
+	),
+	'attributes_text' => array(
+		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag		
+	),
+	'attributes_multi_lang_image' => array(
+		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag		
+	),
 	'attributes_image' => array(
+		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
 		600 => 'imatge_pagina',
 		601 => 'imatge_graella',
 		602 => 'imatge_bloc'

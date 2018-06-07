@@ -157,88 +157,183 @@ class Generator extends DBInterfaceBase {
 		}
 
 		foreach ($attributes_multi_lang_textarea as $key => $val) {
-			foreach ($languages as $key_lang => $val_lang) {
-				$this->create_attribute($key, $val, 'K', $key_lang, $val_lang);
+			if (is_array($val)) {
+				// take the first element that is tag and remove the first element, pass the rest of the array as captions
+				$tag = $val[0];
+				array_shift($val);
+				foreach ($languages as $key_lang => $val_lang) {
+					$this->create_attribute($key, $tag, 'K', $key_lang, $val_lang, 0, $val);
+				}
+			} else {
+				foreach ($languages as $key_lang => $val_lang) {
+					$this->create_attribute($key, $val, 'K', $key_lang, $val_lang);
+				}
 			}
 		}
 
-		foreach ($attributes_textarea as $key => $val) {
-			$this->create_attribute($key, $val, 'K');
-		}
-
-		foreach ($attributes_text as $key => $val) {
-			$this->create_attribute($key, $val, 'T');
-		}
 
 		foreach ($attributes_multi_lang_image as $key => $val) {
-			foreach ($languages as $key_lang => $val_lang) {
-				$this->create_attribute($key, $val, 'I', $key_lang, $val_lang);
+			if (is_array($val)) {
+				// take the first element that is tag and remove the first element, pass the rest of the array as captions
+				$tag = $val[0];
+				array_shift($val);
+				foreach ($languages as $key_lang => $val_lang) {
+					$this->create_attribute($key, $tag, 'I', $key_lang, $val_lang, 0, $val);
+				}
+			} else {
+				foreach ($languages as $key_lang => $val_lang) {
+					$this->create_attribute($key, $val, 'I', $key_lang, $val_lang);
+				}
 			}
 		}
 
 		foreach ($attributes_multi_lang_file as $key => $val) {
-			foreach ($languages as $key_lang => $val_lang) {
-				$this->create_attribute($key, $val, 'F', $key_lang, $val_lang);
+			if (is_array($val)) {
+				// take the first element that is tag and remove the first element, pass the rest of the array as captions
+				$tag = $val[0];
+				array_shift($val);
+				foreach ($languages as $key_lang => $val_lang) {
+					$this->create_attribute($key, $tag, 'F', $key_lang, $val_lang, 0, $val);
+				}
+			} else {
+				foreach ($languages as $key_lang => $val_lang) {
+					$this->create_attribute($key, $val, 'F', $key_lang, $val_lang);
+				}
 			}
 		}
 
 		if (isset($attributes_multi_lang_url)) {
 			foreach ($attributes_multi_lang_url as $key => $val) {
+			if (is_array($val)) {
+				// take the first element that is tag and remove the first element, pass the rest of the array as captions
+				$tag = $val[0];
+				array_shift($val);
+				foreach ($languages as $key_lang => $val_lang) {
+					$this->create_attribute($key, $tag, 'U', $key_lang, $val_lang, 0, $val);
+				}
+			} else {
 				foreach ($languages as $key_lang => $val_lang) {
 					$this->create_attribute($key, $val, 'U', $key_lang, $val_lang);
 				}
+			}
 			}
 		}
 
 		if (isset($attributes_multi_lang_video)) {
 			foreach ($attributes_multi_lang_video as $key => $val) {
+			if (is_array($val)) {
+				// take the first element that is tag and remove the first element, pass the rest of the array as captions
+				$tag = $val[0];
+				array_shift($val);
+				foreach ($languages as $key_lang => $val_lang) {
+					$this->create_attribute($key, $tag, 'Y', $key_lang, $val_lang, 0, $val);
+				}
+			} else {
 				foreach ($languages as $key_lang => $val_lang) {
 					$this->create_attribute($key, $val, 'Y', $key_lang, $val_lang);
 				}
 			}
+			}
+		}
+		
+		foreach ($attributes_textarea as $key => $val) {
+				if (is_array($val)) {
+				$tag = $val[0];
+				array_shift($val);		
+				$this->create_attribute($key, $tag, 'K', 0, 'ALL', 0, $val);
+			} else {
+				$this->create_attribute($key, $val, 'K');
+			}
+		}
+
+		foreach ($attributes_text as $key => $val) {
+			if (is_array($val)) {
+				$tag = $val[0];
+				array_shift($val);		
+				$this->create_attribute($key, $tag, 'T', 0, 'ALL', 0, $val);
+			} else {
+				$this->create_attribute($key, $val, 'T');
+			}
 		}
 
 		foreach ($attributes_file as $key => $val) {
-			$this->create_attribute($key, $val, 'F');
+			if (is_array($val)) {
+				$tag = $val[0];
+				array_shift($val);		
+				$this->create_attribute($key, $tag, 'F', 0, 'ALL', 0, $val);
+			} else {
+				$this->create_attribute($key, $val, 'F');
+			}
 		}
 
 
 		foreach ($attributes_string as $key => $val) {
 			if (is_array($val)) {
-				$caption = $val[1];
-				$this->create_attribute($key, $val[0], 'S', 0, 'ALL', 0, $caption);
+				$tag = $val[0];
+				array_shift($val);		
+				$this->create_attribute($key, $tag, 'S', 0, 'ALL', 0, $val);
 			} else {
 				$this->create_attribute($key, $val, 'S');
 			}
 		}
 
 		foreach ($attributes_image as $key => $val) {
-			$this->create_attribute($key, $val, 'I');
+			if (is_array($val)) {
+				$tag = $val[0];
+				array_shift($val);		
+				$this->create_attribute($key, $tag, 'I', 0, 'ALL', 0, $val);
+			} else {
+				$this->create_attribute($key, $val, 'I');
+			}	
 		}
 
 		foreach ($attributes_geolocation as $key => $val) {
-			$this->create_attribute($key, $val, 'M');
-		}
+			if (is_array($val)) {
+				$tag = $val[0];
+				array_shift($val);		
+				$this->create_attribute($key, $tag, 'M', 0, 'ALL', 0, $val);
+			} else {
+				$this->create_attribute($key, $val, 'M');
+			}			}
 
 		foreach ($attributes_date as $key => $val) {
 			if (is_array($val)) {
-				$caption = $val[1];
-				$this->create_attribute($key, $val[0], 'D', 0, 'ALL', 0, $caption);
+				$tag = $val[0];
+				array_shift($val);		
+				$this->create_attribute($key, $tag, 'D', 0, 'ALL', 0, $val);
 			} else {
 				$this->create_attribute($key, $val, 'D');
-			}
+			}	
 		}
 
 		foreach ($attributes_num as $key => $val) {
-			$this->create_attribute($key, $val, 'N');
+			if (is_array($val)) {
+				$tag = $val[0];
+				array_shift($val);		
+				$this->create_attribute($key, $tag, 'N', 0, 'ALL', 0, $val);
+			} else {
+				$this->create_attribute($key, $val, 'N');
+			}	
 		}
 
 		foreach ($attributes_video as $key => $val) {
-			$this->create_attribute($key, $val, 'Y');
+			if (is_array($val)) {
+				$tag = $val[0];
+				array_shift($val);		
+				$this->create_attribute($key, $tag, 'Y', 0, 'ALL', 0, $val);
+			} else {
+				$this->create_attribute($key, $val, 'Y');
+			}	
 		}
 
 		foreach ($attributes_url as $key => $val) {
-			$this->create_attribute($key, $val, 'U');
+			if (is_array($val)) {
+				$tag = $val[0];
+				array_shift($val);		
+				$this->create_attribute($key, $tag, 'U', 0, 'ALL', 0, $val);
+			} else {
+				$this->create_attribute($key, $val, 'U');
+			}	
 		}
 
 		foreach ($attributes_lookup as $key => $val) {
@@ -573,6 +668,11 @@ class Generator extends DBInterfaceBase {
 			$caption_es = $name;
 			$caption_en = $name;
 		}
+		
+		$name=$this->conn->quote($name);
+		$caption_ca=$this->conn->quote($caption_ca);
+		$caption_es=$this->conn->quote($caption_es);
+		$caption_en=$this->conn->quote($caption_en);
 
 		echo "create attribute id=$id key=$key type=$type language_id=$language_id language=$language lookup_id=$lookup_id caption_ca=$caption_ca caption_es=$caption_es caption_en=$caption_en\n";
 
@@ -604,7 +704,7 @@ class Generator extends DBInterfaceBase {
 		}
 
 		array_push($this->queries, "insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
-																	values ($id, '$key', '$name', '$tag', '$type', $lookup_id, '$language', '$caption_ca', '$caption_es', '$caption_en');");
+																	values ($id, '$key', $name, '$tag', '$type', $lookup_id, '$language', $caption_ca, $caption_es, $caption_en);");
 	}
 
 	function create_class_attribute($class_id, $atri_id, $rel_id, $tab_id, $fila, $columna, $is_key, $is_mandatory) {

@@ -1,0 +1,939 @@
+create attribute id=1 key=nom_intern type=S language_id=0 language=ALL lookup_id=0 caption_ca='Nom Intern' caption_es='Nom Intern' caption_en='Nom Intern'
+create attribute id=2 key=niceurl type=Z language_id=10000 language=ca lookup_id=0 caption_ca='Niceurl' caption_es='Niceurl' caption_en='Niceurl'
+create attribute id=2 key=niceurl type=Z language_id=20000 language=es lookup_id=0 caption_ca='Niceurl' caption_es='Niceurl' caption_en='Niceurl'
+create attribute id=2 key=niceurl type=Z language_id=30000 language=en lookup_id=0 caption_ca='Niceurl' caption_es='Niceurl' caption_en='Niceurl'
+create attribute id=200 key=titol type=S language_id=10000 language=ca lookup_id=0 caption_ca='Títol' caption_es='Título' caption_en='Title'
+create attribute id=200 key=titol type=S language_id=20000 language=es lookup_id=0 caption_ca='Títol' caption_es='Título' caption_en='Title'
+create attribute id=200 key=titol type=S language_id=30000 language=en lookup_id=0 caption_ca='Títol' caption_es='Título' caption_en='Title'
+create attribute id=201 key=subtitol type=S language_id=10000 language=ca lookup_id=0 caption_ca='Subtítol' caption_es='Subtítulo' caption_en='Subtitle'
+create attribute id=201 key=subtitol type=S language_id=20000 language=es lookup_id=0 caption_ca='Subtítol' caption_es='Subtítulo' caption_en='Subtitle'
+create attribute id=201 key=subtitol type=S language_id=30000 language=en lookup_id=0 caption_ca='Subtítol' caption_es='Subtítulo' caption_en='Subtitle'
+create attribute id=202 key=text_link type=S language_id=10000 language=ca lookup_id=0 caption_ca='Text De L\'enllaç' caption_es='Texto Del Enlace' caption_en='Text Link'
+create attribute id=202 key=text_link type=S language_id=20000 language=es lookup_id=0 caption_ca='Text De L\'enllaç' caption_es='Texto Del Enlace' caption_en='Text Link'
+create attribute id=202 key=text_link type=S language_id=30000 language=en lookup_id=0 caption_ca='Text De L\'enllaç' caption_es='Texto Del Enlace' caption_en='Text Link'
+create attribute id=203 key=text_adjunts type=S language_id=10000 language=ca lookup_id=0 caption_ca='Text Adjunts Aaa' caption_es='Text Adjunts Aaa' caption_en='Text Adjunts Aaa'
+create attribute id=203 key=text_adjunts type=S language_id=20000 language=es lookup_id=0 caption_ca='Text Adjunts Aaa' caption_es='Text Adjunts Aaa' caption_en='Text Adjunts Aaa'
+create attribute id=203 key=text_adjunts type=S language_id=30000 language=en lookup_id=0 caption_ca='Text Adjunts Aaa' caption_es='Text Adjunts Aaa' caption_en='Text Adjunts Aaa'
+create attribute id=400 key=text type=K language_id=10000 language=ca lookup_id=0 caption_ca='Text' caption_es='Text' caption_en='Text'
+create attribute id=400 key=text type=K language_id=20000 language=es lookup_id=0 caption_ca='Text' caption_es='Text' caption_en='Text'
+create attribute id=400 key=text type=K language_id=30000 language=en lookup_id=0 caption_ca='Text' caption_es='Text' caption_en='Text'
+create attribute id=700 key=fitxer type=F language_id=10000 language=ca lookup_id=0 caption_ca='Fitxer' caption_es='Fitxer' caption_en='Fitxer'
+create attribute id=700 key=fitxer type=F language_id=20000 language=es lookup_id=0 caption_ca='Fitxer' caption_es='Fitxer' caption_en='Fitxer'
+create attribute id=700 key=fitxer type=F language_id=30000 language=en lookup_id=0 caption_ca='Fitxer' caption_es='Fitxer' caption_en='Fitxer'
+create attribute id=745 key=link_extern type=U language_id=10000 language=ca lookup_id=0 caption_ca='Link Extern' caption_es='Link Extern' caption_en='Link Extern'
+create attribute id=745 key=link_extern type=U language_id=20000 language=es lookup_id=0 caption_ca='Link Extern' caption_es='Link Extern' caption_en='Link Extern'
+create attribute id=745 key=link_extern type=U language_id=30000 language=en lookup_id=0 caption_ca='Link Extern' caption_es='Link Extern' caption_en='Link Extern'
+create attribute id=100 key=nom type=S language_id=0 language=ALL lookup_id=0 caption_ca='Nom' caption_es='Nombre' caption_en='Name'
+create attribute id=600 key=imatge_pagina type=I language_id=0 language=ALL lookup_id=0 caption_ca='Imatge Pagina' caption_es='Imatge Pagina' caption_en='Imatge Pagina'
+create attribute id=601 key=imatge_graella type=I language_id=0 language=ALL lookup_id=0 caption_ca='Imatge Graella' caption_es='Imatge Graella' caption_en='Imatge Graella'
+create attribute id=602 key=imatge_bloc type=I language_id=0 language=ALL lookup_id=0 caption_ca='Imatge Bloc' caption_es='Imatge Bloc' caption_en='Imatge Bloc'
+create attribute id=710 key=data_noticia type=D language_id=0 language=ALL lookup_id=0 caption_ca='Data Noticia' caption_es='Data Noticia' caption_en='Data Noticia'
+create attribute id=760 key=video type=Y language_id=0 language=ALL lookup_id=0 caption_ca='Video' caption_es='Video' caption_en='Video'
+create attribute id=740 key=link_extern type=U language_id=0 language=ALL lookup_id=0 caption_ca='Link Extern' caption_es='Link Extern' caption_en='Link Extern'
+create attribute id=770 key=icon type=L language_id=0 language=ALL lookup_id=70 caption_ca='Icon' caption_es='Icon' caption_en='Icon'
+Array
+(
+    [omatech] => 03bd9b0
+    [test] => 2f42c6c
+)
+Array
+(
+    [0] => SET FOREIGN_KEY_CHECKS=0;
+-- ----------------------------
+-- Table structure for omp_attributes
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_attributes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL DEFAULT '',
+  `caption` varchar(200) NOT NULL DEFAULT '',
+  `description` text,
+  `tag` varchar(100) NOT NULL DEFAULT '',
+  `type` enum('X','S','A','K','D','N','U','I','L','F','P','R','T','G','C','M','Y','Z','O','B') NOT NULL DEFAULT 'X',
+  `lookup_id` int(11) DEFAULT NULL,
+  `width` int(3) DEFAULT NULL,
+  `height` int(3) DEFAULT NULL,
+  `max_length` int(11) DEFAULT '0',
+  `img_width` int(3) DEFAULT NULL,
+  `img_height` int(3) DEFAULT NULL,
+  `language` enum('ALL','ca','en','es') NOT NULL DEFAULT 'ALL',
+  `caption_ca` varchar(100) DEFAULT NULL,
+  `caption_es` varchar(100) DEFAULT NULL,
+  `caption_en` varchar(100) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for omp_class_attributes
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_class_attributes` (
+  `id` int(3) unsigned NOT NULL AUTO_INCREMENT,
+  `class_id` int(3) unsigned DEFAULT '0',
+  `atri_id` int(3) DEFAULT '0',
+  `rel_id` int(3) unsigned DEFAULT '0',
+  `tab_id` int(3) DEFAULT '-1',
+  `fila` int(3) unsigned DEFAULT '0',
+  `columna` int(3) unsigned DEFAULT '0',
+  `width` int(3) DEFAULT NULL,
+  `height` int(3) DEFAULT NULL,
+  `img_width` int(3) DEFAULT NULL,
+  `img_height` int(3) DEFAULT NULL,
+  `caption_position` enum('left','above') NOT NULL DEFAULT 'left',
+  `ordre_key` int(10) unsigned DEFAULT NULL,
+  `mandatory` enum('Y','N') DEFAULT 'N',
+  `detail` enum('Y','N') DEFAULT 'N',
+  PRIMARY KEY (`id`),
+  KEY `omp_class_attributes_n1` (`class_id`) USING BTREE,
+  KEY `omp_class_attributes_n2` (`atri_id`) USING BTREE,
+  KEY `omp_class_attributes_n3` (`rel_id`) USING BTREE,
+  KEY `omp_class_attributes_n4` (`tab_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for omp_class_groups
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_class_groups` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `caption` varchar(200) NOT NULL DEFAULT '',
+  `caption_ca` varchar(200) DEFAULT NULL,
+  `caption_es` varchar(200) DEFAULT NULL,
+  `caption_en` varchar(200) DEFAULT NULL,
+  `ordering` int(2) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for omp_classes
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_classes` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL DEFAULT '',
+  `description` text,
+  `tag` varchar(200) NOT NULL DEFAULT '',
+  `grp_id` int(11) NOT NULL DEFAULT '1',
+  `grp_order` int(11) DEFAULT NULL,
+  `name_ca` varchar(100) DEFAULT NULL,
+  `name_es` varchar(100) DEFAULT NULL,
+  `name_en` varchar(100) DEFAULT NULL,
+  `recursive_clone` char(20) DEFAULT 'N',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `name` (`name`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for omp_instances
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_instances` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `class_id` int(11) NOT NULL DEFAULT '0',
+  `key_fields` varchar(250) DEFAULT NULL,
+  `status` enum('P','V','O') NOT NULL DEFAULT 'P',
+  `publishing_begins` datetime DEFAULT CURRENT_TIMESTAMP,
+  `publishing_ends` datetime DEFAULT NULL,
+  `creation_date` datetime DEFAULT CURRENT_TIMESTAMP,
+  `update_date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `default_draw` varchar(50) DEFAULT NULL,
+  `nice_url` varchar(250) DEFAULT NULL,
+  `external_id` varchar(250) DEFAULT NULL,
+  `batch_id` varchar(250) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `omp_instances_n1` (`class_id`) USING BTREE,
+  KEY `omp_instances_n2` (`publishing_begins`,`publishing_ends`),
+  KEY `omp_instances_n3` (`status`),
+  KEY `omp_instances_n4` (`key_fields`),
+  KEY `omp_instances_n5` (`external_id`),
+  KEY `omp_instances_n6` (`batch_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for omp_instances_backup
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_instances_backup` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `inst_id` int(11) NOT NULL DEFAULT '0',
+  `language` varchar(10) NOT NULL DEFAULT '',
+  `xml_cache` text CHARACTER SET utf8mb4 NOT NULL,
+  `date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
+  `user` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  KEY `omp_instances_backup_n1` (`inst_id`,`language`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for omp_instances_cache
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_instances_cache` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `inst_id` int(11) NOT NULL DEFAULT '0',
+  `language` varchar(10) NOT NULL DEFAULT '',
+  `xml_cache_r` text NOT NULL,
+  `xml_cache_d` text NOT NULL,
+  `search_field` text,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `inst_id, lang` (`inst_id`,`language`) USING BTREE,
+  UNIQUE KEY `id` (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for omp_lookups
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_lookups` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) NOT NULL DEFAULT '',
+  `type` enum('L','R','C') NOT NULL DEFAULT 'L',
+  `default_id` int(11) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for omp_lookups_values
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_lookups_values` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `lookup_id` int(11) NOT NULL DEFAULT '0',
+  `ordre` int(11) NOT NULL DEFAULT '0',
+  `value` varchar(255) NOT NULL DEFAULT '',
+  `value_es` varchar(255) NOT NULL DEFAULT '',
+  `value_en` varchar(255) DEFAULT '',
+  `value_ca` varchar(255) NOT NULL DEFAULT '',
+  `caption_es` varchar(255) NOT NULL DEFAULT '',
+  `caption_en` varchar(255) NOT NULL DEFAULT '',
+  `caption_ca` varchar(255) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`),
+  KEY `omp_lookups_values_n1` (`lookup_id`,`ordre`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for omp_niceurl
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_niceurl` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `inst_id` int(11) DEFAULT NULL,
+  `language` enum('ALL','es','en','ca') DEFAULT NULL,
+  `niceurl` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `niceurl` (`niceurl`,`language`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for omp_relation_instances
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_relation_instances` (
+  `id` int(3) unsigned NOT NULL AUTO_INCREMENT,
+  `rel_id` int(3) unsigned DEFAULT '0',
+  `parent_inst_id` int(3) unsigned DEFAULT '0',
+  `child_inst_id` int(3) unsigned DEFAULT '0',
+  `weight` double DEFAULT NULL,
+  `relation_date` datetime DEFAULT NULL,
+  `clone_session` varchar(255) DEFAULT NULL,
+  `cloned_instance` varchar(255) DEFAULT NULL,
+  `external_id` varchar(255) DEFAULT NULL,
+  `batch_id` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`) USING BTREE,
+  KEY `omp_relation_instances_n1` (`child_inst_id`) USING BTREE,
+  KEY `omp_relation_instances_n2` (`parent_inst_id`) USING BTREE,
+  KEY `omp_relation_instances_n3` (`external_id`) USING BTREE,
+  KEY `omp_relation_instances_n4` (`batch_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ----------------------------
+-- Table structure for omp_relations
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_relations` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  `caption` varchar(255) NOT NULL DEFAULT '',
+  `description` text,
+  `language` enum('ALL','ESP','CAT','ENG') NOT NULL DEFAULT 'ALL',
+  `tag` varchar(100) NOT NULL DEFAULT '',
+  `parent_class_id` int(11) NOT NULL DEFAULT '0',
+  `child_class_id` int(11) NOT NULL DEFAULT '0',
+  `multiple_child_class_id` varchar(255) DEFAULT NULL,
+  `order_type` enum('M','T') NOT NULL DEFAULT 'M',
+  `join_icon` char(1) DEFAULT 'Y',
+  `create_icon` char(1) DEFAULT 'N',
+  `join_massive` char(1) DEFAULT 'N',
+  `massive_file` varchar(255) DEFAULT NULL,
+  `caption_ca` varchar(255) DEFAULT NULL,
+  `caption_es` varchar(255) DEFAULT NULL,
+  `caption_en` varchar(255) DEFAULT NULL,
+  `autocomplete` char(1) DEFAULT 'N',
+  PRIMARY KEY (`id`),
+  KEY `omp_relations_n1` (`parent_class_id`) USING BTREE,
+  KEY `omp_relations_n2` (`child_class_id`) USING BTREE,
+  KEY `omp_relations_n3` (`name`),
+  KEY `omp_relations_n4` (`tag`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for omp_roles
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_roles` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `rol_name` varchar(50) NOT NULL DEFAULT '',
+  `enabled` char(1) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for omp_roles_classes
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_roles_classes` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `class_id` int(11) NOT NULL DEFAULT '0',
+  `rol_id` int(11) NOT NULL DEFAULT '0',
+  `browseable` char(1) DEFAULT NULL,
+  `insertable` char(1) DEFAULT NULL,
+  `editable` char(1) DEFAULT NULL,
+  `deleteable` char(1) DEFAULT NULL,
+  `permisos` char(1) DEFAULT NULL,
+  `status1` char(1) DEFAULT NULL,
+  `status2` char(1) DEFAULT NULL,
+  `status3` char(1) DEFAULT NULL,
+  `status4` char(1) DEFAULT NULL,
+  `status5` char(1) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `omp_roles_classes_n1` (`class_id`) USING BTREE,
+  KEY `omp_roles_classes_n2` (`rol_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for omp_search
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_search` (
+  `id` int(28) NOT NULL AUTO_INCREMENT,
+  `text` text,
+  `inst_id` int(28) NOT NULL,
+  `class_id` int(28) NOT NULL,
+  `atri_id` int(28) NOT NULL,
+  `language` varchar(10) NOT NULL,
+  PRIMARY KEY (`id`),
+  FULLTEXT KEY `omp_search_f1` (`text`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for omp_static_text
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_static_text` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `text_key` varchar(255) NOT NULL DEFAULT '',
+  `language` enum('ALL','ca','es','en','ar') DEFAULT NULL,
+  `text_value` text,
+  PRIMARY KEY (`id`),
+  KEY `omp_static_text_n1` (`text_key`,`language`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ----------------------------
+-- Table structure for omp_tabs
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_tabs` (
+  `id` int(6) NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) DEFAULT NULL,
+  `name_ca` varchar(100) DEFAULT NULL,
+  `name_es` varchar(100) DEFAULT NULL,
+  `name_en` varchar(100) DEFAULT NULL,
+  `ordering` int(3) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for omp_user_instances
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_user_instances` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int(11) NOT NULL DEFAULT '0',
+  `inst_id` int(11) NOT NULL DEFAULT '0',
+  `tipo_acceso` enum('A','F') DEFAULT 'A',
+  `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `omp_user_instances_n1` (`user_id`,`tipo_acceso`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- ----------------------------
+-- Table structure for omp_users
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_users` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) NOT NULL DEFAULT '',
+  `password` varchar(100) NOT NULL DEFAULT '',
+  `complete_name` text,
+  `rol_id` int(11) NOT NULL DEFAULT '0',
+  `language` enum('ca','en','es') DEFAULT 'ca',
+  `tipus` enum('U','O') NOT NULL DEFAULT 'U',
+  `hashed_password` tinyint(1) DEFAULT 0,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `omp_users_u1` (`username`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ----------------------------
+-- Table structure for omp_values
+-- ----------------------------
+CREATE TABLE IF NOT EXISTS `omp_values` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `inst_id` int(11) NOT NULL DEFAULT '0',
+  `atri_id` int(11) NOT NULL DEFAULT '0',
+  `text_val` text,
+  `date_val` datetime DEFAULT NULL,
+  `num_val` double DEFAULT NULL,
+  `img_info` varchar(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `omp_values_n1` (`inst_id`,`atri_id`) USING BTREE,
+  KEY `omp_values_n2` (`date_val`) USING BTREE,
+  KEY `omp_values_n3` (`num_val`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+    [1] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (1, 'nom_intern', 'Nom Intern', 'nom_intern', 'S', null, 'ALL', 'Nom Intern', 'Nom Intern', 'Nom Intern');
+    [2] => insert into omp_tabs (id, name, name_ca, name_es, name_en, ordering) values (1, 'data', 'data', 'data', 'data', 1);
+    [3] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (10002, 'niceurl_ca', 'Niceurl', 'niceurl', 'Z', null, 'ca', 'Niceurl', 'Niceurl', 'Niceurl');
+    [4] => insert into omp_tabs (id, name, name_ca, name_es, name_en, ordering) values (10000, 'ca', 'ca', 'ca', 'ca', 2);
+    [5] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (20002, 'niceurl_es', 'Niceurl', 'niceurl', 'Z', null, 'es', 'Niceurl', 'Niceurl', 'Niceurl');
+    [6] => insert into omp_tabs (id, name, name_ca, name_es, name_en, ordering) values (20000, 'es', 'es', 'es', 'es', 3);
+    [7] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (30002, 'niceurl_en', 'Niceurl', 'niceurl', 'Z', null, 'en', 'Niceurl', 'Niceurl', 'Niceurl');
+    [8] => insert into omp_tabs (id, name, name_ca, name_es, name_en, ordering) values (30000, 'en', 'en', 'en', 'en', 4);
+    [9] => INSERT INTO `omp_roles` VALUES ('1', 'admin', 'Y');
+    [10] => INSERT INTO `omp_roles` VALUES ('2', 'user', 'Y');
+    [11] => delete from omp_class_groups;
+    [12] => insert into omp_class_groups (id, caption, caption_ca, caption_es, caption_en, ordering) values (1, 'Principal', 'Principal', 'Principal', 'Principal', 1);
+    [13] => insert into omp_class_groups (id, caption, caption_ca, caption_es, caption_en, ordering) values (2, 'Secundaris', 'Secundaris', 'Secundaris', 'Secundaris', 2);
+    [14] => insert into omp_class_groups (id, caption, caption_ca, caption_es, caption_en, ordering) values (3, 'Noticies', 'Noticies', 'Noticies', 'Noticies', 3);
+    [15] => insert into omp_class_groups (id, caption, caption_ca, caption_es, caption_en, ordering) values (4, 'Ofertes', 'Ofertes', 'Ofertes', 'Ofertes', 4);
+    [16] => insert into omp_class_groups (id, caption, caption_ca, caption_es, caption_en, ordering) values (5, 'Blocs', 'Blocs', 'Blocs', 'Blocs', 5);
+    [17] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (1, 'Global', 'Global', 1, 1, 'Global', 'Global', 'Global', 'N');
+    [18] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (1, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [19] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (1, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [20] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (1, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [21] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (10, 'Home', 'Home', 1, 2, 'Home', 'Home', 'Home', 'N');
+    [22] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (10, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [23] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (10, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [24] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (10, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [25] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (25, 'Page', 'Page', 2, 3, 'Pàgina', 'Pàgina', 'Pàgina', 'N');
+    [26] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (25, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [27] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (25, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [28] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (25, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [29] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (23, 'SectionApplications', 'SectionApplications', 2, 4, 'Secció Aplicacions', 'Secció Aplicacions', 'Secció Aplicacions', 'N');
+    [30] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (23, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [31] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (23, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [32] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (23, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [33] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (20, 'Applications', 'Applications', 2, 5, 'Aplicacions', 'Aplicacions', 'Aplicacions', 'N');
+    [34] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (20, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [35] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (20, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [36] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (20, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [37] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (24, 'SectionSpaces', 'SectionSpaces', 2, 6, 'Secció Espais', 'Secció Espais', 'Secció Espais', 'N');
+    [38] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (24, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [39] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (24, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [40] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (24, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [41] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (21, 'Spaces', 'Spaces', 2, 7, 'Espais', 'Espais', 'Espais', 'N');
+    [42] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (21, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [43] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (21, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [44] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (21, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [45] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (22, 'Doc_link', 'Doc_link', 2, 8, 'Docs links', 'Docs links', 'Docs links', 'N');
+    [46] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (22, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [47] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (22, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [48] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (22, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [49] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (26, 'Shortcut', 'Shortcut', 2, 9, 'Access directe', 'Access directe', 'Access directe', 'N');
+    [50] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (26, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [51] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (26, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [52] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (26, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [53] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (30, 'News', 'News', 3, 10, 'Notícies', 'Notícies', 'Notícies', 'N');
+    [54] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (30, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [55] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (30, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [56] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [57] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (31, 'NewsCategory', 'NewsCategory', 3, 11, 'Categoria notícies', 'Categoria notícies', 'Categoria notícies', 'N');
+    [58] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (31, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [59] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (31, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [60] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (31, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [61] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (32, 'Redactor', 'Redactor', 3, 12, 'Redactor', 'Redactor', 'Redactor', 'N');
+    [62] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (32, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [63] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (32, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [64] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (32, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [65] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (33, 'SectionNews', 'SectionNews', 3, 13, 'Secció notícies', 'Secció notícies', 'Secció notícies', 'N');
+    [66] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (33, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [67] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (33, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [68] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (33, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [69] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (40, 'Offers', 'Offers', 4, 14, 'Ofertes', 'Ofertes', 'Ofertes', 'N');
+    [70] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (40, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [71] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (40, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [72] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (40, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [73] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (41, 'OffersCategory', 'OffersCategory', 4, 15, 'Categoria ofertes', 'Categoria ofertes', 'Categoria ofertes', 'N');
+    [74] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (41, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [75] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (41, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [76] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (41, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [77] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (42, 'SectionOffers', 'SectionOffers', 4, 16, 'Secció ofertes', 'Secció ofertes', 'Secció ofertes', 'N');
+    [78] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (42, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [79] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (42, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [80] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (42, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [81] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (50, 'BlockApplications', 'BlockApplications', 5, 17, 'Bloc aplicacions', 'Bloc aplicacions', 'Bloc aplicacions', 'N');
+    [82] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (50, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [83] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (50, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [84] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (50, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [85] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (51, 'BlockSpaces', 'BlockSpaces', 5, 18, 'Bloc espais', 'Bloc espais', 'Bloc espais', 'N');
+    [86] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (51, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [87] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (51, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [88] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (51, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [89] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (52, 'BlockOffers', 'BlockOffers', 5, 19, 'Bloc ofertes', 'Bloc ofertes', 'Bloc ofertes', 'N');
+    [90] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (52, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [91] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (52, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [92] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (52, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [93] => insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values (53, 'BlockPage', 'BlockPage', 5, 20, 'Bloc pàgina', 'Bloc pàgina', 'Bloc pàgina', 'N');
+    [94] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (53, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [95] => insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values (53, 2, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');
+    [96] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (53, 1, null, 1, 1, 1, 'left', 1, 'Y', 'N');
+    [97] => insert ignore into omp_users (username, password, complete_name, language, rol_id, tipus) values ('omatech', '$2y$10$3QDCvTYEa1AYSQdNrtPyhOyMTggmnAKwsIR2S//W0Cz6tdOEvbdyO', 'Omatech super-admin', 'ca', '1', 'O');
+    [98] => insert ignore into omp_users (username, password, complete_name, language, rol_id, tipus) values ('test', '$2y$10$Z64Pb5EmOrjbFUqtOuMHjun1WOk5lNITV6Cv1rnsmER5SPYizcaKC', 'Administrator', 'ca', '2', 'U');
+    [99] => insert into omp_lookups (id, name, type, default_id) values (70, 'icon', 'L', 0);
+    [100] => insert into omp_lookups_values (id, lookup_id, ordre, value, caption_es, caption_en, caption_ca) values (7001, 70, 0, 'mdi-phone-log', 'Teléfono', 'Telèfon', 'Telèfon');
+    [101] => update omp_lookups set default_id='7001' where id=70;
+
+    [102] => insert into omp_lookups_values (id, lookup_id, ordre, value, caption_es, caption_en, caption_ca) values (7002, 70, 1, 'mdi-brush', 'Pincel', 'Pincell', 'Pincell');
+    [103] => insert into omp_lookups_values (id, lookup_id, ordre, value, caption_es, caption_en, caption_ca) values (7003, 70, 2, 'mdi-math-compass', 'Compas', 'Compas', 'Compas');
+    [104] => insert into omp_lookups_values (id, lookup_id, ordre, value, caption_es, caption_en, caption_ca) values (7004, 70, 3, 'mdi-cellphone-android', 'Smartphone', 'Smartphone', 'Smartphone');
+    [105] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (10200, 'titol_ca', 'Títol', 'titol', 'S', null, 'ca', 'Títol', 'Título', 'Title');
+    [106] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (20200, 'titol_es', 'Títol', 'titol', 'S', null, 'es', 'Títol', 'Título', 'Title');
+    [107] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (30200, 'titol_en', 'Títol', 'titol', 'S', null, 'en', 'Títol', 'Título', 'Title');
+    [108] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (10201, 'subtitol_ca', 'Subtítol', 'subtitol', 'S', null, 'ca', 'Subtítol', 'Subtítulo', 'Subtitle');
+    [109] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (20201, 'subtitol_es', 'Subtítol', 'subtitol', 'S', null, 'es', 'Subtítol', 'Subtítulo', 'Subtitle');
+    [110] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (30201, 'subtitol_en', 'Subtítol', 'subtitol', 'S', null, 'en', 'Subtítol', 'Subtítulo', 'Subtitle');
+    [111] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (10202, 'text_link_ca', 'Text De L\'enllaç', 'text_link', 'S', null, 'ca', 'Text De L\'enllaç', 'Texto Del Enlace', 'Text Link');
+    [112] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (20202, 'text_link_es', 'Text De L\'enllaç', 'text_link', 'S', null, 'es', 'Text De L\'enllaç', 'Texto Del Enlace', 'Text Link');
+    [113] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (30202, 'text_link_en', 'Text De L\'enllaç', 'text_link', 'S', null, 'en', 'Text De L\'enllaç', 'Texto Del Enlace', 'Text Link');
+    [114] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (10203, 'text_adjunts_ca', 'Text Adjunts Aaa', 'text_adjunts', 'S', null, 'ca', 'Text Adjunts Aaa', 'Text Adjunts Aaa', 'Text Adjunts Aaa');
+    [115] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (20203, 'text_adjunts_es', 'Text Adjunts Aaa', 'text_adjunts', 'S', null, 'es', 'Text Adjunts Aaa', 'Text Adjunts Aaa', 'Text Adjunts Aaa');
+    [116] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (30203, 'text_adjunts_en', 'Text Adjunts Aaa', 'text_adjunts', 'S', null, 'en', 'Text Adjunts Aaa', 'Text Adjunts Aaa', 'Text Adjunts Aaa');
+    [117] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (10400, 'text_ca', 'Text', 'text', 'K', null, 'ca', 'Text', 'Text', 'Text');
+    [118] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (20400, 'text_es', 'Text', 'text', 'K', null, 'es', 'Text', 'Text', 'Text');
+    [119] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (30400, 'text_en', 'Text', 'text', 'K', null, 'en', 'Text', 'Text', 'Text');
+    [120] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (10700, 'fitxer_ca', 'Fitxer', 'fitxer', 'F', null, 'ca', 'Fitxer', 'Fitxer', 'Fitxer');
+    [121] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (20700, 'fitxer_es', 'Fitxer', 'fitxer', 'F', null, 'es', 'Fitxer', 'Fitxer', 'Fitxer');
+    [122] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (30700, 'fitxer_en', 'Fitxer', 'fitxer', 'F', null, 'en', 'Fitxer', 'Fitxer', 'Fitxer');
+    [123] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (10745, 'link_extern_ca', 'Link Extern', 'link_extern', 'U', null, 'ca', 'Link Extern', 'Link Extern', 'Link Extern');
+    [124] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (20745, 'link_extern_es', 'Link Extern', 'link_extern', 'U', null, 'es', 'Link Extern', 'Link Extern', 'Link Extern');
+    [125] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (30745, 'link_extern_en', 'Link Extern', 'link_extern', 'U', null, 'en', 'Link Extern', 'Link Extern', 'Link Extern');
+    [126] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (100, 'nom', 'Nom', 'nom', 'S', null, 'ALL', 'Nom', 'Nombre', 'Name');
+    [127] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (600, 'imatge_pagina', 'Imatge Pagina', 'imatge_pagina', 'I', null, 'ALL', 'Imatge Pagina', 'Imatge Pagina', 'Imatge Pagina');
+    [128] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (601, 'imatge_graella', 'Imatge Graella', 'imatge_graella', 'I', null, 'ALL', 'Imatge Graella', 'Imatge Graella', 'Imatge Graella');
+    [129] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (602, 'imatge_bloc', 'Imatge Bloc', 'imatge_bloc', 'I', null, 'ALL', 'Imatge Bloc', 'Imatge Bloc', 'Imatge Bloc');
+    [130] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (710, 'data_noticia', 'Data Noticia', 'data_noticia', 'D', null, 'ALL', 'Data Noticia', 'Data Noticia', 'Data Noticia');
+    [131] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (760, 'video', 'Video', 'video', 'Y', null, 'ALL', 'Video', 'Video', 'Video');
+    [132] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (740, 'link_extern', 'Link Extern', 'link_extern', 'U', null, 'ALL', 'Link Extern', 'Link Extern', 'Link Extern');
+    [133] => insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values (770, 'icon', 'Icon', 'icon', 'L', 70, 'ALL', 'Icon', 'Icon', 'Icon');
+    [134] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (1, 10002, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [135] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (1, 20002, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [136] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (1, 30002, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [137] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (1, 10200, null, 10000, 3, 1, 'left', null, 'N', 'N');
+    [138] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (1, 20200, null, 20000, 3, 1, 'left', null, 'N', 'N');
+    [139] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (1, 30200, null, 30000, 3, 1, 'left', null, 'N', 'N');
+    [140] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (10, 10002, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [141] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (10, 20002, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [142] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (10, 30002, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [143] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (10, 10200, null, 10000, 3, 1, 'left', null, 'N', 'N');
+    [144] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (10, 20200, null, 20000, 3, 1, 'left', null, 'N', 'N');
+    [145] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (10, 30200, null, 30000, 3, 1, 'left', null, 'N', 'N');
+    [146] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (20, 740, null, 1, 2, 1, 'left', null, 'N', 'N');
+    [147] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (20, 10200, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [148] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (20, 20200, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [149] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (20, 30200, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [150] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (20, 10201, null, 10000, 3, 1, 'left', null, 'N', 'N');
+    [151] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (20, 20201, null, 20000, 3, 1, 'left', null, 'N', 'N');
+    [152] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (20, 30201, null, 30000, 3, 1, 'left', null, 'N', 'N');
+    [153] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (21, 740, null, 1, 2, 1, 'left', null, 'N', 'N');
+    [154] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (21, 10200, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [155] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (21, 20200, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [156] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (21, 30200, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [157] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (21, 10201, null, 10000, 3, 1, 'left', null, 'N', 'N');
+    [158] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (21, 20201, null, 20000, 3, 1, 'left', null, 'N', 'N');
+    [159] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (21, 30201, null, 30000, 3, 1, 'left', null, 'N', 'N');
+    [160] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (22, 10200, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [161] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (22, 20200, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [162] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (22, 30200, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [163] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (22, 10700, null, 10000, 3, 1, 'left', null, 'N', 'N');
+    [164] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (22, 20700, null, 20000, 3, 1, 'left', null, 'N', 'N');
+    [165] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (22, 30700, null, 30000, 3, 1, 'left', null, 'N', 'N');
+    [166] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (22, 10745, null, 10000, 3, 2, 'left', null, 'N', 'N');
+    [167] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (22, 20745, null, 20000, 3, 2, 'left', null, 'N', 'N');
+    [168] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (22, 30745, null, 30000, 3, 2, 'left', null, 'N', 'N');
+    [169] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (23, 10002, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [170] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (23, 20002, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [171] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (23, 30002, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [172] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (23, 10200, null, 10000, 3, 1, 'left', null, 'N', 'N');
+    [173] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (23, 20200, null, 20000, 3, 1, 'left', null, 'N', 'N');
+    [174] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (23, 30200, null, 30000, 3, 1, 'left', null, 'N', 'N');
+    [175] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (24, 10002, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [176] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (24, 20002, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [177] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (24, 30002, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [178] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (24, 10200, null, 10000, 3, 1, 'left', null, 'N', 'N');
+    [179] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (24, 20200, null, 20000, 3, 1, 'left', null, 'N', 'N');
+    [180] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (24, 30200, null, 30000, 3, 1, 'left', null, 'N', 'N');
+    [181] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (25, 600, null, 1, 2, 1, 'left', null, 'N', 'N');
+    [182] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (25, 10002, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [183] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (25, 20002, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [184] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (25, 30002, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [185] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (25, 10200, null, 10000, 3, 1, 'left', null, 'N', 'N');
+    [186] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (25, 20200, null, 20000, 3, 1, 'left', null, 'N', 'N');
+    [187] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (25, 30200, null, 30000, 3, 1, 'left', null, 'N', 'N');
+    [188] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (25, 10400, null, 10000, 4, 1, 'left', null, 'N', 'N');
+    [189] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (25, 20400, null, 20000, 4, 1, 'left', null, 'N', 'N');
+    [190] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (25, 30400, null, 30000, 4, 1, 'left', null, 'N', 'N');
+    [191] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (25, 10203, null, 10000, 5, 1, 'left', null, 'N', 'N');
+    [192] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (25, 20203, null, 20000, 5, 1, 'left', null, 'N', 'N');
+    [193] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (25, 30203, null, 30000, 5, 1, 'left', null, 'N', 'N');
+    [194] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (26, 770, null, 1, 2, 1, 'left', null, 'N', 'N');
+    [195] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (26, 740, null, 1, 2, 2, 'left', null, 'N', 'N');
+    [196] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (26, 10200, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [197] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (26, 20200, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [198] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (26, 30200, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [199] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (26, 10201, null, 10000, 3, 1, 'left', null, 'N', 'N');
+    [200] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (26, 20201, null, 20000, 3, 1, 'left', null, 'N', 'N');
+    [201] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (26, 30201, null, 30000, 3, 1, 'left', null, 'N', 'N');
+    [202] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, 710, null, 1, 2, 1, 'left', null, 'N', 'N');
+    [203] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, 600, null, 1, 3, 1, 'left', null, 'N', 'N');
+    [204] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, 601, null, 1, 3, 2, 'left', null, 'N', 'N');
+    [205] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, 10002, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [206] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, 20002, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [207] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, 30002, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [208] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, 10200, null, 10000, 3, 1, 'left', null, 'N', 'N');
+    [209] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, 20200, null, 20000, 3, 1, 'left', null, 'N', 'N');
+    [210] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, 30200, null, 30000, 3, 1, 'left', null, 'N', 'N');
+    [211] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, 10400, null, 10000, 4, 1, 'left', null, 'N', 'N');
+    [212] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, 20400, null, 20000, 4, 1, 'left', null, 'N', 'N');
+    [213] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, 30400, null, 30000, 4, 1, 'left', null, 'N', 'N');
+    [214] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, 10203, null, 10000, 5, 1, 'left', null, 'N', 'N');
+    [215] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, 20203, null, 20000, 5, 1, 'left', null, 'N', 'N');
+    [216] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, 30203, null, 30000, 5, 1, 'left', null, 'N', 'N');
+    [217] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (31, 10200, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [218] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (31, 20200, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [219] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (31, 30200, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [220] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (32, 100, null, 1, 2, 1, 'left', null, 'N', 'N');
+    [221] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (33, 10002, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [222] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (33, 20002, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [223] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (33, 30002, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [224] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (33, 10200, null, 10000, 3, 1, 'left', null, 'N', 'N');
+    [225] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (33, 20200, null, 20000, 3, 1, 'left', null, 'N', 'N');
+    [226] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (33, 30200, null, 30000, 3, 1, 'left', null, 'N', 'N');
+    [227] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (40, 601, null, 1, 2, 1, 'left', null, 'N', 'N');
+    [228] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (40, 740, null, 1, 2, 2, 'left', null, 'N', 'N');
+    [229] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (40, 10200, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [230] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (40, 20200, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [231] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (40, 30200, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [232] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (40, 10745, null, 10000, 2, 2, 'left', null, 'N', 'N');
+    [233] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (40, 20745, null, 20000, 2, 2, 'left', null, 'N', 'N');
+    [234] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (40, 30745, null, 30000, 2, 2, 'left', null, 'N', 'N');
+    [235] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (41, 10200, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [236] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (41, 20200, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [237] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (41, 30200, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [238] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (42, 10002, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [239] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (42, 20002, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [240] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (42, 30002, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [241] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (42, 10200, null, 10000, 3, 1, 'left', null, 'N', 'N');
+    [242] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (42, 20200, null, 20000, 3, 1, 'left', null, 'N', 'N');
+    [243] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (42, 30200, null, 30000, 3, 1, 'left', null, 'N', 'N');
+    [244] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (50, 10200, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [245] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (50, 20200, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [246] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (50, 30200, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [247] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (50, 10202, null, 10000, 3, 1, 'left', null, 'N', 'N');
+    [248] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (50, 20202, null, 20000, 3, 1, 'left', null, 'N', 'N');
+    [249] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (50, 30202, null, 30000, 3, 1, 'left', null, 'N', 'N');
+    [250] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (51, 10200, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [251] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (51, 20200, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [252] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (51, 30200, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [253] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (51, 10202, null, 10000, 3, 1, 'left', null, 'N', 'N');
+    [254] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (51, 20202, null, 20000, 3, 1, 'left', null, 'N', 'N');
+    [255] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (51, 30202, null, 30000, 3, 1, 'left', null, 'N', 'N');
+    [256] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (52, 10200, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [257] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (52, 20200, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [258] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (52, 30200, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [259] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (52, 10202, null, 10000, 3, 1, 'left', null, 'N', 'N');
+    [260] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (52, 20202, null, 20000, 3, 1, 'left', null, 'N', 'N');
+    [261] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (52, 30202, null, 30000, 3, 1, 'left', null, 'N', 'N');
+    [262] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (53, 602, null, 1, 2, 1, 'left', null, 'N', 'N');
+    [263] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (53, 760, null, 1, 2, 2, 'left', null, 'N', 'N');
+    [264] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (53, 10400, null, 10000, 2, 1, 'left', null, 'N', 'N');
+    [265] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (53, 20400, null, 20000, 2, 1, 'left', null, 'N', 'N');
+    [266] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (53, 30400, null, 30000, 2, 1, 'left', null, 'N', 'N');
+    [267] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (53, null, null, 1, 3, 1, 'left', null, 'N', 'N');
+    [268] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(1001, 'main_menu', 'Menú principal', 'ALL', 'main_menu', 1, 0, '23,24,25,33,42', 'M', 'Y', 'Y', 'N', 'Menú principal', 'Menú principal', 'Menú principal', 'Y');
+    [269] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (1, null, 1001, 1, 2, 1, 'left', null, 'N', 'N');
+    [270] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(10003, 'news_categories', 'Categories notícies destacades', 'ALL', 'news_categories', 10, 31, '', 'M', 'Y', 'Y', 'N', 'Categories notícies destacades', 'Categories notícies destacades', 'Categories notícies destacades', 'Y');
+    [271] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (10, null, 10003, 1, 2, 1, 'left', null, 'N', 'N');
+    [272] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(10004, 'news_highlights', 'Notícies destacades', 'ALL', 'news_highlights', 10, 30, '', 'M', 'Y', 'Y', 'N', 'Notícies destacades', 'Notícies destacades', 'Notícies destacades', 'Y');
+    [273] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (10, null, 10004, 1, 2, 2, 'left', null, 'N', 'N');
+    [274] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(10002, 'shortcuts', 'Accessos directes', 'ALL', 'shortcuts', 10, 26, '', 'M', 'Y', 'Y', 'N', 'Accessos directes', 'Accessos directes', 'Accessos directes', 'Y');
+    [275] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (10, null, 10002, 1, 3, 1, 'left', null, 'N', 'N');
+    [276] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(10001, 'home_blocks', 'Blocs destacats', 'ALL', 'home_blocks', 10, 0, '50,51,52', 'M', 'Y', 'Y', 'N', 'Blocs destacats', 'Blocs destacats', 'Blocs destacats', 'Y');
+    [277] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (10, null, 10001, 1, 3, 2, 'left', null, 'N', 'N');
+    [278] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(21001, 'pages', 'Pàgines', 'ALL', 'pages', 21, 25, '', 'M', 'Y', 'Y', 'N', 'Pàgines', 'Pàgines', 'Pàgines', 'Y');
+    [279] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (21, null, 21001, 1, 3, 1, 'left', null, 'N', 'N');
+    [280] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(23001, 'highlights', 'Destacats', 'ALL', 'highlights', 23, 20, '', 'M', 'Y', 'Y', 'N', 'Destacats', 'Destacats', 'Destacats', 'Y');
+    [281] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (23, null, 23001, 1, 2, 1, 'left', null, 'N', 'N');
+    [282] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(24001, 'highlights', 'Destacats', 'ALL', 'highlights', 24, 21, '', 'M', 'Y', 'Y', 'N', 'Destacats', 'Destacats', 'Destacats', 'Y');
+    [283] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (24, null, 24001, 1, 2, 1, 'left', null, 'N', 'N');
+    [284] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(25001, 'attachments', 'Adjunts', 'ALL', 'attachments', 25, 22, '', 'M', 'Y', 'Y', 'N', 'Adjunts', 'Adjunts', 'Adjunts', 'Y');
+    [285] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (25, null, 25001, 1, 3, 1, 'left', null, 'N', 'N');
+    [286] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(25002, 'blocks', 'Blocs', 'ALL', 'blocks', 25, 53, '', 'M', 'Y', 'Y', 'N', 'Blocs', 'Blocs', 'Blocs', 'Y');
+    [287] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (25, null, 25002, 1, 3, 2, 'left', null, 'N', 'N');
+    [288] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(30001, 'redactor', 'Redactor', 'ALL', 'redactor', 30, 32, '', 'M', 'Y', 'Y', 'N', 'Redactor', 'Redactor', 'Redactor', 'Y');
+    [289] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, null, 30001, 1, 4, 1, 'left', null, 'N', 'N');
+    [290] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(30002, 'categories', 'Categories', 'ALL', 'categories', 30, 31, '', 'M', 'Y', 'Y', 'N', 'Categories', 'Categories', 'Categories', 'Y');
+    [291] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, null, 30002, 1, 4, 2, 'left', null, 'N', 'N');
+    [292] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(30003, 'attachments', 'Adjunts', 'ALL', 'attachments', 30, 22, '', 'M', 'Y', 'Y', 'N', 'Adjunts', 'Adjunts', 'Adjunts', 'Y');
+    [293] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (30, null, 30003, 1, 5, 1, 'left', null, 'N', 'N');
+    [294] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(33001, 'highlights_news', 'Notícies destacades', 'ALL', 'highlights_news', 33, 30, '', 'M', 'Y', 'Y', 'N', 'Notícies destacades', 'Notícies destacades', 'Notícies destacades', 'Y');
+    [295] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (33, null, 33001, 1, 2, 1, 'left', null, 'N', 'N');
+    [296] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(33002, 'highlights_categories', 'Categories destacades', 'ALL', 'highlights_categories', 33, 31, '', 'M', 'Y', 'Y', 'N', 'Categories destacades', 'Categories destacades', 'Categories destacades', 'Y');
+    [297] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (33, null, 33002, 1, 2, 2, 'left', null, 'N', 'N');
+    [298] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(40001, 'categories', 'Categories', 'ALL', 'categories', 40, 41, '', 'M', 'Y', 'Y', 'N', 'Categories', 'Categories', 'Categories', 'Y');
+    [299] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (40, null, 40001, 1, 3, 1, 'left', null, 'N', 'N');
+    [300] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(42001, 'highlights_categories', 'Categories destacades', 'ALL', 'highlights_categories', 42, 41, '', 'M', 'Y', 'Y', 'N', 'Categories destacades', 'Categories destacades', 'Categories destacades', 'Y');
+    [301] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (42, null, 42001, 1, 2, 1, 'left', null, 'N', 'N');
+    [302] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(50001, 'highlights', 'Aplicacions destacades', 'ALL', 'highlights', 50, 20, '', 'M', 'Y', 'Y', 'N', 'Aplicacions destacades', 'Aplicacions destacades', 'Aplicacions destacades', 'Y');
+    [303] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (50, null, 50001, 1, 2, 1, 'left', null, 'N', 'N');
+    [304] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(50002, 'calltoaction', 'Link veure mes', 'ALL', 'calltoaction', 50, 23, '', 'M', 'Y', 'Y', 'N', 'Link veure mes', 'Link veure mes', 'Link veure mes', 'Y');
+    [305] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (50, null, 50002, 1, 2, 2, 'left', null, 'N', 'N');
+    [306] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(51001, 'highlights', 'Espais destacats', 'ALL', 'highlights', 51, 21, '', 'M', 'Y', 'Y', 'N', 'Espais destacats', 'Espais destacats', 'Espais destacats', 'Y');
+    [307] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (51, null, 51001, 1, 2, 1, 'left', null, 'N', 'N');
+    [308] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(51002, 'calltoaction', 'Link veure mes', 'ALL', 'calltoaction', 51, 24, '', 'M', 'Y', 'Y', 'N', 'Link veure mes', 'Link veure mes', 'Link veure mes', 'Y');
+    [309] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (51, null, 51002, 1, 2, 2, 'left', null, 'N', 'N');
+    [310] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(52001, 'highlights', 'Ofertes destacades', 'ALL', 'highlights', 52, 40, '', 'M', 'Y', 'Y', 'N', 'Ofertes destacades', 'Ofertes destacades', 'Ofertes destacades', 'Y');
+    [311] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (52, null, 52001, 1, 2, 1, 'left', null, 'N', 'N');
+    [312] => insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
+			values(52002, 'calltoaction', 'Link veure mes', 'ALL', 'calltoaction', 52, 42, '', 'M', 'Y', 'Y', 'N', 'Link veure mes', 'Link veure mes', 'Link veure mes', 'Y');
+    [313] => insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail) 
+																	 values (52, null, 52002, 1, 2, 2, 'left', null, 'N', 'N');
+    [314] => update omp_attributes set img_width=780 where id=600;
+    [315] => update omp_attributes set img_width=300 where id=601;
+    [316] => update omp_attributes set img_height=200 where id=601;
+    [317] => update omp_attributes set img_width=780 where id=602;
+)

@@ -125,7 +125,7 @@ if ($conn_to)
 	$generator=new Generator($conn_to, array());
 	$generator->createEditora($data);
 	print_r($generator->get_users_passwords());
-	print_r($generator->getQueries());
+	//print_r($generator->getQueries());
 }
 else
 {
