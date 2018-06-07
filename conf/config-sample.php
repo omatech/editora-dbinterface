@@ -23,8 +23,6 @@ else
 	define("dbuser","");
 	define("dbpass",'');
 	define("dbname","");
-
-	define("defaultUserPassword","");
 }
 
 // For geocode in Loader

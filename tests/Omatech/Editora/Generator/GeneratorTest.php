@@ -36,7 +36,7 @@ class GeneratorTest extends TestCaseBase
             'original_localized_attributes' => array(),
             'global_filas' => array(),
             'users' => array(
-                array('test_editora', 'testeditorapassword'.rand(), 'Administrator', 'en')
+                array('test_editora', 'Administrator', 'en')
             ),
             'languages' => array(
                 10000=>'es',
@@ -67,6 +67,7 @@ class GeneratorTest extends TestCaseBase
                 105=>array('city','city')
             ),
             'attributes_multi_lang_string' => array(
+//                200=> array('title', 'Título'), //TODO
                 200=> 'title',
                 201=>'intro',
                 202=>'date',
@@ -171,7 +172,7 @@ class GeneratorTest extends TestCaseBase
 
         $this->assertTrue($created);
 
-        $dbname = dbname;
+        $dbname = $this->connection->getDatabase();
         $required_tables = array(
             'omp_attributes',
             'omp_class_attributes',
@@ -482,5 +483,70 @@ class GeneratorTest extends TestCaseBase
         $this->assertTrue($query_result[0]['name_es'] == $name_es);
         $this->assertTrue($query_result[0]['name_en'] == $name_en);
 
+    }
+
+    //validation data
+
+    public function testGenerateEditoraWithoutUserInData()
+    {
+        $data = $this->getTestData();
+        unset($data['users']);
+
+        $generated = $this->Generator->createEditora($data);
+
+        $this->assertTrue($generated);
+    }
+
+//    public function testGenerateEditoraWithUserOmatech()
+//    {
+//        $data = $this->getTestData();
+//        unset($data['users']);
+//
+//        $data['users'] = array(
+//            array('omatech', 'UserTest', 'ca')
+//        );
+//
+//        $generated = $this->Generator->createEditora($data);
+//
+//        $this->assertTrue($generated);
+//
+//        $query_result = $this->connection->fetchAll("select * from omp_users WHERE username='omatech';");
+//
+//        $usernameOmatechCount = 0;
+//        foreach ($query_result as $anUser)
+//        {
+//            if($anUser['username'] == 'omatech'){
+//                $usernameOmatechCount++;
+//            }
+//            if($usernameOmatechCount > 1){
+//                break;
+//            }
+//        }
+//
+//        $this->assertEquals(1, $usernameOmatechCount);
+//    }
+
+    public function testGenerateEditoraWithoutUserOmatech()
+    {
+        $data = $this->getTestData();
+        unset($data['users']);
+
+        $data['users'] = array(
+            array('test', 'UserTest', 'ca')
+        );
+
+        $generated = $this->Generator->createEditora($data);
+
+        $this->assertTrue($generated);
+
+        $query_result = $this->connection->fetchAll("select * from omp_users WHERE username='omatech';");
+
+        foreach ($query_result as $anUser)
+        {
+            if($anUser['username'] == 'omatech'){
+                $this->assertTrue(true);
+                break;
+            }
+        }
     }
 }

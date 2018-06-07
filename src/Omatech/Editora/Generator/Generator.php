@@ -27,15 +27,21 @@ class Generator extends DBInterfaceBase
     {
 
         $this->data = $this->editoraPrepareData($data);
-        $this->queries = array();
 
-        $editora_structure = file_get_contents(__DIR__ .'/../../../../sql/editora.sql');
-        array_push($this->queries, $editora_structure);
+        if(!$this->validateData($this->data))
+        {
+            return false;
+        }
 
         extract(
             $this->data,
             EXTR_OVERWRITE
         );
+
+        $this->queries = array();
+
+        $editora_structure = file_get_contents(__DIR__ .'/../../../../sql/editora.sql');
+        array_push($this->queries, $editora_structure);
 
         $this->create_attribute($nomintern_id, $nomintern_name, 'S');
 
@@ -112,7 +118,14 @@ class Generator extends DBInterfaceBase
 
         foreach ($users as $user)
         {
-            array_push($this->queries, "insert into omp_users (username, password, complete_name, rol_id, language, tipus) values ('$user[0]', '$user[1]', '$user[2]', 2, '$user[3]', 'U');");
+            $password = substr(md5(rand()), 0, 7);
+
+            if($user[0] == 'omatech'){
+                array_push($this->queries, "insert into omp_users (username, password, complete_name, rol_id, language, tipus) values ('$user[0]', '$password', '$user[1]', 1, '$user[2]', 'O');");
+                continue;
+            }
+
+            array_push($this->queries, "insert into omp_users (username, password, complete_name, rol_id, language, tipus) values ('$user[0]', '$password', '$user[1]', 2, '$user[2]', 'U');");
         }
 
         foreach ($lookups as $lookup_key=>$lookup)
@@ -370,7 +383,7 @@ class Generator extends DBInterfaceBase
         return true;
     }
 
-    //Default Data
+    // Data
 
     private function editoraDefaultData(){
 
@@ -385,7 +398,7 @@ class Generator extends DBInterfaceBase
             'global_filas' => array(),
             'classes_with_url_nice' => array(),
             'users' => array(
-                array('user', defaultUserPassword, 'Administrator', 'en')
+                array('omatech', 'Omatech', 'ca')
             ),
             'languages' => array(),
             'groups' => array(),
@@ -423,7 +436,6 @@ class Generator extends DBInterfaceBase
 
 INSERT INTO `omp_attributes` VALUES ('1', 'nom_intern', 'Nom Intern', 'Nom Intern', 'nom_intern', 'S', null, null, null, '0', null, null, 'ALL', 'Nom Intern', 'Nombre Interno', 'Internal Name');
 INSERT INTO `omp_tabs` VALUES ('1', 'dades', 'Dades', 'Datos', 'Data', '1');
-INSERT INTO `omp_users` VALUES ('1', 'admin', 'password', 'Omatech', '1', 'ca', 'O'); //Todo pensa
 
          *
          * */
@@ -471,6 +483,18 @@ INSERT INTO `omp_users` VALUES ('1', 'admin', 'password', 'Omatech', '1', 'ca', 
             }
         }
         return array_merge($defaultData, $data);
+    }
+
+    public function validateData($data)
+    {
+        return !(
+            !is_array($data) ||
+            empty($data['users']) ||
+            !is_array($data['users']) ||
+            !isset($data['users'][0]) ||
+            count($data['users'][0]) != 3 ||
+            $data['users'][0][0] != 'omatech'
+        );
     }
 
 
