@@ -325,7 +325,7 @@ CREATE TABLE IF NOT EXISTS `omp_users` (
   `tipus` enum('U','O') NOT NULL DEFAULT 'U',
   `hashed_password` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `omp_users_u1` (`username`,`password`) USING BTREE
+  UNIQUE KEY `omp_users_u1` (`username`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 

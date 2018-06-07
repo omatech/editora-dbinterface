@@ -6,7 +6,8 @@
 
 namespace Omatech\Editora\Generator;
 use Omatech\Editora\Clear\Clear;
-use \Omatech\Editora\DBInterfaceBase;
+use Omatech\Editora\DBInterfaceBase;
+use Omatech\Editora\Utils\BcryptHasher;
 
 class Generator extends DBInterfaceBase
 {
@@ -126,8 +127,12 @@ class Generator extends DBInterfaceBase
 
         foreach ($users as $user)
         {
+					
+					  $hasher = new BcryptHasher();
             $password = substr(md5(rand()), 0, 7);
-            array_push($this->queries, "insert ignore into omp_users (username, password, complete_name, language, rol_id, tipus) values ('$user[0]', '$password', '$user[1]', '$user[2]', '$user[3]', '$user[4]');");
+						$hashed_password = $hasher->make($password);
+												
+            array_push($this->queries, "insert ignore into omp_users (username, password, complete_name, language, rol_id, tipus) values ('$user[0]', '$hashed_password', '$user[1]', '$user[2]', '$user[3]', '$user[4]');");
 						$this->users_passwords[$user[0]]=$password;
         }
 
@@ -496,10 +501,7 @@ INSERT INTO `omp_tabs` VALUES ('1', 'dades', 'Dades', 'Datos', 'Data', '1');
         return !(
             !is_array($data) ||
             empty($data['users']) ||
-            !is_array($data['users']) ||
-            !isset($data['users'][0]) ||
-            count($data['users'][0]) != 3 ||
-            $data['users'][0][0] != 'omatech'
+						!is_array($data['users'])
         );
     }
 
