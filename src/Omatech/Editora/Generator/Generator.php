@@ -12,6 +12,7 @@ class Generator extends DBInterfaceBase
 {
     protected $data;
     protected $queries;
+		protected $users_passwords;
 
     public function __construct($conn, $params)
     {
@@ -127,6 +128,7 @@ class Generator extends DBInterfaceBase
         {
             $password = substr(md5(rand()), 0, 7);
             array_push($this->queries, "insert ignore into omp_users (username, password, complete_name, rol_id, language, tipus) values ('$user[0]', '$password', '$user[1]', 2, '$user[2]', '$user[2]');");
+						$this->users_passwords[$user[0]]=$password;
         }
 
         foreach ($lookups as $lookup_key=>$lookup)
@@ -383,6 +385,11 @@ class Generator extends DBInterfaceBase
 
         return true;
     }
+		
+		public function get_users_passwords()
+		{
+			return $this->users_passwords;
+		}
 
     // Data
 
