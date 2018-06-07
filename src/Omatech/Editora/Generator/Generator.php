@@ -30,17 +30,15 @@ class Generator extends DBInterfaceBase {
 		return $this->data;
 	}
 
-	public function checkPassword($user, $password)
+	public function checkPassword($user, $hassed_password)
 	{
 		$user=$this->conn->quote($user);
-		$hasher = new BcryptHasher();
-		$hashed_password = $hasher->make($password);
-		$pass=$this->conn->quote($hashed_password);
+		$hassed_password=$this->conn->quote($hassed_password);
 		
 		$sql="select count(*) num
 		from omp_users 
 		where username=$user
-		and password=$pass
+		and password=$hassed_password
 		";
 		$num=$this->conn->FetchColumn($sql);
 		return $num==1;
@@ -142,7 +140,7 @@ class Generator extends DBInterfaceBase {
 			$hashed_password = $hasher->make($password);
 
 			array_push($this->queries, "insert ignore into omp_users (username, password, complete_name, language, rol_id, tipus) values ('$user[0]', '$hashed_password', '$user[1]', '$user[2]', '$user[3]', '$user[4]');");
-			$this->users_passwords[$user[0]] = $password;
+			$this->users_passwords[$user[0]] = array($password, $hashed_password);
 		}
 
 		foreach ($lookups as $lookup_key => $lookup) {
