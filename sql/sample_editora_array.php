@@ -3,7 +3,7 @@
 $data = array(
 	'localized_attributes' => array(),
 	'simple_attributes' => array(),
-	'truncate_users'=>true,
+	'truncate_users'=>false,
 	'original_localized_attributes' => array(),
 	'global_filas' => array(),
 	'users' => array(
@@ -57,10 +57,10 @@ $data = array(
 		100 => array('nom', 'nom')
 	),
 	'attributes_multi_lang_string' => array(
-		200 => 'titol',
-		201 => 'subtitol',
-		202 => 'text_link',
-		203 => 'text_adjunts'
+		200 => array('titol', 'Títol'),
+		201 => array('subtitol', 'Subtítol'),
+		202 => array('text_link', 'Text Link'),
+		203 => array('text_adjunts', 'Text Adjunts aaa')
 	),
 	'attributes_multi_lang_textarea' => array(
 		400 => 'text'

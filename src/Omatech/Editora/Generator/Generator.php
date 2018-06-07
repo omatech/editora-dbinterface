@@ -159,7 +159,14 @@ class Generator extends DBInterfaceBase
         {
             foreach ($languages as $key_lang=>$val_lang)
             {
-                $this->create_attribute($key, $val, 'S', $key_lang, $val_lang);
+								if(is_array($val)){
+									// take the first element that is tag and remove the first element, pass the rest of the array as captions
+									$tag=$val[0];
+									array_shift($val);
+									$this->create_attribute($key, $val[0], 'S', $key_lang, $val_lang, 0, $val);
+								}else{
+										$this->create_attribute($key, $val, 'S', $key_lang, $val_lang);
+								}															
             }
         }
 
@@ -644,9 +651,25 @@ INSERT INTO `omp_tabs` VALUES ('1', 'dades', 'Dades', 'Datos', 'Data', '1');
         //$original_localized_attributes = $this->data['original_localized_attributes'];
 
         if($caption != null){
-            $name = $this->key_to_title($caption);
+					if (is_array($caption))
+					{
+            $name = $this->key_to_title($caption[0]);
+            $caption_ca = $name;
+            $caption_es = $this->key_to_title(isset($caption[1])?$caption[1]:$name);
+            $caption_en = $this->key_to_title(isset($caption[2])?$caption[2]:$name);
+					}
+					else
+					{
+            $name = $this->key_to_title($caption);						
+            $caption_ca = $name;
+            $caption_es = $name;
+            $caption_en = $name;
+					}
         }else{
             $name=$this->key_to_title($key);
+            $caption_ca = $name;
+            $caption_es = $name;
+            $caption_en = $name;
         }
 
         $tag= $key = $this->clean_characters($key);
@@ -682,7 +705,8 @@ INSERT INTO `omp_tabs` VALUES ('1', 'dades', 'Dades', 'Datos', 'Data', '1');
             $lookup_id='null';
         }
 
-        array_push($this->queries, "insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) values ($id, '$key', '$name', '$tag', '$type', $lookup_id, '$language', '$name', '$name', '$name');");
+        array_push($this->queries, "insert into omp_attributes (id, name, caption, tag, type, lookup_id, language, caption_ca, caption_es, caption_en) 
+																	values ($id, '$key', '$name', '$tag', '$type', $lookup_id, '$language', '$caption_ca', '$caption_es', '$caption_en');");
     }
 
     function create_class_attribute($class_id, $atri_id, $rel_id, $tab_id, $fila, $columna, $is_key, $is_mandatory)
