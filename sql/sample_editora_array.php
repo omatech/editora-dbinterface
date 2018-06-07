@@ -1,11 +1,7 @@
 <?php
 
 $data = array(
-	'localized_attributes' => array(),
-	'simple_attributes' => array(),
 	'truncate_users'=>false,
-	'original_localized_attributes' => array(),
-	'global_filas' => array(),
 	'users' => array(
 		// name, type, default lang, rol_id, O|U (Omatech-super-admin or normal user)
 		array('omatech', 'Omatech super-admin', 'ca', 1, 'O'),

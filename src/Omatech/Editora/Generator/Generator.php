@@ -449,61 +449,6 @@ class Generator extends DBInterfaceBase {
 		return $this->users_passwords;
 	}
 
-	// Data
-
-	private function editoraDefaultData() {
-
-		return array(
-			'nomintern_id' => $this->editoraDefaultNomInternId(),
-			'nomintern_name' => $this->editoraDefaultNomInternName(),
-			'niceurl_id' => 2,
-			'niceurl_name' => 'niceurl',
-			'localized_attributes' => array(),
-			'simple_attributes' => array(),
-			'original_localized_attributes' => array(),
-			'global_filas' => array(),
-			'classes_with_url_nice' => array(),
-			'users' => array(),
-			'languages' => array(),
-			'groups' => array(),
-			'classes' => array(),
-			'attributes_string' => array(),
-			'attributes_multi_lang_string' => array(),
-			'attributes_multi_lang_textarea' => array(),
-			'attributes_textarea' => array(),
-			'attributes_text' => array(),
-			'attributes_multi_lang_image' => array(),
-			'attributes_image' => array(),
-			'images_sizes' => array(),
-			'attributes_multi_lang_file' => array(),
-			'attributes_date' => array(),
-			'attributes_num' => array(),
-			'attributes_geolocation' => array(),
-			'attributes_url' => array(),
-			'attributes_multi_lang_url' => array(),
-			'attributes_file' => array(),
-			'attributes_video' => array(),
-			'attributes_lookup' => array(),
-			'lookups' => array(),
-			'relations' => array(),
-			'relation_names' => array(),
-			'attributes_classes' => array(),
-			'roles' => $this->editoraDefaultRoles(),
-			'other_classes' => array(),
-			'tabs' => array(
-				1 => 'data'
-			)
-		);
-
-
-		/*
-
-		  INSERT INTO `omp_attributes` VALUES ('1', 'nom_intern', 'Nom Intern', 'Nom Intern', 'nom_intern', 'S', null, null, null, '0', null, null, 'ALL', 'Nom Intern', 'Nombre Interno', 'Internal Name');
-		  INSERT INTO `omp_tabs` VALUES ('1', 'dades', 'Dades', 'Datos', 'Data', '1');
-
-		 *
-		 * */
-	}
 
 	public function editoraDefaultNomInternId() {
 		return 1;
@@ -522,6 +467,14 @@ class Generator extends DBInterfaceBase {
 
 	public function editoraPrepareData($data) {
 		$defaultData = $this->editoraDefaultData();
+		
+		$process_variables=['localized_attributes' => array(),
+			'simple_attributes' => array(),
+			'original_localized_attributes' => array(),
+			'global_filas' => array(),
+			'classes_with_url_nice' => array(),
+			'other_classes' => array()];
+
 
 		foreach ($defaultData as $aDefaultDataKey => $aDefaultDataValue) {
 			if (empty($aDefaultDataValue))
@@ -537,7 +490,12 @@ class Generator extends DBInterfaceBase {
 				unset($defaultData[$aDefaultDataKey]);
 			}
 		}
-		return array_merge($defaultData, $data);
+		
+		
+		
+		
+		
+		return array_merge($defaultData, $process_variables, $data);
 	}
 
 	public function validateData($data) {
@@ -773,5 +731,51 @@ class Generator extends DBInterfaceBase {
 		);
 		return $str;
 	}
+	
+	
+	// Data
+	private function editoraDefaultData() {
+
+		return array(
+			'nomintern_id' => $this->editoraDefaultNomInternId(),
+			'nomintern_name' => $this->editoraDefaultNomInternName(),
+			'niceurl_id' => 2,
+			'niceurl_name' => 'niceurl',
+			
+
+			
+			'users' => array(),
+			'languages' => array(),
+			'groups' => array(),
+			'classes' => array(),
+			'attributes_string' => array(),
+			'attributes_multi_lang_string' => array(),
+			'attributes_multi_lang_textarea' => array(),
+			'attributes_textarea' => array(),
+			'attributes_text' => array(),
+			'attributes_multi_lang_image' => array(),
+			'attributes_image' => array(),
+			'images_sizes' => array(),
+			'attributes_multi_lang_file' => array(),
+			'attributes_date' => array(),
+			'attributes_num' => array(),
+			'attributes_geolocation' => array(),
+			'attributes_url' => array(),
+			'attributes_multi_lang_url' => array(),
+			'attributes_file' => array(),
+			'attributes_video' => array(),
+			'attributes_lookup' => array(),
+			'lookups' => array(),
+			'relations' => array(),
+			'relation_names' => array(),
+			'attributes_classes' => array(),
+			'roles' => $this->editoraDefaultRoles(),
+
+			'tabs' => array(
+				1 => 'data'
+			)
+		);
+	}
+	
 
 }
