@@ -13,6 +13,8 @@ $data = array(
 	),
 	'languages' => array(
 		10000 => 'ca',
+		20000 => 'es',
+		30000 => 'en'
 	),
 	'groups' => array(
 		'Principal' => 1,
@@ -57,10 +59,10 @@ $data = array(
 		100 => array('nom', 'nom')
 	),
 	'attributes_multi_lang_string' => array(
-		200 => array('titol', 'Títol', 'Título', 'Title'),
-		201 => array('subtitol', 'Subtítol', 'Subtítulo', 'Subtitle'),
-		202 => array('text_link', 'Text de l\'enllaç', "Texto del enlace", "Text link"),
-		203 => array('text_adjunts', 'Text Adjunts aaa')
+		200 => ['titol', 'Títol', 'Título', 'Title'],
+		201 => ['subtitol', 'Subtítol', 'Subtítulo', 'Subtitle'],
+		202 => ['text_link', 'Text de l\'enllaç', "Texto del enlace", "Text link"],
+		203 => ['text_adjunts', 'Text Adjunts aaa']
 	),
 	'attributes_multi_lang_textarea' => array(
 		400 => 'text'
