@@ -674,7 +674,7 @@ class Generator extends DBInterfaceBase {
 		$caption_es=$this->conn->quote($caption_es);
 		$caption_en=$this->conn->quote($caption_en);
 
-		echo "create attribute id=$id key=$key type=$type language_id=$language_id language=$language lookup_id=$lookup_id caption_ca=$caption_ca caption_es=$caption_es caption_en=$caption_en\n";
+		//echo "create attribute id=$id key=$key type=$type language_id=$language_id language=$language lookup_id=$lookup_id caption_ca=$caption_ca caption_es=$caption_es caption_en=$caption_en\n";
 
 		$tag = $key = $this->clean_characters($key);
 		if ($language != 'ALL') {

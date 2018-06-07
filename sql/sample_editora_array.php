@@ -81,7 +81,7 @@ $data = array(
 	),
 	'attributes_image' => array(
 		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
-		600 => 'imatge_pagina',
+		600 => ['imatge_pagina', 'Imatge pàgina', 'Imágen Página', 'Page Image'],
 		601 => 'imatge_graella',
 		602 => 'imatge_bloc'
 	),
