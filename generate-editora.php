@@ -124,7 +124,16 @@ if ($conn_to)
 {
 	$generator=new Generator($conn_to, array());
 	$generator->createEditora($data);
-	print_r($generator->get_users_passwords());
+	$data=$generator->getFinalData();
+	$new_passwords=$generator->get_users_passwords();
+	foreach ($new_passwords as $user=>$password)
+	{
+		if ($generator->checkPassword($user, $password))
+		{// El password es igual, quiere decir que lo acabamos de generar correctamente
+			echo "New user: $user with password $password\n";
+		}
+	}
+	
 	//print_r($generator->getQueries());
 }
 else

@@ -25,7 +25,27 @@ class Generator extends DBInterfaceBase {
 	{
 		return $this->queries;
 	}
+	
+	public function getFinalData() {
+		return $this->data;
+	}
 
+	public function checkPassword($user, $password)
+	{
+		$user=$this->conn->quote($user);
+		$hasher = new BcryptHasher();
+		$hashed_password = $hasher->make($password);
+		$pass=$this->conn->quote($hashed_password);
+		
+		$sql="select count(*) num
+		from omp_users 
+		where username=$user
+		and password=$pass
+		";
+		$num=$this->conn->FetchColumn($sql);
+		return $num==1;
+	}
+	
 	/**
 	 * @param $data
 	 * @throws \Doctrine\DBAL\DBALException
