@@ -28,7 +28,6 @@ class Clear extends DBInterfaceBase
             'omp_roles',
             'omp_roles_classes',
             'omp_tabs',
-            'omp_users'
         );
 
         $tables_truncate_queries = '';

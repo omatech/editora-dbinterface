@@ -126,13 +126,7 @@ class Generator extends DBInterfaceBase
         foreach ($users as $user)
         {
             $password = substr(md5(rand()), 0, 7);
-
-            if($user[0] == 'omatech'){
-                array_push($this->queries, "insert into omp_users (username, password, complete_name, rol_id, language, tipus) values ('$user[0]', '$password', '$user[1]', 1, '$user[2]', 'O');");
-                continue;
-            }
-
-            array_push($this->queries, "insert into omp_users (username, password, complete_name, rol_id, language, tipus) values ('$user[0]', '$password', '$user[1]', 2, '$user[2]', 'U');");
+            array_push($this->queries, "insert ignore into omp_users (username, password, complete_name, rol_id, language, tipus) values ('$user[0]', '$password', '$user[1]', 2, '$user[2]', '$user[2]');");
         }
 
         foreach ($lookups as $lookup_key=>$lookup)
