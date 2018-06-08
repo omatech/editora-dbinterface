@@ -114,7 +114,7 @@ class TranslatorModel extends AppModel {
 	{
 		$sql = "update omp_instances
 		set update_date=now()
-		where inst_id=$inst_id
+		where id=$inst_id
 		";	
 		parent::executeQuery($sql, $connection);
 	}
@@ -123,7 +123,7 @@ class TranslatorModel extends AppModel {
 	{
 		$sql = "update omp_instances
 		set updated_at=now()
-		where inst_id=$inst_id
+		where id=$inst_id
 		";	
 		parent::executeQuery($sql, $connection);
 	}	

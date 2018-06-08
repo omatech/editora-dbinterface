@@ -6,6 +6,8 @@ require_once __DIR__.$autoload_location;
 
 use \Doctrine\DBAL\Configuration;
 use \Omatech\Editora\Translator\TranslatorModel;
+use \PhpOffice\PhpSpreadsheet\Spreadsheet;
+use \PhpOffice\PhpSpreadsheet\IOFactory;
 
 ini_set("memory_limit", "5000M");
 set_time_limit(0);
@@ -173,29 +175,29 @@ elseif ($options_array['outputformat']=='json')
 }	
 elseif ($options_array['outputformat']=='excel')
 {	
-	$objPHPExcel = new PHPExcel();
+	$objSpreadsheet = new Spreadsheet();
 	// Set document properties
-	$objPHPExcel->getProperties()->setCreator("Omatech")
+	$objSpreadsheet->getProperties()->setCreator("Omatech")
 								 ->setLastModifiedBy("Omatech")
 								 ->setTitle("Translator Export from editora from ".$options_array['sourcelanguage']." to ".$options_array['destinationlanguage'])
 								 ->setSubject("Translator Export from editora")
 								 ->setDescription("Translator Export from editora ".$options_array['dbname']." version $from_version at ".$result['metadata']['generated_at_human']." source language is ".$options_array['sourcelanguage']." detination language ".$options_array['destinationlanguage'])
 								 ->setCategory("Translator");
-	$objPHPExcel->setActiveSheetIndex(0);
+	$objSpreadsheet->setActiveSheetIndex(0);
 	$i=1;
-	$objPHPExcel->getActiveSheet()->setTitle('Omatech Translator');
-	$objPHPExcel->getActiveSheet()->setCellValue("A$i", 'key1');
-	$objPHPExcel->getActiveSheet()->setCellValue("B$i", 'key2');
-	$objPHPExcel->getActiveSheet()->setCellValue("C$i", 'value');
+	$objSpreadsheet->getActiveSheet()->setTitle('Omatech Translator');
+	$objSpreadsheet->getActiveSheet()->setCellValue("A$i", 'key1');
+	$objSpreadsheet->getActiveSheet()->setCellValue("B$i", 'key2');
+	$objSpreadsheet->getActiveSheet()->setCellValue("C$i", 'value');
 	$i++;
 	foreach ($result['data'] as $row)
 	{
-		$objPHPExcel->getActiveSheet()->setCellValue("A$i", $row['key1']);
-		$objPHPExcel->getActiveSheet()->setCellValue("B$i", $row['key2']);
-		$objPHPExcel->getActiveSheet()->setCellValue("C$i", $row['value']);
+		$objSpreadsheet->getActiveSheet()->setCellValue("A$i", $row['key1']);
+		$objSpreadsheet->getActiveSheet()->setCellValue("B$i", $row['key2']);
+		$objSpreadsheet->getActiveSheet()->setCellValue("C$i", $row['value']);
 		$i++;
 	}
-  $objWriter = PHPExcel_IOFactory::createWriter($objPHPExcel, 'Excel2007');
+  $objWriter = IOFactory::createWriter($objSpreadsheet, 'Xlsx');
 	$objWriter->save('php://output');		
 }
 else

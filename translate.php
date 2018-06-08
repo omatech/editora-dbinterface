@@ -1,8 +1,10 @@
 <?php
 
 $autoload_location = '/vendor/autoload.php';
-while (!is_file(__DIR__.$autoload_location)) { $autoload_location='/..'.$autoload_location;}
-require_once __DIR__.$autoload_location;
+while (!is_file(__DIR__ . $autoload_location)) {
+	$autoload_location = '/..' . $autoload_location;
+}
+require_once __DIR__ . $autoload_location;
 
 $usleep_pause = 500000;
 $price_per_character = 0.002;
@@ -207,15 +209,16 @@ if (isset($options_array['costestimationonly'])) {
 		usleep($usleep_pause);
 	}
 
-
+	echo "\nUpdating instance update date\n";
 	foreach ($instances_modified as $inst_id) {
 		if ($to_version == 4) {
 			$model->update_instance4($inst_id);
 		} else {
 			$model->update_instance5($inst_id);
 		}
+		echo ".";
 	}
-
+	echo "\nDone!\n";
 	$model->commit();
 
 	echo "\n";

@@ -6,6 +6,8 @@ require_once __DIR__.$autoload_location;
 
 use \Doctrine\DBAL\Configuration;
 use \Omatech\Editora\Translator\TranslatorModel;
+use \PhpOffice\PhpSpreadsheet\Spreadsheet;
+use \PhpOffice\PhpSpreadsheet\IOFactory;
 
 ini_set("memory_limit", "5000M");
 set_time_limit(0);
@@ -54,6 +56,7 @@ php export-translation.php --sourcelanguage=en --from=db5 --dbhost=localhost --d
 die;
 }
 
+//print_r($options_array);
 if (!isset($options_array['from']) || !isset($options_array['to'])) {
 	echo "Missing from or to parameters, use --help for help!\n";
 	die;
@@ -115,11 +118,11 @@ if ($options_array['inputformat']=='json')
 }
 elseif ($options_array['inputformat']=='excel')
 {
-	$temp_filename=tempnam('.', 'tmp');
+	$temp_filename=tempnam(sys_get_temp_dir(), 'tmp');
 	file_put_contents($temp_filename, $input);
-	$objPHPExcel = PHPExcel_IOFactory::load($temp_filename);
+	$objSpreadsheet = IOFactory::load($temp_filename);
 	//  Get worksheet dimensions
-	$sheet = $objPHPExcel->getSheet(0);
+	$sheet = $objSpreadsheet->getSheet(0);
 	$highestRow = $sheet->getHighestRow();
 	$highestColumn = $sheet->getHighestColumn();
 	
@@ -162,7 +165,7 @@ else
 if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') 
 {// let's backup the database first
 	$backup_date=date('Ymd_His');
-	$cmd="mysqldump --user=".$options_array['dbuser']." --password=".$options_array['dbpass']." --host=".$options_array['dbhost']." ".$options_array['dbname']." omp_values > backup_ompvalues_preimport_".$options_array['dbname']."_$backup_date.sql";
+	$cmd="mysqldump --user=".$options_array['dbuser']." --password=".$options_array['dbpass']." --host=".$options_array['dbhost']." ".$options_array['dbname']." omp_values > ".sys_get_temp_dir()."/backup_ompvalues_preimport_".$options_array['dbname']."_$backup_date.sql";
 	echo "Performing database backup $backup_date\n";
 	echo "$cmd\n";
 	exec($cmd);
@@ -240,6 +243,7 @@ foreach ($rows as $row)
 	}
 }
 
+echo "\nUpdating instance update date\n";
 foreach ($instances_modified as $inst_id)
 {
 		if ($to_version==4)
@@ -250,7 +254,9 @@ foreach ($instances_modified as $inst_id)
 		{
 		  $model->update_instance5($inst_id);			
 		}	
+		echo ".";
 }
+echo "\nDone!\n";
 
 
 $model->commit();
