@@ -629,9 +629,9 @@ class Generator extends DBInterfaceBase {
 		if ($caption != null) {
 			if (is_array($caption)) {
 				$name = $this->key_to_title($caption[0]);
-				$caption_ca = $name;
-				$caption_es = $this->key_to_title(isset($caption[1]) ? $caption[1] : $name);
-				$caption_en = $this->key_to_title(isset($caption[2]) ? $caption[2] : $name);
+				$caption_ca = $caption[0];
+				$caption_es = $this->key_to_title(isset($caption[1]) ? $caption[1] : $caption[0]);
+				$caption_en = $this->key_to_title(isset($caption[2]) ? $caption[2] : $caption[0]);
 			} else {
 				$name = $this->key_to_title($caption);
 				$caption_ca = $name;

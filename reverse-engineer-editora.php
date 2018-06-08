@@ -25,33 +25,27 @@ $options_array = getopt(null, ['from::', 'to::'
 	, 'help']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
-	echo 'Generate editora structure from a driver file
+	echo 'Takes out the editora structure and generates a compatible generator file
 
 From parameters:
---from= file | db4 | db5 (only file supported by now)
---inputformat= array | json (only array supported by now)
---inputfile= name of the configfile
---dbfromhost= database host
---dbfromuser= database user
---dbfrompass= database password 
---dbfromname= database name 
+--from= db4 | db5 (only db4 supported by now)
+--dbhost= database host
+--dbuser= database user
+--dbpass= database password 
+--dbname= database name 
 
 To parameters:
---to= db4 | file | json | db5 (only supported db4 by now)
---outputformat= (excel, json, array)
+--to= file 
+--outputformat= (excel, json, array) (only array and json supported by now)
 --outputfile= name of the file to export
---dbtohost= database host
---dbtouser= database user
---dbtopass= database password 
---dbtoname= database name 
 
 Others:
 --help this help!
 
 example: 
 	
-1) Generate an editora from file
-php generate-editora.php --from=file --inputformat=array --inputfile=../sql/sample_editora_array.php --to=db4 --dbtohost=localhost --dbtouser=root --dbtopass=xxx --dbtoname=intranetmutua 
+1) Take info from an existing editora and dump array to file
+php reverse-engineer-editora.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=intranetmutua --outputformat=array --outputfile=../sql/reverse_engineer_editora_array.php
 ';
 die;
 }
@@ -66,34 +60,22 @@ if ($options_array['from'] == 'db5') {
 	$from_version = 5;
 }
 
+if ($from_version==5) die ("DB5 not supported yet!\n");
+
 $dbal_config = new \Doctrine\DBAL\Configuration();
 
 $conn_from = null;
 if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 	$connection_params = array(
-		'dbname' => $options_array['dbfromname'],
-		'user' => $options_array['dbfromuser'],
-		'password' => $options_array['dbfrompass'],
-		'host' => $options_array['dbfromhost'],
+		'dbname' => $options_array['dbname'],
+		'user' => $options_array['dbuser'],
+		'password' => $options_array['dbpass'],
+		'host' => $options_array['dbhost'],
 		'driver' => 'pdo_mysql',
 		'charset' => 'utf8'
 	);
 
 	$conn_from = \Doctrine\DBAL\DriverManager::getConnection($connection_params, $dbal_config);
-}
-
-$conn_to = null;
-if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') {
-	$connection_params = array(
-		'dbname' => $options_array['dbtoname'],
-		'user' => $options_array['dbtouser'],
-		'password' => $options_array['dbtopass'],
-		'host' => $options_array['dbtohost'],
-		'driver' => 'pdo_mysql',
-		'charset' => 'utf8'
-	);
-
-	$conn_to = \Doctrine\DBAL\DriverManager::getConnection($connection_params, $dbal_config);
 }
 
 
