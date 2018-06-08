@@ -20,30 +20,28 @@ class Generator extends DBInterfaceBase {
 	public function __construct($conn, $params) {
 		parent::__construct($conn, $params);
 	}
-	
-	public function getQueries ()
-	{
+
+	public function getQueries() {
 		return $this->queries;
 	}
-	
+
 	public function getFinalData() {
 		return $this->data;
 	}
 
-	public function checkPassword($user, $hassed_password)
-	{
-		$user=$this->conn->quote($user);
-		$hassed_password=$this->conn->quote($hassed_password);
-		
-		$sql="select count(*) num
+	public function checkPassword($user, $hassed_password) {
+		$user = $this->conn->quote($user);
+		$hassed_password = $this->conn->quote($hassed_password);
+
+		$sql = "select count(*) num
 		from omp_users 
 		where username=$user
 		and password=$hassed_password
 		";
-		$num=$this->conn->FetchColumn($sql);
-		return $num==1;
+		$num = $this->conn->FetchColumn($sql);
+		return $num == 1;
 	}
-	
+
 	/**
 	 * @param $data
 	 * @throws \Doctrine\DBAL\DBALException
@@ -150,7 +148,7 @@ class Generator extends DBInterfaceBase {
 			array_push($this->queries, "insert into omp_lookups (id, name, type, default_id) values ($lookup_id, '$lookup_name', 'L', 0);");
 			$i = 0;
 			foreach ($lookup as $value_key => $value) {
-				array_push($this->queries, "insert into omp_lookups_values (id, lookup_id, ordre, value, caption_es, caption_en, caption_ca) values ($value_key, $lookup_id, $i, '$value[0]', '$value[1]', '$value[3]', '$value[3]');");
+				array_push($this->queries, "insert into omp_lookups_values (id, lookup_id, ordre, value, caption_ca, caption_es, caption_en) values ($value_key, $lookup_id, $i, '$value[0]', '$value[1]', '$value[2]', '$value[3]');");
 				if ($i == 0) {
 					array_push($this->queries, "update omp_lookups set default_id='" . $value_key . "' where id=$lookup_id;\n");
 				}
@@ -222,42 +220,42 @@ class Generator extends DBInterfaceBase {
 
 		if (isset($attributes_multi_lang_url)) {
 			foreach ($attributes_multi_lang_url as $key => $val) {
-			if (is_array($val)) {
-				// take the first element that is tag and remove the first element, pass the rest of the array as captions
-				$tag = $val[0];
-				array_shift($val);
-				foreach ($languages as $key_lang => $val_lang) {
-					$this->create_attribute($key, $tag, 'U', $key_lang, $val_lang, 0, $val);
+				if (is_array($val)) {
+					// take the first element that is tag and remove the first element, pass the rest of the array as captions
+					$tag = $val[0];
+					array_shift($val);
+					foreach ($languages as $key_lang => $val_lang) {
+						$this->create_attribute($key, $tag, 'U', $key_lang, $val_lang, 0, $val);
+					}
+				} else {
+					foreach ($languages as $key_lang => $val_lang) {
+						$this->create_attribute($key, $val, 'U', $key_lang, $val_lang);
+					}
 				}
-			} else {
-				foreach ($languages as $key_lang => $val_lang) {
-					$this->create_attribute($key, $val, 'U', $key_lang, $val_lang);
-				}
-			}
 			}
 		}
 
 		if (isset($attributes_multi_lang_video)) {
 			foreach ($attributes_multi_lang_video as $key => $val) {
-			if (is_array($val)) {
-				// take the first element that is tag and remove the first element, pass the rest of the array as captions
-				$tag = $val[0];
-				array_shift($val);
-				foreach ($languages as $key_lang => $val_lang) {
-					$this->create_attribute($key, $tag, 'Y', $key_lang, $val_lang, 0, $val);
+				if (is_array($val)) {
+					// take the first element that is tag and remove the first element, pass the rest of the array as captions
+					$tag = $val[0];
+					array_shift($val);
+					foreach ($languages as $key_lang => $val_lang) {
+						$this->create_attribute($key, $tag, 'Y', $key_lang, $val_lang, 0, $val);
+					}
+				} else {
+					foreach ($languages as $key_lang => $val_lang) {
+						$this->create_attribute($key, $val, 'Y', $key_lang, $val_lang);
+					}
 				}
-			} else {
-				foreach ($languages as $key_lang => $val_lang) {
-					$this->create_attribute($key, $val, 'Y', $key_lang, $val_lang);
-				}
-			}
 			}
 		}
-		
+
 		foreach ($attributes_textarea as $key => $val) {
-				if (is_array($val)) {
+			if (is_array($val)) {
 				$tag = $val[0];
-				array_shift($val);		
+				array_shift($val);
 				$this->create_attribute($key, $tag, 'K', 0, 'ALL', 0, $val);
 			} else {
 				$this->create_attribute($key, $val, 'K');
@@ -267,7 +265,7 @@ class Generator extends DBInterfaceBase {
 		foreach ($attributes_text as $key => $val) {
 			if (is_array($val)) {
 				$tag = $val[0];
-				array_shift($val);		
+				array_shift($val);
 				$this->create_attribute($key, $tag, 'T', 0, 'ALL', 0, $val);
 			} else {
 				$this->create_attribute($key, $val, 'T');
@@ -277,7 +275,7 @@ class Generator extends DBInterfaceBase {
 		foreach ($attributes_file as $key => $val) {
 			if (is_array($val)) {
 				$tag = $val[0];
-				array_shift($val);		
+				array_shift($val);
 				$this->create_attribute($key, $tag, 'F', 0, 'ALL', 0, $val);
 			} else {
 				$this->create_attribute($key, $val, 'F');
@@ -288,7 +286,7 @@ class Generator extends DBInterfaceBase {
 		foreach ($attributes_string as $key => $val) {
 			if (is_array($val)) {
 				$tag = $val[0];
-				array_shift($val);		
+				array_shift($val);
 				$this->create_attribute($key, $tag, 'S', 0, 'ALL', 0, $val);
 			} else {
 				$this->create_attribute($key, $val, 'S');
@@ -298,67 +296,78 @@ class Generator extends DBInterfaceBase {
 		foreach ($attributes_image as $key => $val) {
 			if (is_array($val)) {
 				$tag = $val[0];
-				array_shift($val);		
+				array_shift($val);
 				$this->create_attribute($key, $tag, 'I', 0, 'ALL', 0, $val);
 			} else {
 				$this->create_attribute($key, $val, 'I');
-			}	
+			}
 		}
 
 		foreach ($attributes_geolocation as $key => $val) {
 			if (is_array($val)) {
 				$tag = $val[0];
-				array_shift($val);		
+				array_shift($val);
 				$this->create_attribute($key, $tag, 'M', 0, 'ALL', 0, $val);
 			} else {
 				$this->create_attribute($key, $val, 'M');
-			}			}
+			}
+		}
 
 		foreach ($attributes_date as $key => $val) {
 			if (is_array($val)) {
 				$tag = $val[0];
-				array_shift($val);		
+				array_shift($val);
 				$this->create_attribute($key, $tag, 'D', 0, 'ALL', 0, $val);
 			} else {
 				$this->create_attribute($key, $val, 'D');
-			}	
+			}
 		}
 
 		foreach ($attributes_num as $key => $val) {
 			if (is_array($val)) {
 				$tag = $val[0];
-				array_shift($val);		
+				array_shift($val);
 				$this->create_attribute($key, $tag, 'N', 0, 'ALL', 0, $val);
 			} else {
 				$this->create_attribute($key, $val, 'N');
-			}	
+			}
 		}
 
 		foreach ($attributes_video as $key => $val) {
 			if (is_array($val)) {
 				$tag = $val[0];
-				array_shift($val);		
+				array_shift($val);
 				$this->create_attribute($key, $tag, 'Y', 0, 'ALL', 0, $val);
 			} else {
 				$this->create_attribute($key, $val, 'Y');
-			}	
+			}
 		}
 
 		foreach ($attributes_url as $key => $val) {
 			if (is_array($val)) {
 				$tag = $val[0];
-				array_shift($val);		
+				array_shift($val);
 				$this->create_attribute($key, $tag, 'U', 0, 'ALL', 0, $val);
 			} else {
 				$this->create_attribute($key, $val, 'U');
-			}	
+			}
 		}
 
 		foreach ($attributes_lookup as $key => $val) {
-			$arr_val = explode(',', $val);
-			$lookup_name = $arr_val[0];
-			$lookup_id = $arr_val[1];
-			$this->create_attribute($key, $lookup_name, 'L', 0, 'ALL', $lookup_id);
+			if (is_array($val)) {
+				$tag = $val[0];
+				array_shift($val);
+				$arr_val = explode(',', $tag);
+				$lookup_name = $arr_val[0];
+				$lookup_id = $arr_val[1];
+
+				$this->create_attribute($key, $lookup_name, 'L', 0, 'ALL', $lookup_id, $val);
+			} else {
+				$arr_val = explode(',', $val);
+				$lookup_name = $arr_val[0];
+				$lookup_id = $arr_val[1];
+				$this->create_attribute($key, $lookup_name, 'L', 0, 'ALL', $lookup_id);
+			}
 		}
 
 		foreach ($attributes_classes as $key => $val) {
@@ -467,7 +476,6 @@ class Generator extends DBInterfaceBase {
 		return $this->users_passwords;
 	}
 
-
 	public function editoraDefaultNomInternId() {
 		return 1;
 	}
@@ -485,8 +493,8 @@ class Generator extends DBInterfaceBase {
 
 	public function editoraPrepareData($data) {
 		$defaultData = $this->editoraDefaultData();
-		
-		$process_variables=['localized_attributes' => array(),
+
+		$process_variables = ['localized_attributes' => array(),
 			'simple_attributes' => array(),
 			'original_localized_attributes' => array(),
 			'global_filas' => array(),
@@ -508,11 +516,11 @@ class Generator extends DBInterfaceBase {
 				unset($defaultData[$aDefaultDataKey]);
 			}
 		}
-		
-		
-		
-		
-		
+
+
+
+
+
 		return array_merge($defaultData, $process_variables, $data);
 	}
 
@@ -644,11 +652,11 @@ class Generator extends DBInterfaceBase {
 			$caption_es = $name;
 			$caption_en = $name;
 		}
-		
-		$name=$this->conn->quote($name);
-		$caption_ca=$this->conn->quote($caption_ca);
-		$caption_es=$this->conn->quote($caption_es);
-		$caption_en=$this->conn->quote($caption_en);
+
+		$name = $this->conn->quote($name);
+		$caption_ca = $this->conn->quote($caption_ca);
+		$caption_es = $this->conn->quote($caption_es);
+		$caption_en = $this->conn->quote($caption_en);
 
 		//echo "create attribute id=$id key=$key type=$type language_id=$language_id language=$language lookup_id=$lookup_id caption_ca=$caption_ca caption_es=$caption_es caption_en=$caption_en\n";
 
@@ -749,8 +757,7 @@ class Generator extends DBInterfaceBase {
 		);
 		return $str;
 	}
-	
-	
+
 	// Data
 	private function editoraDefaultData() {
 
@@ -759,22 +766,13 @@ class Generator extends DBInterfaceBase {
 			'nomintern_name' => $this->editoraDefaultNomInternName(),
 			'niceurl_id' => 2,
 			'niceurl_name' => 'niceurl',
-			
-
-			
 			'users' => array(),
 			'languages' => array(),
 			'groups' => array(),
 			'classes' => array(),
 			'attributes_string' => array(),
-			'attributes_multi_lang_string' => array(),
-			'attributes_multi_lang_textarea' => array(),
 			'attributes_textarea' => array(),
 			'attributes_text' => array(),
-			'attributes_multi_lang_image' => array(),
-			'attributes_image' => array(),
-			'images_sizes' => array(),
-			'attributes_multi_lang_file' => array(),
 			'attributes_date' => array(),
 			'attributes_num' => array(),
 			'attributes_geolocation' => array(),
@@ -783,17 +781,21 @@ class Generator extends DBInterfaceBase {
 			'attributes_file' => array(),
 			'attributes_video' => array(),
 			'attributes_lookup' => array(),
+			'attributes_image' => array(),
+			'images_sizes' => array(),
+			'attributes_multi_lang_string' => array(),
+			'attributes_multi_lang_textarea' => array(),
+			'attributes_multi_lang_file' => array(),
+			'attributes_multi_lang_image' => array(),
 			'lookups' => array(),
 			'relations' => array(),
 			'relation_names' => array(),
 			'attributes_classes' => array(),
 			'roles' => $this->editoraDefaultRoles(),
-
 			'tabs' => array(
 				1 => 'data'
 			)
 		);
 	}
-	
 
 }

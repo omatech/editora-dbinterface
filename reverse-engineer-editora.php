@@ -12,7 +12,8 @@ require_once __DIR__.$autoload_location;
 //require_once __DIR__.'/conf/config.php';
 
 use \Doctrine\DBAL\Configuration;
-use \Omatech\Editora\Generator\ReverseEngineerator;
+use Omatech\Editora\Generator\ReverseEngineerator;
+use Omatech\Editora\Utils\Strings;
 
 ini_set("memory_limit", "5000M");
 set_time_limit(0);
@@ -80,7 +81,8 @@ if ($conn_from)
 {
 	$reverseengineerator=new \Omatech\Editora\Generator\ReverseEngineerator($conn_from, array());
 	$data=$reverseengineerator->reverseEngineerEditora();
-	print_r($data);
+	echo \Omatech\Editora\Utils\Strings::array2string($data);
+	//print_r($data);
 	die;
 }
 else

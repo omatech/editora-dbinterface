@@ -19,6 +19,15 @@ class Strings {
 			 }
 		}
 		
+static function array2string($data){
+    $log_a = "";
+    foreach ($data as $key => $value) {
+        if(is_array($value))    $log_a .= "[".$key."] => (". self::array2string($value). ") \n";
+        else                    $log_a .= "[".$key."] => ".$value."\n";
+    }
+    return $log_a;
+}
+		
 		static function not_empty(&$var = null) 
 		{
 				if (!isset($var)) return false;

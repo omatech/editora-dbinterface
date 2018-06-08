@@ -62,18 +62,23 @@ $data = array(
 		202 => ['text_link', 'Text de l\'enllaç', "Texto del enlace", "Text link"],
 		203 => ['text_adjunts', 'Text Adjunts aaa']
 	),
-	'attributes_multi_lang_textarea' => array(
-		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
-		400 => 'text'
-	),
 	'attributes_textarea' => array(
 	//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
 	),
 	'attributes_text' => array(
 		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag		
 	),
-	'attributes_multi_lang_image' => array(
-		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag		
+	'attributes_date' => array(
+		710 => 'data_noticia'
+	),
+	'attributes_num' => array(),
+	'attributes_geolocation' => array(),
+	'attributes_url' => array(
+		740 => 'link_extern'
+	),
+	'attributes_file' => array(),
+	'attributes_video' => array(
+		760 => 'video'
 	),
 	'attributes_image' => array(
 		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
@@ -86,35 +91,34 @@ $data = array(
 		601 => '300x200',
 		602 => '780x'
 	),
-	'attributes_multi_lang_file' => array(
-		700 => 'fitxer'
-	),
-	'attributes_date' => array(
-		710 => 'data_noticia'
-	),
-	'attributes_num' => array(),
-	'attributes_geolocation' => array(),
-	'attributes_url' => array(
-		740 => 'link_extern'
-	),
-	'attributes_multi_lang_url' => array(
-		745 => 'link_extern'
-	),
-	'attributes_file' => array(),
-	'attributes_video' => array(
-		760 => 'video'
-	),
 	'attributes_lookup' => array(
-		770 => 'icon,70'
+		770 => ['icon,70', 'Icona', 'Icono', 'Icon']
 	),
 	'lookups' => array(
 		'70,icon' => [
-			7001 => ['mdi-phone-log', 'Teléfono', 'Phone', 'Telèfon'],
-			7002 => ['mdi-brush', 'Pincel', 'Brush', 'Pincell'],
-			7003 => ['mdi-math-compass', 'Compas', 'Compass', 'Compas'],
+			7001 => ['mdi-phone-log', 'Telèfon', 'Teléfono', 'Phone'],
+			7002 => ['mdi-brush', 'Pincell', 'Pincel', 'Brush'],
+			7003 => ['mdi-math-compass', 'Compas', 'Compas', 'Compass'],
 			7004 => ['mdi-cellphone-android', 'Smartphone', 'Smartphone', 'Smartphone'],
 		]
 	),
+
+
+	'attributes_multi_lang_url' => array(
+		745 => 'link_extern'
+	),
+	'attributes_multi_lang_image' => array(
+		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag		
+	),
+	'attributes_multi_lang_textarea' => array(
+		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
+		400 => 'text'
+	),
+	'attributes_multi_lang_file' => array(
+		700 => 'fitxer'
+	),
+
+
 	'relations' => array(
 		1001 => '1,23,24,25,33,42',
 		10003 => '10,31',
