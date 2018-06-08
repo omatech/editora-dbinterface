@@ -12,15 +12,13 @@ require_once __DIR__.$autoload_location;
 //require_once __DIR__.'/conf/config.php';
 
 use \Doctrine\DBAL\Configuration;
-use \Omatech\Editora\Generator\Generator;
+use \Omatech\Editora\Generator\ReverseEngineerator;
 
 ini_set("memory_limit", "5000M");
 set_time_limit(0);
 
 $options_array = getopt(null, ['from::', 'to::'
-	, 'dbfromhost:', 'dbfromuser:', 'dbfrompass:', 'dbfromname:'
-	, 'inputformat:', 'inputfile:'
-	, 'dbtohost:', 'dbtouser:', 'dbtopass:', 'dbtoname:'
+	, 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:'
 	, 'outputformat:', 'outputfile:'
 	, 'help']);
 //print_r($options_array);
@@ -78,47 +76,32 @@ if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 	$conn_from = \Doctrine\DBAL\DriverManager::getConnection($connection_params, $dbal_config);
 }
 
-
-if ($options_array['inputformat']=='array')
+if ($conn_from)
 {
-	if (isset($options_array['inputfile']))
+	$reverseengineerator=new \Omatech\Editora\Generator\ReverseEngineerator($conn_from, array());
+	$data=$reverseengineerator->reverseEngineerEditora();
+	print_r($data);
+	die;
+}
+else
+{
+	die("DB from connection not set, see help for more info\n");
+}
+
+if ($options_array['outputformat']=='array')
+{
+	if (isset($options_array['outputfile']))
 	{
-		if (is_file($options_array['inputfile']))
-		{
-			require_once ($options_array['inputfile']);
-		}
-		else
-		{
-			die("File not found ".$options_array['inputfile'])." see help for more info\n";
-		}
+
 	}
 	else
 	{
-		die("Missing inputfile see help for more info\n");
+		die("Missing outputfile see help for more info\n");
 	}
 }
 else
 {
-	die("Only array inputformat supported see help for more info\n");
+	die("Only array outputformat supported see help for more info\n");
 }
 
-if ($conn_to)
-{
-	$generator=new Generator($conn_to, array());
-	$generator->createEditora($data);
-	$data=$generator->getFinalData();
-	$new_passwords=$generator->get_users_passwords();
-	foreach ($new_passwords as $user=>$password_array)
-	{
-		if ($generator->checkPassword($user, $password_array[1]))
-		{// El password es igual, quiere decir que lo acabamos de generar correctamente
-			echo "New user: $user with password $password_array[0]\n";
-		}
-	}
-	
-	//print_r($generator->getQueries());
-}
-else
-{
-	die("DB to connection not set, see help for more info\n");
-}
+
