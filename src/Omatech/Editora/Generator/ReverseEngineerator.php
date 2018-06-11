@@ -53,7 +53,10 @@ class ReverseEngineerator extends DBInterfaceBase {
 	
 	function quote($v)
 	{
-		if (!is_numeric($v)) $v="'$v'";
+		if (!is_numeric($v))
+		{
+			$v="'".str_replace("'", "\'", $v)."'";
+		}
 		return $v;
 	}
 	
@@ -131,7 +134,7 @@ class ReverseEngineerator extends DBInterfaceBase {
 	
 	public function arrayToCode ($rows)
 	{
-		$return_string='$data = ['."\n";
+		$return_string="<?php\n".'$data'." = [\n";
 		foreach ($rows as $key=>$val)
 		{
 			if ($key=='truncate_users')
@@ -243,7 +246,8 @@ class ReverseEngineerator extends DBInterfaceBase {
 				$return_string .= "'attributes_classes'=>".$this->twoLevelArrayToCode($val);
 			}				
 		}
-		$return_string.="];\n";
+		$return_string=substr($return_string, 0, strlen($return_string)-2);
+		$return_string.="\n];\n";
 		return $return_string;
 	}
 	
@@ -307,7 +311,7 @@ class ReverseEngineerator extends DBInterfaceBase {
 		$atris='';
 		foreach ($rows as $row)
 		{
-			echo $class_id.' '.$row['class_id'].' '.$row['tab_id'].' '.$row['atri_id'].' '.$row['rel_id']."\n";
+			//echo $class_id.' '.$row['class_id'].' '.$row['tab_id'].' '.$row['atri_id'].' '.$row['rel_id']."\n";
 			if ($class_id!=$row['class_id'])
 			{
 				$return_array[$class_id]=substr($atris,0,strlen($atris)-1);
@@ -331,7 +335,7 @@ class ReverseEngineerator extends DBInterfaceBase {
 					$atris.="$atri_id,";					
 				}
 			}
-			echo $atris."\n";
+			//echo $atris."\n";
 			//print_r($return_array);
 		}
 		$return_array[$class_id]=substr($atris,0,strlen($atris)-1);

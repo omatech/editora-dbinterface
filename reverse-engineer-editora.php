@@ -35,8 +35,8 @@ From parameters:
 
 To parameters:
 --to= file 
---outputformat= (excel, json, array) (only array and json supported by now)
---outputfile= name of the file to export
+--outputformat= (array, json, print_r) 
+--outputfile= name of the file to export (if not present outputs in the standard output
 
 Others:
 --help this help!
@@ -82,9 +82,9 @@ if ($conn_from)
 	$reverseengineerator=new \Omatech\Editora\Generator\ReverseEngineerator($conn_from, array());
 	$data=$reverseengineerator->reverseEngineerEditora();
 	//echo \Omatech\Editora\Utils\Strings::array2string($data);
-	print_r($data);
-	echo $reverseengineerator->arrayToCode($data);
-	die;
+	//print_r($data);
+	//echo $reverseengineerator->arrayToCode($data);
+	//die;
 }
 else
 {
@@ -93,18 +93,27 @@ else
 
 if ($options_array['outputformat']=='array')
 {
-	if (isset($options_array['outputfile']))
-	{
-
-	}
-	else
-	{
-		die("Missing outputfile see help for more info\n");
-	}
+	$result=$reverseengineerator->arrayToCode($data);
+}
+elseif ($options_array['outputformat']=='json')
+{
+	$result= json_encode($data);
+}
+elseif ($options_array['outputformat']=='print_r')
+{
+	$result= print_r($data, true);
 }
 else
 {
-	die("Only array outputformat supported see help for more info\n");
+	die("Only array, json or print_r outputformat supported see help for more info\n");
 }
 
 
+	if (isset($options_array['outputfile']))
+	{
+		file_put_contents($options_array['outputfile'], $result);
+	}
+	else
+	{
+		echo $result;
+	}
