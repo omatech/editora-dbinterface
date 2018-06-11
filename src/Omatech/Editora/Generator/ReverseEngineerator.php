@@ -91,7 +91,7 @@ class ReverseEngineerator extends DBInterfaceBase {
 		return $return_string;		
 	}
 	
-	public function attributeArrayToCode($label, $rows)
+	public function attributeArrayToCode($label, $rows, $remove_internal_keys=false)
 	{
 		if (!$rows) return;
 		$return_string="'$label'=>[";
@@ -100,7 +100,14 @@ class ReverseEngineerator extends DBInterfaceBase {
 			foreach ($rows as $key=>$val)
 			{
 				if (!is_numeric($key)) $key="'$key'";
-				$return_string.="\n\t$key => [".implode(',', array_map(array($this,'quote'), $val))."],\t\t";
+				if ($remove_internal_keys)
+				{
+					$return_string.="\n\t[".implode(',', array_map(array($this,'quote'), $val))."],\t\t";
+				}
+				else
+				{
+					$return_string.="\n\t$key => [".implode(',', array_map(array($this,'quote'), $val))."],\t\t";					
+				}
 			}
 			$return_string=substr($return_string, 0, strlen($return_string)-3);
 		}
@@ -137,6 +144,10 @@ class ReverseEngineerator extends DBInterfaceBase {
 				{
 					$return_string.="'truncate_users'=>false,\n";					
 				}
+			}
+			elseif ($key=='users')
+			{
+				$return_string .= $this->attributeArrayToCode('users',$val,true);
 			}
 			elseif ($key=='languages')
 			{
@@ -226,6 +237,10 @@ class ReverseEngineerator extends DBInterfaceBase {
 			elseif ($key=='relation_names')
 			{
 				$return_string .= $this->attributeArrayToCode('relation_names', $val);
+			}				
+			elseif ($key=='attributes_classes')
+			{
+				$return_string .= "'attributes_classes'=>".$this->twoLevelArrayToCode($val);
 			}				
 		}
 		$return_string.="];\n";
