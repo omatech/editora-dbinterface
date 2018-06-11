@@ -19,7 +19,7 @@ class ReverseEngineerator extends DBInterfaceBase {
   public function reverseEngineerEditora()
 	{
 		$return_array=array();
-		$return_array['truncate_users']=true;
+		$return_array['truncate_users']=false;
 		$return_array['users']=$this->getUsersArray();
 		$return_array['languages']=$this->getLanguagesArray();
 		$return_array['groups']=$this->getGroupsArray();
@@ -44,6 +44,311 @@ class ReverseEngineerator extends DBInterfaceBase {
 		$return_array['attributes_multi_lang_file']=$this->getAttributes ('F', true);
 		$return_array['attributes_multi_lang_image']=$this->getAttributes ('I', true);
 		
+		$return_array['images_sizes']=$this->getImagesSizesArray();
+		$return_array['relations']=$this->getRelationsArray();
+		$return_array['relation_names']=$this->getRelationNamesArray();
+		$return_array['attributes_classes']=$this->getAttributesClassesArray();
+		return $return_array;
+	}
+	
+	function quote($v)
+	{
+		if (!is_numeric($v)) $v="'$v'";
+		return $v;
+	}
+	
+	public function aplanaClass($rows)
+	{
+		$return_string="[";
+		foreach ($rows as $key=>$val)
+		{
+			if (!is_numeric($key)) $key="'$key'";
+			$return_string.="$key => [".implode(',', array_map(array($this,'quote'), $val))."],\n\t\t";
+		}
+		$return_string=substr($return_string, 0, strlen($return_string)-4);
+		$return_string.="\n\t\t],\n";
+		return $return_string;				
+	}
+	
+	public function twoLevelArrayToCode($rows)
+	{
+		$return_string="[";
+		foreach ($rows as $key=>$val)
+		{
+			if (!is_numeric($key)) $key="'$key'";
+			if (is_array($val))
+			{
+				$return_string.="\n\t$key => ".$this->aplanaClass($val)."\n";
+			}
+			else
+			{
+				if (!is_numeric($val)) $val="'$val'";
+				$return_string.="\n\t$key => ".$val.",";				
+			}
+		}
+		$return_string=substr($return_string, 0, strlen($return_string)-1);
+		$return_string.="\n\t],\n";
+		return $return_string;		
+	}
+	
+	public function attributeArrayToCode($label, $rows)
+	{
+		if (!$rows) return;
+		$return_string="'$label'=>[";
+		if ($rows)
+		{
+			foreach ($rows as $key=>$val)
+			{
+				if (!is_numeric($key)) $key="'$key'";
+				$return_string.="\n\t$key => [".implode(',', array_map(array($this,'quote'), $val))."],\t\t";
+			}
+			$return_string=substr($return_string, 0, strlen($return_string)-3);
+		}
+		$return_string.="\n\t],\n";
+		return $return_string;		
+	}
+
+	public function simpleArrayToCode($rows)
+	{
+		$return_string="[";
+		foreach ($rows as $key=>$val)
+		{
+			if (!is_numeric($key)) $key="'$key'";
+			if (!is_numeric($val)) $val="'$val'";
+			$return_string.="\n\t$key => $val,";
+		}
+		$return_string=substr($return_string, 0, strlen($return_string)-1);
+		$return_string.="\n\t],\n";
+		return $return_string;
+	}
+	
+	public function arrayToCode ($rows)
+	{
+		$return_string='$data = ['."\n";
+		foreach ($rows as $key=>$val)
+		{
+			if ($key=='truncate_users')
+			{
+				if ($val===true)
+				{
+					$return_string.="'truncate_users'=>true,\n";					
+				}
+				else
+				{
+					$return_string.="'truncate_users'=>false,\n";					
+				}
+			}
+			elseif ($key=='languages')
+			{
+				$return_string .= "'languages'=>".$this->simpleArrayToCode($val);
+			}
+			elseif ($key=='groups')
+			{
+				$return_string .= "'groups'=>".$this->simpleArrayToCode($val);
+			}
+			elseif ($key=='classes')
+			{
+				$return_string .= "'classes'=>".$this->twoLevelArrayToCode($val);
+			}			
+			elseif ($key=='attributes_string')
+			{
+				$return_string .= $this->attributeArrayToCode('attributes_string', $val);
+			}
+			elseif ($key=='attributes_textarea')
+			{
+				$return_string .= $this->attributeArrayToCode('attributes_textarea', $val);
+			}
+			elseif ($key=='attributes_text')
+			{
+				$return_string .= $this->attributeArrayToCode('attributes_text', $val);
+			}
+			elseif ($key=='attributes_date')
+			{
+				$return_string .= $this->attributeArrayToCode('attributes_date', $val);
+			}
+			elseif ($key=='attributes_num')
+			{
+				$return_string .= $this->attributeArrayToCode('attributes_num', $val);
+			}
+			elseif ($key=='attributes_geolocation')
+			{
+				$return_string .= $this->attributeArrayToCode('attributes_geolocation', $val);
+			}
+			elseif ($key=='attributes_url')
+			{
+				$return_string .= $this->attributeArrayToCode('attributes_url', $val);
+			}
+			elseif ($key=='attributes_file')
+			{
+				$return_string .= $this->attributeArrayToCode('attributes_file', $val);
+			}
+			elseif ($key=='attributes_video')
+			{
+				$return_string .= $this->attributeArrayToCode('attributes_video', $val);
+			}
+			elseif ($key=='attributes_image')
+			{
+				$return_string .= $this->attributeArrayToCode('attributes_image', $val);
+			}
+			elseif ($key=='attributes_lookup')
+			{
+				$return_string .= $this->attributeArrayToCode('attributes_lookup', $val);
+			}
+			
+			elseif ($key=='attributes_multi_lang_string')
+			{
+				$return_string .= $this->attributeArrayToCode('attributes_multi_lang_string', $val);
+			}
+			elseif ($key=='attributes_multi_lang_textarea')
+			{
+				$return_string .= $this->attributeArrayToCode('attributes_multi_lang_textarea', $val);
+			}			
+			elseif ($key=='attributes_multi_lang_file')
+			{
+				$return_string .= $this->attributeArrayToCode('attributes_multi_lang_file', $val);
+			}
+			elseif ($key=='attributes_multi_lang_image')
+			{
+				$return_string .= $this->attributeArrayToCode('attributes_multi_lang_image', $val);
+			}
+			elseif ($key=='lookups')
+			{
+				$return_string .= "'lookups'=>".$this->twoLevelArrayToCode($val);
+			}			
+			elseif ($key=='images_sizes')
+			{
+				$return_string .= "'images_sizes'=>".$this->twoLevelArrayToCode($val);
+			}				
+			elseif ($key=='relations')
+			{
+				$return_string .= "'relations'=>".$this->twoLevelArrayToCode($val);
+			}				
+			elseif ($key=='relation_names')
+			{
+				$return_string .= $this->attributeArrayToCode('relation_names', $val);
+			}				
+		}
+		$return_string.="];\n";
+		return $return_string;
+	}
+	
+	public function getRelationsArray()
+	{
+		$return_array=array();
+		$sql="select * 
+		from omp_relations
+		order by id
+		";
+		$rows=$this->conn->fetchAll($sql);
+		if ($rows)
+		{
+			foreach ($rows as $row)
+			{
+				if (isset($row['multiple_child_class_id']) && !empty($row['multiple_child_class_id']))
+				{// we have at least one image size
+					$return_array[$row['id']]=$row['parent_class_id'].','.$row['multiple_child_class_id'];				
+				}
+				else
+				{
+					$return_array[$row['id']]=$row['parent_class_id'].','.$row['child_class_id'];				
+				}
+			}
+		}
+		return $return_array;
+	}
+	
+	public function getRelationNamesArray()
+	{
+		$return_array=array();
+		$sql="select * 
+		from omp_relations
+		order by id
+		";
+		$rows=$this->conn->fetchAll($sql);
+		if ($rows)
+		{
+			foreach ($rows as $row)
+			{
+				$return_array[$row['id']]=array($row['caption'],$row['tag']);						
+			}
+		}
+		return $return_array;
+	}	
+	
+	public function getAttributesClassesArray()
+	{
+		$return_array=array();
+		$sql="select * from (
+		select 0 es_rel, ca.* 
+		from omp_class_attributes ca
+		where atri_id is not null
+		and atri_id>1
+		and tab_id<10001
+		union 
+		select 1 es_rel, ca.* 
+		from omp_class_attributes ca
+		where rel_id is not null
+		and tab_id<10001
+		) t
+		order by class_id, tab_id, es_rel, fila, columna
+		";
+		$rows=$this->conn->fetchAll($sql);
+		$class_id=$rows[0]['class_id'];
+		$atris='';
+		foreach ($rows as $row)
+		{
+			echo $class_id.' '.$row['class_id'].' '.$row['tab_id'].' '.$row['atri_id'].' '.$row['rel_id']."\n";
+			if ($class_id!=$row['class_id'])
+			{
+				$return_array[$class_id]=$atris;
+				$atris='';
+				$class_id=$row['class_id'];
+				print_r($return_array);
+			}
+			$resta=0;
+			$tab_id=$row['tab_id'];
+			if ($tab_id>=10000) $resta=$tab_id;
+			if (isset($row['atri_id'])) $atri_id=$row['atri_id']-$resta;
+			if (isset($row['rel_id'])) $atri_id=$row['rel_id'];
+			if ($atri_id>1)
+			$atris.="$atri_id,";
+			echo $atris."\n";
+			//print_r($return_array);
+		}
+		$return_array[$class_id]=$atris;
+print_r($return_array);die;		
+		return $return_array;
+	}
+	
+	public function getImagesSizesArray()
+	{
+		$return_array=array();
+		$sql="select id, img_width, img_height 
+		from omp_attributes
+		where type='I'
+		order by id
+		";
+		$rows=$this->conn->fetchAll($sql);
+		if ($rows)
+		{
+			foreach ($rows as $row)
+			{
+				if (isset($row['img_width']) || isset($row['img_height']))
+				{// we have at least one image size
+					$size_string='x';
+					if (isset($row['img_width']) && !empty($row['img_width']))
+					{
+						$size_string=$row['img_width'].$size_string;
+					}
+					if (isset($row['img_height']) && !empty($row['img_height']))
+					{
+						$size_string=$size_string.$row['img_height'];
+					}
+					$return_array[$row['id']]=$size_string;				
+				}
+
+			}
+		}
 		return $return_array;
 	}
 	
@@ -64,7 +369,7 @@ class ReverseEngineerator extends DBInterfaceBase {
 			}
 		}
 		return $return_array;
-	}
+	}	
 	
 	
 	public function getUsersArray ()
@@ -105,9 +410,7 @@ class ReverseEngineerator extends DBInterfaceBase {
 		{
 			foreach ($rows as $row)
 			{
-				$element_array=array();
-				$element_array[$row['caption']]=$row['id'];
-				$return_array[]=$element_array;
+				$return_array[$row['caption']]=$row['id'];
 			}
 		}
 		return $return_array;
@@ -127,7 +430,7 @@ class ReverseEngineerator extends DBInterfaceBase {
 		{
 			foreach ($rows as $row)
 			{
-				$element_array=array();
+				//$element_array=array();
 				$classes_array=array();
 				$sql="select * 
 				from omp_classes c
@@ -139,9 +442,9 @@ class ReverseEngineerator extends DBInterfaceBase {
 				{
 					$classes_array[$class['id']]=array($class['tag'], $class['name_ca']);
 				}	
-				$element_array[$row['caption']]=$classes_array;
+				//$element_array[$row['caption']]=$classes_array;
 					
-				$return_array[]=$element_array;
+				$return_array[$row['caption']]=$classes_array;
 			}
 		}
 		return $return_array;

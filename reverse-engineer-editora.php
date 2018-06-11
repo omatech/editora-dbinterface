@@ -81,8 +81,9 @@ if ($conn_from)
 {
 	$reverseengineerator=new \Omatech\Editora\Generator\ReverseEngineerator($conn_from, array());
 	$data=$reverseengineerator->reverseEngineerEditora();
-	echo \Omatech\Editora\Utils\Strings::array2string($data);
-	//print_r($data);
+	//echo \Omatech\Editora\Utils\Strings::array2string($data);
+	print_r($data);
+	echo $reverseengineerator->arrayToCode($data);
 	die;
 }
 else
