@@ -284,13 +284,8 @@ class ReverseEngineerator extends DBInterfaceBase {
 		where atri_id is not null
 		and atri_id>1
 		and tab_id<10001
-		union 
-		select 1 es_rel, ca.* 
-		from omp_class_attributes ca
-		where rel_id is not null
-		and tab_id<10001
 		) t
-		order by class_id, tab_id, es_rel, fila, columna
+		order by class_id, es_rel, tab_id, fila, columna
 		";
 		$rows=$this->conn->fetchAll($sql);
 		$class_id=$rows[0]['class_id'];
@@ -300,10 +295,10 @@ class ReverseEngineerator extends DBInterfaceBase {
 			echo $class_id.' '.$row['class_id'].' '.$row['tab_id'].' '.$row['atri_id'].' '.$row['rel_id']."\n";
 			if ($class_id!=$row['class_id'])
 			{
-				$return_array[$class_id]=$atris;
+				$return_array[$class_id]=substr($atris,0,strlen($atris)-1);
 				$atris='';
 				$class_id=$row['class_id'];
-				print_r($return_array);
+				//print_r($return_array);
 			}
 			$resta=0;
 			$tab_id=$row['tab_id'];
@@ -311,12 +306,21 @@ class ReverseEngineerator extends DBInterfaceBase {
 			if (isset($row['atri_id'])) $atri_id=$row['atri_id']-$resta;
 			if (isset($row['rel_id'])) $atri_id=$row['rel_id'];
 			if ($atri_id>1)
-			$atris.="$atri_id,";
+			{
+				if ($row['columna']==2)
+				{
+					$atris.=substr($atris,0,strlen($atris)-1)."-$atri_id,";
+				}
+				else
+				{
+					$atris.="$atri_id,";					
+				}
+			}
 			echo $atris."\n";
 			//print_r($return_array);
 		}
-		$return_array[$class_id]=$atris;
-print_r($return_array);die;		
+		$return_array[$class_id]=substr($atris,0,strlen($atris)-1);
+//print_r($return_array);die;		
 		return $return_array;
 	}
 	
