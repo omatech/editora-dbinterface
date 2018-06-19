@@ -64,6 +64,7 @@ class TranslatorModel extends AppModel {
 	}
 
 	function set_value4 ($inst_id, $atri_id_from, $value, $connection = 'conn_to') {
+		if (!isset($inst_id) || !isset($atri_id_from) || !is_numeric($inst_id) || !is_numeric($atri_id_from)) die ("\nLos valores de inst_id ($inst_id) y atri_id_from ($atri_id_from) no existen o no son numéricos\n");
 		$atri_id_to = $this->translate_attribute_id($atri_id_from, $this->source_language, $this->destination_language);
 		$sql = "delete from omp_values
 		where inst_id=$inst_id
