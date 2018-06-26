@@ -24,12 +24,23 @@ class TranslatorModel extends AppModel {
 		if (!$row)
 			die("Critical error atri_id=$atri_id_from not found in language $source_language!\n");
 
-		$offsetlang=$this->offsetlang;
+		$sql="select id from omp_attributes 
+		where language=" . parent::escape($destination_language, $connection) . "
+		and tag=". parent::escape($row['tag'], $connection) . "
+		";
+		$row = parent::get_one($sql, $connection);
+		if (!$row)
+			die("Critical error source atri_id=$atri_id_from not found in language $destination_language!\n");
 		
+		/*
+		$offsetlang=$this->offsetlang;
 		$destination_lang_id = $this->get_language_id($destination_language);
 		$destination_lang_id = $destination_lang_id * $offsetlang;
 		$multilang_atri_id = $atri_id_from % $offsetlang;
 		$translated_atri_id = $destination_lang_id + $multilang_atri_id;
+		*/
+		$translated_atri_id=$row['id'];
+		
 		return $translated_atri_id;
 	}
 
