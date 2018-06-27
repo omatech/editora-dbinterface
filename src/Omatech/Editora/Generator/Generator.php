@@ -327,6 +327,26 @@ class Generator extends DBInterfaceBase {
 			}
 		}
 
+		
+		foreach ($attributes_order_string as $key => $val) {
+			if (is_array($val)) {
+				$tag = $val[0];
+				array_shift($val);
+				$this->create_attribute($key, $tag, 'B', 0, 'ALL', 0, $val);
+			} else {
+				$this->create_attribute($key, $val, 'B');
+			}
+		}
+
+		foreach ($attributes_order_date as $key => $val) {
+			if (is_array($val)) {
+				$tag = $val[0];
+				array_shift($val);
+				$this->create_attribute($key, $tag, 'C', 0, 'ALL', 0, $val);
+			} else {
+				$this->create_attribute($key, $val, 'C');
+			}
+		}		
 
 		foreach ($attributes_string as $key => $val) {
 			if (is_array($val)) {

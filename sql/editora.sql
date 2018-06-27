@@ -96,6 +96,8 @@ CREATE TABLE IF NOT EXISTS `omp_instances` (
   `nice_url` varchar(250) DEFAULT NULL,
   `external_id` varchar(250) DEFAULT NULL,
   `batch_id` varchar(250) DEFAULT NULL,
+  `order_string` varchar(250) DEFAULT NULL,
+  `order_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `omp_instances_n1` (`class_id`) USING BTREE,
   KEY `omp_instances_n2` (`publishing_begins`,`publishing_ends`),
@@ -103,6 +105,8 @@ CREATE TABLE IF NOT EXISTS `omp_instances` (
   KEY `omp_instances_n4` (`key_fields`),
   KEY `omp_instances_n5` (`external_id`),
   KEY `omp_instances_n6` (`batch_id`)
+  KEY `omp_instances_n7` (`order_string`)
+  KEY `omp_instances_n8` (`order_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------

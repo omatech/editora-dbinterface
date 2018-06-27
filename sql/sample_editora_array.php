@@ -51,6 +51,14 @@ $data = array(
 			53 => ['BlockPage', 'Bloc pàgina']
 		]
 	),
+	'attributes_order_string' => array(
+		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
+		101 => array('apellidos', 'Cognoms', 'Apellidos', 'Surname')
+	),
+	'attributes_order_date' => array(
+		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
+		102 => array('fecha_noticia', 'Data noticia', 'Fecha noticia', 'News Date')
+	),	
 	'attributes_string' => array(
 		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
 		100 => array('nom', 'Nom', 'Nombre', 'Name')
