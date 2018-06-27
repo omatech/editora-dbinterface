@@ -422,10 +422,31 @@ class DBInterfaceBase {
 	}
 
 	protected function getLimitFilter($num = null) {
+		// $num can be only integer or with syntax 10/3 (give 10 elements in page 3 (elements from 31 to 40)
+		$default=100000000;
 		if ($num != null) {
+			if (stripos($num, '/'))
+			{
+				$pagination_array=explode("/", $num);
+				if (isset($pagination_array[0]) && isset($pagination_array[1]) && is_numeric($pagination_array[0]) && is_numeric($pagination_array[1]) && $pagination_array[1]>0)
+				{
+					$limit=$pagination_array[0];
+					$offset=($pagination_array[1]-1)*$limit;
+					return " limit $limit offset $offset ";
+				}
+				else
+				{
+					$this->debug("Limit syntax incorrect $num for example 10/1 gives first 10 records 10/2 gives from 11 to 20 etc.");
+					return " limit $default ";
+				}
+			}
+			else
+			{
+				
+			}
 			return " limit $num ";
 		} else {
-			return " limit 100000000 ";
+			return " limit $default ";
 		}
 	}
 
