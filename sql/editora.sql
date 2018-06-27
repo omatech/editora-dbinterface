@@ -104,8 +104,8 @@ CREATE TABLE IF NOT EXISTS `omp_instances` (
   KEY `omp_instances_n3` (`status`),
   KEY `omp_instances_n4` (`key_fields`),
   KEY `omp_instances_n5` (`external_id`),
-  KEY `omp_instances_n6` (`batch_id`)
-  KEY `omp_instances_n7` (`order_string`)
+  KEY `omp_instances_n6` (`batch_id`),
+  KEY `omp_instances_n7` (`order_string`),
   KEY `omp_instances_n8` (`order_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
