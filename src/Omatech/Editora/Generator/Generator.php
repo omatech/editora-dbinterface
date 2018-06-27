@@ -342,9 +342,9 @@ class Generator extends DBInterfaceBase {
 			if (is_array($val)) {
 				$tag = $val[0];
 				array_shift($val);
-				$this->create_attribute($key, $tag, 'C', 0, 'ALL', 0, $val);
+				$this->create_attribute($key, $tag, 'E', 0, 'ALL', 0, $val);
 			} else {
-				$this->create_attribute($key, $val, 'C');
+				$this->create_attribute($key, $val, 'E');
 			}
 		}		
 

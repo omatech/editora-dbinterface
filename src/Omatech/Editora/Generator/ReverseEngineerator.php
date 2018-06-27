@@ -26,7 +26,7 @@ class ReverseEngineerator extends DBInterfaceBase {
 		$return_array['classes']=$this->getClassesArray();
 				
 		$return_array['attributes_order_string']=$this->getAttributes ('B');
-		$return_array['attributes_order_date']=$this->getAttributes ('C');
+		$return_array['attributes_order_date']=$this->getAttributes ('E');
 		$return_array['attributes_string']=$this->getAttributes ('S');
 		$return_array['attributes_textarea']=$this->getAttributes ('K');
 		$return_array['attributes_text']=$this->getAttributes ('T');

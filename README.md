@@ -138,7 +138,8 @@ phpunit tests/
  
 A -> text_val (Text Area)
 B -> text_val (Short string used to order instances)
-C -> date_val (Date used to order instances)
+C -> text_val (HTML Code textarea)
+E -> date_val (Date used to order instances)
 D -> date_val (Date)
 F -> text_val (File URL)
 I -> text_val (Image URL)
