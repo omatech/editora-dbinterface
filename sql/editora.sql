@@ -20,7 +20,8 @@ CREATE TABLE IF NOT EXISTS `omp_attributes` (
   `caption_es` varchar(100) DEFAULT NULL,
   `caption_en` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`) USING BTREE
+  UNIQUE KEY `omp_attributes_u1` (`name`) USING BTREE,
+	KEY `omp_attributes_n1` (`class_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -77,7 +78,9 @@ CREATE TABLE IF NOT EXISTS `omp_classes` (
   `name_en` varchar(100) DEFAULT NULL,
   `recursive_clone` char(20) DEFAULT 'N',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `name` (`name`) USING BTREE
+  UNIQUE KEY `name` (`name`) USING BTREE,
+	KEY `omp_classes_n1` (`tag`) USING BTREE,
+	KEY `omp_classes_n2` (`grp_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -134,8 +137,7 @@ CREATE TABLE IF NOT EXISTS `omp_instances_cache` (
   `xml_cache_d` text NOT NULL,
   `search_field` text,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `inst_id, lang` (`inst_id`,`language`) USING BTREE,
-  UNIQUE KEY `id` (`id`) USING BTREE
+  UNIQUE KEY `inst_id, lang` (`inst_id`,`language`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -194,11 +196,11 @@ CREATE TABLE IF NOT EXISTS `omp_relation_instances` (
   `external_id` varchar(255) DEFAULT NULL,
   `batch_id` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `id` (`id`) USING BTREE,
   KEY `omp_relation_instances_n1` (`child_inst_id`) USING BTREE,
   KEY `omp_relation_instances_n2` (`parent_inst_id`) USING BTREE,
   KEY `omp_relation_instances_n3` (`external_id`) USING BTREE,
   KEY `omp_relation_instances_n4` (`batch_id`) USING BTREE
+  KEY `omp_relation_instances_n5` (`rel_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 

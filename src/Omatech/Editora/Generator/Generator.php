@@ -45,6 +45,29 @@ class Generator extends DBInterfaceBase {
 		}
 		return $changes;
 	}
+	
+	public function tryToCreateIndex($table, $num, $columns_array, $unique=false)
+	{
+		$changes=0;
+		$index_name=$table.'_n'.$num;
+		$unique_flag='';
+		if ($unique)
+		{
+			$index_name=$table.'_u'.$num;
+			$unique_flag=' unique ';
+		}
+		$index_name=
+		$sql="create $unique_flag index $index_name on $table (".implode(',', $columns_array).") ";
+		try {
+			$this->conn->executeQuery($sql);
+			echo "Created!\n";
+			$changes++;
+		} catch (\Doctrine\DBAL\DBALException $e)
+		{
+			echo "Already created!\n";
+		}
+		return $changes;
+	}
 
 	public function modernize() {
 		$this->conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
@@ -78,9 +101,13 @@ class Generator extends DBInterfaceBase {
 		
 		$order_string_found=false;
 		$order_date_found=false;
+		$external_id_found=false;
+		$batch_id_found=false;
 		foreach ($rows as $row) {
 			if ($row['Field']=='order_string') $order_string_found=true;
 			if ($row['Field']=='order_date') $order_date_found=true;
+			if ($row['Field']=='external_id') $external_id_found=true;
+			if ($row['Field']=='batch_id') $batch_id_found=true;
 		}	
 		if (!$order_string_found) {
 			$sql = "alter table $table add column order_string varchar(250) default null\n";
@@ -92,10 +119,71 @@ class Generator extends DBInterfaceBase {
 		if (!$order_date_found) {
 			$sql = "alter table $table add column order_date datetime default null\n";
 			$this->conn->executeQuery($sql);
-			$sql = "alter table $table add key omp_instances_n8 (order_date)\n";
+			$changes++;
+		}
+		if (!$external_id_found) {
+			$sql = "alter table $table add column external_id varchar(250) default null\n";
 			$this->conn->executeQuery($sql);
 			$changes++;
-		}		
+		}
+		if (!$external_id_found) {
+			$sql = "alter table $table add column batch_id varchar(250) default null\n";
+			$this->conn->executeQuery($sql);
+			$changes++;
+		}
+		
+		$changes += $this->tryToCreateIndex('omp_attributes', 1, ['tag']);
+
+		$changes += $this->tryToCreateIndex('omp_class_attributes', 1, ['class_id']);
+		$changes += $this->tryToCreateIndex('omp_class_attributes', 2, ['atri_id']);
+		$changes += $this->tryToCreateIndex('omp_class_attributes', 3, ['rel_id']);
+		$changes += $this->tryToCreateIndex('omp_class_attributes', 4, ['tab_id']);
+		
+		$changes += $this->tryToCreateIndex('omp_classes', 1, ['name'], true);
+		$changes += $this->tryToCreateIndex('omp_classes', 1, ['tag']);
+		$changes += $this->tryToCreateIndex('omp_classes', 2, ['grp_id']);
+		
+		$changes += $this->tryToCreateIndex('omp_instances', 1, ['class_id']);
+		$changes += $this->tryToCreateIndex('omp_instances', 2, ['publishing_begins', 'publishing_ends']);
+		$changes += $this->tryToCreateIndex('omp_instances', 3, ['status']);
+		$changes += $this->tryToCreateIndex('omp_instances', 4, ['key_fields']);
+		$changes += $this->tryToCreateIndex('omp_instances', 5, ['external_id']);
+		$changes += $this->tryToCreateIndex('omp_instances', 6, ['batch_id']);
+		$changes += $this->tryToCreateIndex('omp_instances', 7, ['order_string']);
+		$changes += $this->tryToCreateIndex('omp_instances', 8, ['order_date']);
+		
+		$changes += $this->tryToCreateIndex('omp_instances_backup', 1, ['inst_id', 'language']);
+		
+		$changes += $this->tryToCreateIndex('omp_instances_cache', 1, ['inst_id', 'language']);
+		
+		$changes += $this->tryToCreateIndex('omp_lookups_values', 1, ['lookup_id', 'ordre']);
+
+		$changes += $this->tryToCreateIndex('omp_niceurl', 1, ['niceurl', 'language'], true);
+	
+		$changes += $this->tryToCreateIndex('omp_relation_instances', 1, ['child_inst_id']);
+		$changes += $this->tryToCreateIndex('omp_relation_instances', 2, ['parent_inst_id']);
+		$changes += $this->tryToCreateIndex('omp_relation_instances', 3, ['external_id']);
+		$changes += $this->tryToCreateIndex('omp_relation_instances', 4, ['batch_id']);
+		$changes += $this->tryToCreateIndex('omp_relation_instances', 5, ['rel_id']);
+		
+		$changes += $this->tryToCreateIndex('omp_relations', 1, ['parent_class_id']);
+		$changes += $this->tryToCreateIndex('omp_relations', 2, ['child_class_id']);
+		$changes += $this->tryToCreateIndex('omp_relations', 3, ['name']);
+		$changes += $this->tryToCreateIndex('omp_relations', 4, ['tag']);
+
+		$changes += $this->tryToCreateIndex('omp_roles_classes', 1, ['class_id']);
+		$changes += $this->tryToCreateIndex('omp_roles_classes', 2, ['rol_id']);
+		
+		$changes += $this->tryToCreateIndex('omp_static_text', 1, ['text_key', 'language']);
+		
+		$changes += $this->tryToCreateIndex('omp_user_instances', 1, ['user_id', 'tipo_acceso']);
+
+		$changes += $this->tryToCreateIndex('omp_users', 1, ['username'], true);
+
+		$changes += $this->tryToCreateIndex('omp_values', 1, ['inst_id', 'atri_id']);
+		$changes += $this->tryToCreateIndex('omp_values', 2, ['date_val']);
+		$changes += $this->tryToCreateIndex('omp_values', 3, ['num_val']);
+
 		return $changes;
 	}
 
