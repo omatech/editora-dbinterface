@@ -33,12 +33,28 @@ class Generator extends DBInterfaceBase {
 	public function modernize(){
 		$this->conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
 		$sm = $this->conn->getSchemaManager();
+		$changes=0;
 		
 		echo "Testing omp_attributes table\n";
 		$sql="show columns from omp_attributes";
 		$rows=$this->conn->fetchAll($sql);
+		foreach ($rows as $row)
+		{
+			if ($row['Field']=='type')
+			{
+				if (substr($row['Type'],0,4)=='enum')
+				{
+					$sql="alter table omp_attributes modify type varchar(10)\n";
+					$this->conn->executeQuery($sql);
+					$changes++;
+				}
+			}
+		}
+		
+		//echo "Testing omp_attributes table\n";
 		//$columns = $sm->listTableColumns('omp_attributes');
-		print_r($rows);		
+		//print_r($rows);		
+		return $changes;
 	}
 
 	public function resetPasswords($length = 8) {

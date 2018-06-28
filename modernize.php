@@ -19,7 +19,7 @@ set_time_limit(0);
 
 $options_array = getopt(null, ['to::'
 	, 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:'
-	, 'help']);
+	, 'help', 'debug']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
 	echo 'Modernize editora DB to include latest changes in DB structure
@@ -33,6 +33,7 @@ Parameters:
 
 Others:
 --help this help!
+--debug show all sqls (if not present false)
 
 example: 
 	
@@ -58,6 +59,7 @@ if ($to_version!=4){
 }
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
+if (isset($options_array['debug'])) $dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
 
 $conn_to = null;
 if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') {
@@ -76,7 +78,8 @@ if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') {
 if ($conn_to)
 {
 	$generator=new Generator($conn_to, array());
-	$generator->modernize();
+	$changes=$generator->modernize();
+	echo "$changes changes made!\n";
 }
 else
 {
