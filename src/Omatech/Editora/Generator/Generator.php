@@ -35,8 +35,10 @@ class Generator extends DBInterfaceBase {
 		$sm = $this->conn->getSchemaManager();
 		
 		echo "Testing omp_attributes table\n";
-		$columns = $sm->listTableColumns('omp_attributes');
-		print_r($columns);		
+		$sql="show columns from omp_attributes";
+		$rows=$this->conn->fetchAll($sql);
+		//$columns = $sm->listTableColumns('omp_attributes');
+		print_r($rows);		
 	}
 
 	public function resetPasswords($length = 8) {
