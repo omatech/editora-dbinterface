@@ -683,6 +683,12 @@ class Generator extends DBInterfaceBase {
 		foreach ($this->queries as $aQuery) {
 			try {
 				$this->conn->executeQuery($aQuery);
+				
+				$loader=new \Omatech\Editora\Loader\Loader($this->conn, $this->params);
+				$ret=$loader->ExistingInstanceIsDifferent(1, 'Home', ['nom_intern'=>'Home']);
+				if ($ret!=0) $loader->insertInstanceForcingID (1, 10, 'Home', ['nom_intern'=>'Home']);
+				$ret=$loader->ExistingInstanceIsDifferent(2, 'GLOBAL', ['nom_intern'=>'GLOBAL']);
+				if ($ret!=0) $loader->insertInstanceForcingID (2, 1, 'GLOBAL', ['nom_intern'=>'GLOBAL']);
 			} catch (\Exception $exception) {
 				$this->rollback();
 				return false;

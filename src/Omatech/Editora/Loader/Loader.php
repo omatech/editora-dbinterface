@@ -98,7 +98,8 @@ class Loader extends DBInterfaceBase {
 		}
 	}
 
-	public function ExistingInstanceIsDifferent($inst_id, $nom_intern, $values, $status = 'O', &$difference, &$attr_difference) {// -1 instance not exist
+	public function ExistingInstanceIsDifferent($inst_id, $nom_intern, $values, $status = 'O', &$difference, &$attr_difference) {
+		// -1 instance not exist
 		// -2 status is different
 		// -3 nom_intern is different
 		// -4 some value is different
@@ -351,6 +352,54 @@ class Loader extends DBInterfaceBase {
 
 		$sql = "insert into omp_instances (class_id, key_fields, status, publishing_begins, publishing_ends, creation_date, update_date)
 						values ($class_id, " . $this->conn->quote($nom_intern) . ", $status, $publishing_begins, $publishing_ends, now(), now())";
+		$this->conn->executeQuery($sql);
+		$inst_id = $this->conn->lastInsertId();
+
+		$ret = $this->updateValues($inst_id, ['nom_intern' => $nom_intern]);
+		if (!$ret) {
+			$this->conn->executeQuery('rollback');
+			return false;
+		}
+
+		$ret = $this->updateValues($inst_id, $values);
+		if (!$ret) {
+			$this->conn->executeQuery('rollback');
+			return false;
+		}
+
+
+		$sql = "update omp_instances set update_date=now() where id=$inst_id";
+		$this->conn->executeQuery($sql);
+
+		return $inst_id;
+	}
+
+	public function insertInstanceForcingID($inst_id, $class_id, $nom_intern, $values, $status = 'O', $publishing_begins = null, $publishing_ends = null) {
+
+		$status = $this->conn->quote($status);
+
+		if ($publishing_begins == null) {
+			$publishing_begins = 'now()';
+		} else {
+			if (is_int($publishing_begins)) {// es un timestamp
+				$publishing_begins = $this->conn->quote(date("Y-m-d H:m:s", $publishing_begins));
+			} else {// confiem que esta en el format correcte
+				$publishing_begins = $this->conn->quote($publishing_begins);
+			}
+		}
+
+		if ($publishing_ends == null) {
+			$publishing_ends = 'null';
+		} else {
+			if (is_int($publishing_ends)) {// es un timestamp
+				$publishing_ends = $this->conn->quote(date("Y-m-d H:m:s", $publishing_ends));
+			} else {// confiem que esta en el format correcte
+				$publishing_ends = $this->conn->quote($publishing_ends);
+			}
+		}
+
+		$sql = "insert into omp_instances (id, class_id, key_fields, status, publishing_begins, publishing_ends, creation_date, update_date)
+						values ($inst_id, $class_id, " . $this->conn->quote($nom_intern) . ", $status, $publishing_begins, $publishing_ends, now(), now())";
 		$this->conn->executeQuery($sql);
 		$inst_id = $this->conn->lastInsertId();
 

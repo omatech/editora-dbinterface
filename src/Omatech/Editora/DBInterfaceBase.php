@@ -4,6 +4,7 @@ namespace Omatech\Editora;
 class DBInterfaceBase {
 
 	protected $conn;
+	protected $params;
 	protected $cache_expiration = 3600;
 	protected $type_of_cache = null;
 	protected $mc = null;
@@ -14,7 +15,7 @@ class DBInterfaceBase {
 	protected $timings = false;
 
 	public function __construct($conn, $params) {
-		
+		$this->params=$params;
 		foreach ($params as $key => $value) {
 			//echo "Parsing $key=$value\n";
 			if (property_exists($this, $key)) {
