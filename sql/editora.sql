@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `omp_attributes` (
   `caption_en` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `omp_attributes_u1` (`name`) USING BTREE,
-	KEY `omp_attributes_n1` (`class_id`) USING BTREE
+	KEY `omp_attributes_n1` (`tag`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
