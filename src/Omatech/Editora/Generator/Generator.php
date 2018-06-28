@@ -52,7 +52,7 @@ class Generator extends DBInterfaceBase {
 		$changes = 0;
 
 		echo "Testing omp_attributes table\n";
-		$changes += $this->fromEnumToVarchar('omp_attributes', ['type']);
+		$changes += $this->fromEnumToVarchar('omp_attributes', ['type', 'language']);
 
 		echo "Testing omp_class_attributes table\n";
 		$changes += $this->fromEnumToVarchar('omp_class_attributes', ['caption_position', 'mandatory', 'detail']);
