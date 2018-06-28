@@ -392,6 +392,20 @@ class DBInterfaceBase {
 		";
 	}
 
+	public function updateInstanceOrderString ($inst_id, $value)
+	{
+		$value=$this->conn->quote($value);
+		$sql="update omp_instances set order_string=$value where id=$inst_id";
+		return $this->conn->executeQuery($sql);
+	}
+	
+	public function updateInstanceOrderDate ($inst_id, $value)
+	{
+		$value=$this->conn->quote($value);
+		$sql="update omp_instances set order_date=$value where id=$inst_id";
+		return $this->conn->executeQuery($sql);
+	}	
+	
 	protected function getOrderFilter($order, $order_direction = null, $previous_order_filter = null) {
 		if (isset($order)) {
 			if (strtolower($order) == 'update_date') {
@@ -405,6 +419,12 @@ class DBInterfaceBase {
 			}
 			if (strtolower($order) == 'publishing_begins') {
 				$order_sql = " order by i.publishing_begins ";
+			}
+			if (strtolower($order) == 'order_string') {
+				$order_sql = " order by i.order_string ";
+			}
+			if (strtolower($order) == 'order_date') {
+				$order_sql = " order by i.order_date ";
 			}
 		} else {
 			if ($previous_order_filter != null) {

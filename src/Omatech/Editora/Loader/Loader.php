@@ -384,9 +384,19 @@ class Loader extends DBInterfaceBase {
 				//print_r($attr_info);
 				if ($attr_info['type'] == 'I') {// image
 					$this->insertUpdateImageVal($inst_id, $attr_info['id'], $value);
-				} elseif ($attr_info['type'] == 'D') {// date
+				} 
+				elseif ($attr_info['type'] == 'B') {// string order
+					$this->insertUpdateTextVal($inst_id, $attr_info['id'], $value);
+					$this->updateInstanceOrderString($inst_id, $value);
+				} 
+				elseif ($attr_info['type'] == 'D') {// date
 					$this->insertUpdateDateVal($inst_id, $attr_info['id'], $value);
-				} elseif ($attr_info['type'] == 'N') {// number
+				} 
+				elseif ($attr_info['type'] == 'E') {// date order
+					$this->insertUpdateDateVal($inst_id, $attr_info['id'], $value);
+					$this->updateInstanceOrderDate($inst_id, $value);
+				} 
+				elseif ($attr_info['type'] == 'N') {// number
 					$this->insertUpdateNumVal($inst_id, $attr_info['id'], $value);
 				} elseif ($attr_info['type'] == 'L') {// lookup
 					$this->insertUpdateLookupVal($inst_id, $attr_info['id'], $attr_info['lookup_id'], $value);
