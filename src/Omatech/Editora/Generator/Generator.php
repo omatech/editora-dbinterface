@@ -154,7 +154,7 @@ class Generator extends DBInterfaceBase {
 		
 		$changes += $this->tryToCreateIndex('omp_instances_backup', 1, ['inst_id', 'language']);
 		
-		$changes += $this->tryToCreateIndex('omp_instances_cache', 1, ['inst_id', 'language']);
+		$changes += $this->tryToCreateIndex('omp_instances_cache', 1, ['inst_id', 'language'], true);
 		
 		$changes += $this->tryToCreateIndex('omp_lookups_values', 1, ['lookup_id', 'ordre']);
 

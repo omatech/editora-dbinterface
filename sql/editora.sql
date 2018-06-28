@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS `omp_instances_cache` (
   `xml_cache_d` text NOT NULL,
   `search_field` text,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `inst_id, lang` (`inst_id`,`language`) USING BTREE
+  UNIQUE KEY `omp_instances_cache_u1` (`inst_id`,`language`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -178,7 +178,7 @@ CREATE TABLE IF NOT EXISTS `omp_niceurl` (
   `language` varchar(3) DEFAULT NULL,
   `niceurl` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  UNIQUE KEY `niceurl` (`niceurl`,`language`) USING BTREE
+  UNIQUE KEY `omp_niceurl_u1` (`niceurl`,`language`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
