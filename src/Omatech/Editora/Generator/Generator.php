@@ -835,6 +835,8 @@ class Generator extends DBInterfaceBase {
 			'languages' => array(),
 			'groups' => array(),
 			'classes' => array(),
+			'attributes_order_date' => array(),
+			'attributes_order_string' => array(),
 			'attributes_string' => array(),
 			'attributes_textarea' => array(),
 			'attributes_text' => array(),
