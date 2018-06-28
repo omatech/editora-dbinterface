@@ -3,18 +3,18 @@ SET FOREIGN_KEY_CHECKS=0;
 -- Table structure for omp_attributes
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_attributes` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL DEFAULT '',
   `caption` varchar(200) NOT NULL DEFAULT '',
   `description` text,
   `tag` varchar(100) NOT NULL DEFAULT '',
   `type` varchar(1) NOT NULL DEFAULT 'S',
-  `lookup_id` int(11) DEFAULT NULL,
-  `width` int(3) DEFAULT NULL,
-  `height` int(3) DEFAULT NULL,
-  `max_length` int(11) DEFAULT '0',
-  `img_width` int(3) DEFAULT NULL,
-  `img_height` int(3) DEFAULT NULL,
+  `lookup_id` int DEFAULT NULL,
+  `width` int DEFAULT NULL,
+  `height` int DEFAULT NULL,
+  `max_length` int DEFAULT '0',
+  `img_width` int DEFAULT NULL,
+  `img_height` int DEFAULT NULL,
   `language` varchar(3) NOT NULL DEFAULT 'ALL',
   `caption_ca` varchar(100) DEFAULT NULL,
   `caption_es` varchar(100) DEFAULT NULL,
@@ -27,19 +27,19 @@ CREATE TABLE IF NOT EXISTS `omp_attributes` (
 -- Table structure for omp_class_attributes
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_class_attributes` (
-  `id` int(3) unsigned NOT NULL AUTO_INCREMENT,
-  `class_id` int(3) unsigned DEFAULT '0',
-  `atri_id` int(3) DEFAULT '0',
-  `rel_id` int(3) unsigned DEFAULT '0',
-  `tab_id` int(3) DEFAULT '-1',
-  `fila` int(3) unsigned DEFAULT '0',
-  `columna` int(3) unsigned DEFAULT '0',
-  `width` int(3) DEFAULT NULL,
-  `height` int(3) DEFAULT NULL,
-  `img_width` int(3) DEFAULT NULL,
-  `img_height` int(3) DEFAULT NULL,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `class_id` int unsigned DEFAULT '0',
+  `atri_id` int DEFAULT '0',
+  `rel_id` int unsigned DEFAULT '0',
+  `tab_id` int DEFAULT '-1',
+  `fila` int unsigned DEFAULT '0',
+  `columna` int unsigned DEFAULT '0',
+  `width` int DEFAULT NULL,
+  `height` int DEFAULT NULL,
+  `img_width` int DEFAULT NULL,
+  `img_height` int DEFAULT NULL,
   `caption_position` varchar(10) NOT NULL DEFAULT 'left',
-  `ordre_key` int(10) unsigned DEFAULT NULL,
+  `ordre_key` int unsigned DEFAULT NULL,
   `mandatory` varchar(1) DEFAULT 'N',
   `detail` varchar(1) DEFAULT 'N',
   PRIMARY KEY (`id`),
@@ -53,12 +53,12 @@ CREATE TABLE IF NOT EXISTS `omp_class_attributes` (
 -- Table structure for omp_class_groups
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_class_groups` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `caption` varchar(200) NOT NULL DEFAULT '',
   `caption_ca` varchar(200) DEFAULT NULL,
   `caption_es` varchar(200) DEFAULT NULL,
   `caption_en` varchar(200) DEFAULT NULL,
-  `ordering` int(2) DEFAULT NULL,
+  `ordering` int DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -66,12 +66,12 @@ CREATE TABLE IF NOT EXISTS `omp_class_groups` (
 -- Table structure for omp_classes
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_classes` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(100) NOT NULL DEFAULT '',
   `description` text,
   `tag` varchar(200) NOT NULL DEFAULT '',
-  `grp_id` int(11) NOT NULL DEFAULT '1',
-  `grp_order` int(11) DEFAULT NULL,
+  `grp_id` int NOT NULL DEFAULT '1',
+  `grp_order` int DEFAULT NULL,
   `name_ca` varchar(100) DEFAULT NULL,
   `name_es` varchar(100) DEFAULT NULL,
   `name_en` varchar(100) DEFAULT NULL,
@@ -84,8 +84,8 @@ CREATE TABLE IF NOT EXISTS `omp_classes` (
 -- Table structure for omp_instances
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_instances` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `class_id` int(11) NOT NULL DEFAULT '0',
+  `id` int NOT NULL AUTO_INCREMENT,
+  `class_id` int NOT NULL DEFAULT '0',
   `key_fields` varchar(250) DEFAULT NULL,
   `status` varchar(1) NOT NULL DEFAULT 'P', /*(Pending Validated Ok)*/
   `publishing_begins` datetime DEFAULT CURRENT_TIMESTAMP,
@@ -113,12 +113,12 @@ CREATE TABLE IF NOT EXISTS `omp_instances` (
 -- Table structure for omp_instances_backup
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_instances_backup` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `inst_id` int(11) NOT NULL DEFAULT '0',
+  `id` int NOT NULL AUTO_INCREMENT,
+  `inst_id` int NOT NULL DEFAULT '0',
   `language` varchar(10) NOT NULL DEFAULT '',
   `xml_cache` text CHARACTER SET utf8mb4 NOT NULL,
   `date` timestamp NULL DEFAULT CURRENT_TIMESTAMP,
-  `user` int(11) NOT NULL DEFAULT '0',
+  `user` int NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `omp_instances_backup_n1` (`inst_id`,`language`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -127,8 +127,8 @@ CREATE TABLE IF NOT EXISTS `omp_instances_backup` (
 -- Table structure for omp_instances_cache
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_instances_cache` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `inst_id` int(11) NOT NULL DEFAULT '0',
+  `id` int NOT NULL AUTO_INCREMENT,
+  `inst_id` int NOT NULL DEFAULT '0',
   `language` varchar(10) NOT NULL DEFAULT '',
   `xml_cache_r` text NOT NULL,
   `xml_cache_d` text NOT NULL,
@@ -142,7 +142,7 @@ CREATE TABLE IF NOT EXISTS `omp_instances_cache` (
 -- Table structure for omp_lookups
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_lookups` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL DEFAULT '',
   `type` enum('L','R','C') NOT NULL DEFAULT 'L',
   `default_id` int(11) NOT NULL DEFAULT '0',
@@ -153,9 +153,9 @@ CREATE TABLE IF NOT EXISTS `omp_lookups` (
 -- Table structure for omp_lookups_values
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_lookups_values` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `lookup_id` int(11) NOT NULL DEFAULT '0',
-  `ordre` int(11) NOT NULL DEFAULT '0',
+  `id` int NOT NULL AUTO_INCREMENT,
+  `lookup_id` int NOT NULL DEFAULT '0',
+  `ordre` int NOT NULL DEFAULT '0',
   `value` varchar(255) NOT NULL DEFAULT '',
   `value_es` varchar(255) NOT NULL DEFAULT '',
   `value_en` varchar(255) DEFAULT '',
@@ -171,8 +171,8 @@ CREATE TABLE IF NOT EXISTS `omp_lookups_values` (
 -- Table structure for omp_niceurl
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_niceurl` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `inst_id` int(11) DEFAULT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
+  `inst_id` int DEFAULT NULL,
   `language` varchar(3) DEFAULT NULL,
   `niceurl` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
@@ -183,10 +183,10 @@ CREATE TABLE IF NOT EXISTS `omp_niceurl` (
 -- Table structure for omp_relation_instances
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_relation_instances` (
-  `id` int(3) unsigned NOT NULL AUTO_INCREMENT,
-  `rel_id` int(3) unsigned DEFAULT '0',
-  `parent_inst_id` int(3) unsigned DEFAULT '0',
-  `child_inst_id` int(3) unsigned DEFAULT '0',
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `rel_id` int unsigned DEFAULT '0',
+  `parent_inst_id` int unsigned DEFAULT '0',
+  `child_inst_id` int unsigned DEFAULT '0',
   `weight` double DEFAULT NULL,
   `relation_date` datetime DEFAULT NULL,
   `clone_session` varchar(255) DEFAULT NULL,
@@ -206,14 +206,14 @@ CREATE TABLE IF NOT EXISTS `omp_relation_instances` (
 -- Table structure for omp_relations
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_relations` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) DEFAULT NULL,
   `caption` varchar(255) NOT NULL DEFAULT '',
   `description` text,
   `language` varchar(3) NOT NULL DEFAULT 'ALL',
   `tag` varchar(100) NOT NULL DEFAULT '',
-  `parent_class_id` int(11) NOT NULL DEFAULT '0',
-  `child_class_id` int(11) NOT NULL DEFAULT '0',
+  `parent_class_id` int NOT NULL DEFAULT '0',
+  `child_class_id` int NOT NULL DEFAULT '0',
   `multiple_child_class_id` varchar(255) DEFAULT NULL,
   `order_type` varchar(1) NOT NULL DEFAULT 'M',
   `join_icon` char(1) DEFAULT 'Y',
@@ -245,9 +245,9 @@ CREATE TABLE IF NOT EXISTS `omp_roles` (
 -- Table structure for omp_roles_classes
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_roles_classes` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `class_id` int(11) NOT NULL DEFAULT '0',
-  `rol_id` int(11) NOT NULL DEFAULT '0',
+  `id` int NOT NULL AUTO_INCREMENT,
+  `class_id` int NOT NULL DEFAULT '0',
+  `rol_id` int NOT NULL DEFAULT '0',
   `browseable` char(1) DEFAULT NULL,
   `insertable` char(1) DEFAULT NULL,
   `editable` char(1) DEFAULT NULL,
@@ -267,11 +267,11 @@ CREATE TABLE IF NOT EXISTS `omp_roles_classes` (
 -- Table structure for omp_search
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_search` (
-  `id` int(28) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `text` text,
-  `inst_id` int(28) NOT NULL,
-  `class_id` int(28) NOT NULL,
-  `atri_id` int(28) NOT NULL,
+  `inst_id` int NOT NULL,
+  `class_id` int NOT NULL,
+  `atri_id` int NOT NULL,
   `language` varchar(10) NOT NULL,
   PRIMARY KEY (`id`),
   FULLTEXT KEY `omp_search_f1` (`text`)
@@ -281,7 +281,7 @@ CREATE TABLE IF NOT EXISTS `omp_search` (
 -- Table structure for omp_static_text
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_static_text` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `text_key` varchar(255) NOT NULL DEFAULT '',
   `language` varchar(3) DEFAULT NULL,
   `text_value` text,
@@ -294,12 +294,12 @@ CREATE TABLE IF NOT EXISTS `omp_static_text` (
 -- Table structure for omp_tabs
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_tabs` (
-  `id` int(6) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `name` varchar(100) DEFAULT NULL,
   `name_ca` varchar(100) DEFAULT NULL,
   `name_es` varchar(100) DEFAULT NULL,
   `name_en` varchar(100) DEFAULT NULL,
-  `ordering` int(3) DEFAULT NULL,
+  `ordering` int DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
@@ -307,9 +307,9 @@ CREATE TABLE IF NOT EXISTS `omp_tabs` (
 -- Table structure for omp_user_instances
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_user_instances` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL DEFAULT '0',
-  `inst_id` int(11) NOT NULL DEFAULT '0',
+  `id` int unsigned NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL DEFAULT '0',
+  `inst_id` int NOT NULL DEFAULT '0',
   `tipo_acceso` enum('A','F') DEFAULT 'A',
   `fecha` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -320,11 +320,11 @@ CREATE TABLE IF NOT EXISTS `omp_user_instances` (
 -- Table structure for omp_users
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(50) NOT NULL DEFAULT '',
   `password` varchar(100) NOT NULL DEFAULT '',
   `complete_name` text,
-  `rol_id` int(11) NOT NULL DEFAULT '0',
+  `rol_id` int NOT NULL DEFAULT '0',
   `language` varchar(3) DEFAULT 'es',
   `tipus` enum('U','O') NOT NULL DEFAULT 'U',
   `hashed_password` tinyint(1) DEFAULT 0,
@@ -337,9 +337,9 @@ CREATE TABLE IF NOT EXISTS `omp_users` (
 -- Table structure for omp_values
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_values` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `inst_id` int(11) NOT NULL DEFAULT '0',
-  `atri_id` int(11) NOT NULL DEFAULT '0',
+  `id` int NOT NULL AUTO_INCREMENT,
+  `inst_id` int NOT NULL DEFAULT '0',
+  `atri_id` int NOT NULL DEFAULT '0',
   `text_val` text,
   `date_val` datetime DEFAULT NULL,
   `num_val` double DEFAULT NULL,

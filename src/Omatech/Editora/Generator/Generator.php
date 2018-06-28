@@ -29,31 +29,73 @@ class Generator extends DBInterfaceBase {
 	public function getFinalData() {
 		return $this->data;
 	}
-	
-	public function modernize(){
-		$this->conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
-		$sm = $this->conn->getSchemaManager();
-		$changes=0;
-		
-		echo "Testing omp_attributes table\n";
-		$sql="show columns from omp_attributes";
-		$rows=$this->conn->fetchAll($sql);
-		foreach ($rows as $row)
-		{
-			if ($row['Field']=='type')
-			{
-				if (substr($row['Type'],0,4)=='enum')
-				{
-					$sql="alter table omp_attributes modify type varchar(10)\n";
+
+	public function fromEnumToVarchar($table, $columns_array) {
+		$sql = "show columns from $table";
+		$rows = $this->conn->fetchAll($sql);
+		$changes = 0;
+		foreach ($rows as $row) {
+			if (in_array($row['Field'], $columns_array)) {
+				if (substr($row['Type'], 0, 4) == 'enum') {
+					$sql = "alter table $table modify " . $row['Field'] . " varchar(10)\n";
 					$this->conn->executeQuery($sql);
 					$changes++;
 				}
 			}
 		}
-		
-		//echo "Testing omp_attributes table\n";
-		//$columns = $sm->listTableColumns('omp_attributes');
-		//print_r($rows);		
+		return $changes;
+	}
+
+	public function modernize() {
+		$this->conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
+		$sm = $this->conn->getSchemaManager();
+		$changes = 0;
+
+		echo "Testing omp_attributes table\n";
+		$changes += $this->fromEnumToVarchar('omp_attributes', ['type']);
+
+		echo "Testing omp_class_attributes table\n";
+		$changes += $this->fromEnumToVarchar('omp_class_attributes', ['caption_position', 'mandatory', 'detail']);
+
+		echo "Testing omp_instances table\n";
+		$changes += $this->fromEnumToVarchar('omp_instances', ['status']);
+
+		echo "Testing omp_niceurl table\n";
+		$changes += $this->fromEnumToVarchar('omp_niceurl', ['language']);
+
+		echo "Testing omp_relations table\n";
+		$changes += $this->fromEnumToVarchar('omp_relations', ['language', 'order_type']);
+
+		echo "Testing omp_static_text table\n";
+		$changes += $this->fromEnumToVarchar('omp_static_text', ['language']);
+
+		echo "Testing omp_users table\n";
+		$changes += $this->fromEnumToVarchar('omp_users', ['language']);
+				
+		$table='omp_instances';
+		$sql = "show columns from $table";
+		$rows = $this->conn->fetchAll($sql);
+		$changes = 0;
+		$order_string_found=false;
+		$order_date_found=false;
+		foreach ($rows as $row) {
+			if ($row['Field']=='order_string') $order_string_found=true;
+			if ($row['Field']=='order_date') $order_date_found=true;
+		}	
+		if (!$order_string_found) {
+			$sql = "alter table $table add column order_string varchar(250) default null\n";
+			$this->conn->executeQuery($sql);
+			$sql = "alter table $table add key omp_instances_n7 (order_string)\n";
+			$this->conn->executeQuery($sql);
+			$changes++;
+		}		
+		if (!$order_date_found) {
+			$sql = "alter table $table add column order_date datetime default null\n";
+			$this->conn->executeQuery($sql);
+			$sql = "alter table $table add key omp_instances_n8 (order_date)\n";
+			$this->conn->executeQuery($sql);
+			$changes++;
+		}		
 		return $changes;
 	}
 
@@ -354,7 +396,7 @@ class Generator extends DBInterfaceBase {
 			}
 		}
 
-		
+
 		foreach ($attributes_order_string as $key => $val) {
 			if (is_array($val)) {
 				$tag = $val[0];
@@ -373,7 +415,7 @@ class Generator extends DBInterfaceBase {
 			} else {
 				$this->create_attribute($key, $val, 'E');
 			}
-		}		
+		}
 
 		foreach ($attributes_string as $key => $val) {
 			if (is_array($val)) {
