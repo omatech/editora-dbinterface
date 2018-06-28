@@ -39,7 +39,7 @@ $e=new Extractor($conn, $params);
 - callback (closure function)
 
 #### Extraction params
-- order = order class instances by order criteria, update_date|publishing_begins|inst_id|key_fields default publishing_begins
+- order = order class instances by order criteria, update_date|publishing_begins|inst_id|key_fields|order_date|order_string default publishing_begins
 - order_direction = direction of the order by clause, desc|asc defaults to asc
 
 
