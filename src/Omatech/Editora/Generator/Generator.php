@@ -75,7 +75,7 @@ class Generator extends DBInterfaceBase {
 		$table='omp_instances';
 		$sql = "show columns from $table";
 		$rows = $this->conn->fetchAll($sql);
-		$changes = 0;
+		
 		$order_string_found=false;
 		$order_date_found=false;
 		foreach ($rows as $row) {
