@@ -29,6 +29,15 @@ class Generator extends DBInterfaceBase {
 	public function getFinalData() {
 		return $this->data;
 	}
+	
+	public function modernize(){
+		$this->conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
+		$sm = $this->conn->getSchemaManager();
+		
+		echo "Testing omp_attributes table\n";
+		$columns = $sm->listTableColumns('omp_attributes');
+		print_r($columns);		
+	}
 
 	public function resetPasswords($length = 8) {
 		$this->conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
