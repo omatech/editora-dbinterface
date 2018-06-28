@@ -199,7 +199,7 @@ CREATE TABLE IF NOT EXISTS `omp_relation_instances` (
   KEY `omp_relation_instances_n1` (`child_inst_id`) USING BTREE,
   KEY `omp_relation_instances_n2` (`parent_inst_id`) USING BTREE,
   KEY `omp_relation_instances_n3` (`external_id`) USING BTREE,
-  KEY `omp_relation_instances_n4` (`batch_id`) USING BTREE
+  KEY `omp_relation_instances_n4` (`batch_id`) USING BTREE,
   KEY `omp_relation_instances_n5` (`rel_id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
