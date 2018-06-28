@@ -20,7 +20,7 @@ set_time_limit(0);
 $options_array = getopt(null, ['to::'
 	, 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:'
 	, 'length:'
-	, 'help']);
+	, 'help', 'debug']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
 	echo 'Reset all the passwords in the database using a string with uppercase, lowercase, symbols and numbers
@@ -35,6 +35,7 @@ Parameters:
 
 Others:
 --help this help!
+--debug (if not present false)
 
 example: 
 	
@@ -60,6 +61,7 @@ if ($to_version!=4){
 }
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
+if (isset($options_array['debug'])) $dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
 
 $conn_to = null;
 if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') {

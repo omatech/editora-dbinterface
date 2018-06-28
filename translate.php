@@ -1,10 +1,14 @@
 <?php
 
 $autoload_location = '/vendor/autoload.php';
-while (!is_file(__DIR__ . $autoload_location)) {
-	$autoload_location = '/..' . $autoload_location;
+$tries=0;
+while (!is_file(__DIR__.$autoload_location)) 
+{ 
+	$autoload_location='/..'.$autoload_location;
+	$tries++;
+	if ($tries>10) die("Error trying to find autoload file try to make a composer update first\n");
 }
-require_once __DIR__ . $autoload_location;
+require_once __DIR__.$autoload_location;
 
 $usleep_pause = 500000;
 $price_per_character = 0.002;
@@ -20,7 +24,7 @@ set_time_limit(0);
 $options_array = getopt(null, ['from::', 'to::'
 	, 'dbfromhost:', 'dbfromuser:', 'dbfrompass:', 'dbfromname:', 'sourcelanguage:'
 	, 'dbtohost:', 'dbtouser:', 'dbtopass:', 'dbtoname:', 'destinationlanguage:'
-	, 'help', 'googlecloudprojectid:', 'costestimationonly']);
+	, 'help', 'googlecloudprojectid:', 'costestimationonly', 'debug']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
 	echo 'Translate missing strings from a source language to a destination language, using direct database connection
@@ -45,6 +49,7 @@ Others:
 --help this help!
 --googlecloudprojectid= ID of your project, billing must be set and authorized in the running host
 --costestimationonly If present only calculates the cost of the missing charaters to translate
+--debug (if not present false)
 
 example: 
 	
@@ -75,6 +80,7 @@ if ($options_array['from'] == 'db5' || $options_array['from'] == 'editora5file' 
 
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
+if (isset($options_array['debug'])) $dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
 
 $conn_from = null;
 if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {

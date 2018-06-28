@@ -1,8 +1,15 @@
 <?php
 
 $autoload_location = '/vendor/autoload.php';
-while (!is_file(__DIR__.$autoload_location)) { $autoload_location='/..'.$autoload_location;}
+$tries=0;
+while (!is_file(__DIR__.$autoload_location)) 
+{ 
+	$autoload_location='/..'.$autoload_location;
+	$tries++;
+	if ($tries>10) die("Error trying to find autoload file try to make a composer update first\n");
+}
 require_once __DIR__.$autoload_location;
+
 
 use \Doctrine\DBAL\Configuration;
 use \Omatech\Editora\Translator\TranslatorModel;
@@ -15,7 +22,7 @@ set_time_limit(0);
 $options_array = getopt(null, ['from::', 'to::'
 	, 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:', 'sourcelanguage:', 'destinationlanguage:'
 	, 'outputformat:', 'tofilename:', 'what:', 'since:'
-	, 'help', 'includemetadata']);
+	, 'help', 'includemetadata','debug']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
 	echo 'Export strings in one language from editora database to excel file or output
@@ -38,6 +45,7 @@ To parameters:
 
 Others:
 --help this help!
+--debug (if not present false)
 --what= (all|missing|same) 
   - all: all the strings in a source language
 	- missing: all the strings in source language that are empty in destination language
@@ -81,6 +89,7 @@ if ($options_array['from'] == 'db5') {
 }
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
+if (isset($options_array['debug'])) $dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
 
 $conn_from = null;
 if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {

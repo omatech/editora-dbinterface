@@ -21,7 +21,7 @@ set_time_limit(0);
 $options_array = getopt(null, ['from::', 'to::'
 	, 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:'
 	, 'outputformat:', 'outputfile:'
-	, 'help']);
+	, 'help', 'debug']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
 	echo 'Takes out the editora structure and generates a compatible generator file
@@ -40,6 +40,7 @@ To parameters:
 
 Others:
 --help this help!
+--debug (if not present false)
 
 example: 
 	
@@ -62,6 +63,7 @@ if ($options_array['from'] == 'db5') {
 if ($from_version==5) die ("DB5 not supported yet!\n");
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
+if (isset($options_array['debug'])) $dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
 
 $conn_from = null;
 if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
