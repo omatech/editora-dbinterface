@@ -106,8 +106,11 @@ class Loader extends DBInterfaceBase {
 		// -5 some value not exists in current instance
 		// 0 same!
 		if (!$this->existInstance($inst_id))
-			return -1;
-
+		{
+			$difference = -1;
+			return true;
+		}
+		
 		$current_inst = $this->getInstanceRowAndExistingValues($inst_id);
 		if ($status != $current_inst['status']) {
 			$difference = -1;
@@ -377,6 +380,8 @@ class Loader extends DBInterfaceBase {
 	public function insertInstanceForcingID($inst_id, $class_id, $nom_intern, $values, $status = 'O', $publishing_begins = null, $publishing_ends = null) {
 
 		$status = $this->conn->quote($status);
+		$sql="delete from omp_instances where id=$inst_id";
+		$this->conn->executeQuery($sql);
 
 		if ($publishing_begins == null) {
 			$publishing_begins = 'now()';

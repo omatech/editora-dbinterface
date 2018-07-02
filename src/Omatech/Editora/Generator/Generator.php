@@ -693,12 +693,12 @@ class Generator extends DBInterfaceBase {
 		}
 		
 		// Creem les instancies home i global si no les teniem
-/*		$loader=new \Omatech\Editora\Loader\Loader($this->conn, $this->params);
+		$loader=new \Omatech\Editora\Loader\Loader($this->conn, $this->params);
 		$ret=$loader->ExistingInstanceIsDifferent(1, 'Home', ['nom_intern'=>'Home'], 'O', $difference, $attr_difference);
 		if ($ret) $loader->insertInstanceForcingID (1, 10, 'Home', ['nom_intern'=>'Home']);
 		$ret=$loader->ExistingInstanceIsDifferent(2, 'GLOBAL', ['nom_intern'=>'GLOBAL'], 'O', $difference, $attr_difference);
 		if ($ret) $loader->insertInstanceForcingID (2, 1, 'GLOBAL', ['nom_intern'=>'GLOBAL']);
-*/
+
 		
 		$this->commit();
 
