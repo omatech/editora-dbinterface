@@ -33,6 +33,17 @@ class DBInterfaceBase {
 		}
 		$this->conn = $conn;
 	}
+	
+	function getAttrInfo($key) {
+		if (is_numeric($key)) {
+			$key = $this->conn->quote($key);
+			$sql = "SELECT * FROM omp_attributes where id=$key";
+		} else {
+			$key = $this->conn->quote($key);
+			$sql = "SELECT * FROM omp_attributes where name=$key";
+		}
+		return $this->conn->fetchAssoc($sql);
+	}		
 
 	public function findClassIDFromInstID($inst_id) {
 		$this->debug("Extractor::findClassIDFromInstID inst_id=$inst_id\n");

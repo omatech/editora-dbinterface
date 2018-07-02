@@ -598,15 +598,6 @@ class Extractor extends DBInterfaceBase {
 		return $values;
 	}
 	
-	function getAttrInfo($key) {
-		if (is_numeric($key)) {
-			$key = $this->conn->quote($key);
-			$sql = "SELECT * FROM omp_attributes where id=$key";
-		} else {
-			$key = $this->conn->quote($key);
-			$sql = "SELECT * FROM omp_attributes where name=$key";
-		}
-		return $this->conn->fetchAssoc($sql);
-	}	
+
 
 }
