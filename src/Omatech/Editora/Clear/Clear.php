@@ -38,10 +38,10 @@ class Clear extends DBInterfaceBase
 
         foreach ($tables_to_truncate as $aTable)
         {
-            $tables_truncate_queries .= 'DROP TABLE '.$database_name.'.'.$aTable.';';
+            $tables_truncate_queries .= "DROP TABLE IF EXISTS $database_name.$aTable;\n";
         }
 
-        $commands = 'SET FOREIGN_KEY_CHECKS=0;'.$tables_truncate_queries.'SET FOREIGN_KEY_CHECKS=1;';
+        $commands = "SET FOREIGN_KEY_CHECKS=0;\n".$tables_truncate_queries."SET FOREIGN_KEY_CHECKS=1;\n";
 
         $this->conn->executeQuery($commands);
 
@@ -59,7 +59,7 @@ class Clear extends DBInterfaceBase
 
         $tables = $this->conn->query("SELECT concat('DROP TABLE IF EXISTS ', table_name, ';') FROM information_schema.tables WHERE table_schema = '$database_name';")->fetchAll();
 
-        $queries = 'SET FOREIGN_KEY_CHECKS=0;';
+        $queries = "SET FOREIGN_KEY_CHECKS=0;\n";
 
         foreach ($tables as $aTable){
             $queries .= reset($aTable);

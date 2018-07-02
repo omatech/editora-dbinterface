@@ -265,7 +265,6 @@ class Generator extends DBInterfaceBase {
 		$editora_structure = file_get_contents(__DIR__ . '/../../../../sql/editora.sql');
 		array_push($this->queries, $editora_structure);
 
-		$this->create_attribute($nomintern_id, $nomintern_name, 'S');
 
 		if (isset($tabs) && is_array($tabs)) {
 			foreach ($tabs as $key => $tab) {
@@ -693,7 +692,10 @@ class Generator extends DBInterfaceBase {
 				$this->rollback();
 				return false;
 			}
+			
+			$this->create_attribute($nomintern_id, $nomintern_name, 'S');
 		}
+		
 
 		$this->commit();
 
