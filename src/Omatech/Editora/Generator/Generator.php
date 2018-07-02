@@ -265,6 +265,8 @@ class Generator extends DBInterfaceBase {
 		$editora_structure = file_get_contents(__DIR__ . '/../../../../sql/editora.sql');
 		array_push($this->queries, $editora_structure);
 
+		// Creem l'atribut nom_intern
+		$this->create_attribute($nomintern_id, $nomintern_name, 'S');
 
 		if (isset($tabs) && is_array($tabs)) {
 			foreach ($tabs as $key => $tab) {
@@ -683,20 +685,21 @@ class Generator extends DBInterfaceBase {
 			try {
 				$this->conn->executeQuery($aQuery);
 				
-				$loader=new \Omatech\Editora\Loader\Loader($this->conn, $this->params);
-				$ret=$loader->ExistingInstanceIsDifferent(1, 'Home', ['nom_intern'=>'Home'], 'O', $difference, $attr_difference);
-				if ($ret) $loader->insertInstanceForcingID (1, 10, 'Home', ['nom_intern'=>'Home']);
-				$ret=$loader->ExistingInstanceIsDifferent(2, 'GLOBAL', ['nom_intern'=>'GLOBAL'], 'O', $difference, $attr_difference);
-				if ($ret) $loader->insertInstanceForcingID (2, 1, 'GLOBAL', ['nom_intern'=>'GLOBAL']);
 			} catch (\Exception $exception) {
 				$this->rollback();
 				return false;
 			}
 			
-			$this->create_attribute($nomintern_id, $nomintern_name, 'S');
 		}
 		
-
+		// Creem les instancies home i global si no les teniem
+/*		$loader=new \Omatech\Editora\Loader\Loader($this->conn, $this->params);
+		$ret=$loader->ExistingInstanceIsDifferent(1, 'Home', ['nom_intern'=>'Home'], 'O', $difference, $attr_difference);
+		if ($ret) $loader->insertInstanceForcingID (1, 10, 'Home', ['nom_intern'=>'Home']);
+		$ret=$loader->ExistingInstanceIsDifferent(2, 'GLOBAL', ['nom_intern'=>'GLOBAL'], 'O', $difference, $attr_difference);
+		if ($ret) $loader->insertInstanceForcingID (2, 1, 'GLOBAL', ['nom_intern'=>'GLOBAL']);
+*/
+		
 		$this->commit();
 
 		return true;
