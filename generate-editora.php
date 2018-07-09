@@ -99,13 +99,20 @@ if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') {
 }
 
 
-if ($options_array['inputformat']=='array')
+if ($options_array['inputformat']=='array' || $options_array['inputformat']=='json')
 {
 	if (isset($options_array['inputfile']))
 	{
 		if (is_file($options_array['inputfile']))
 		{
-			require_once ($options_array['inputfile']);
+			if ($options_array['inputformat']=='array') {
+				require_once ($options_array['inputfile']);
+			}
+			else
+			{// format json
+				$json_data=file_get_contents($options_array['inputfile']);
+				$data=json_decode($json_data, true);
+			}
 		}
 		else
 		{
