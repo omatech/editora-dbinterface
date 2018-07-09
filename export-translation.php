@@ -22,7 +22,7 @@ set_time_limit(0);
 $options_array = getopt(null, ['from::', 'to::'
 	, 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:', 'sourcelanguage:', 'destinationlanguage:'
 	, 'outputformat:', 'tofilename:', 'what:', 'since:'
-	, 'help', 'includemetadata','debug']);
+	, 'help', 'includemetadata','debug','excludeimporteddata']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
 	echo 'Export strings in one language from editora database to excel file or output
@@ -46,6 +46,7 @@ To parameters:
 Others:
 --help this help!
 --debug (if not present false)
+--excludeimporteddata (default false, if present avoid instances with external_id not null)
 --what= (all|missing|same) 
   - all: all the strings in a source language
 	- missing: all the strings in source language that are empty in destination language
@@ -117,6 +118,12 @@ $params = [
 if (isset($options_array['since']))
 {
 	$params['since']=$options_array['since'];
+}
+
+$params['excludeimporteddata']=false;
+if (isset($options_array['excludeimporteddata']))
+{
+	$params['excludeimporteddata']=true;
 }
 
 $result = array();

@@ -221,6 +221,10 @@ class TranslatorModel extends AppModel {
 	}
 
 	function get_all_source_texts($connection = 'conn_from') {
+		
+		$imported_sql_add="";
+		if ($this->excludeimporteddata) $imported_sql_add=" and i.external_id is not null ";
+		
 		if ($this->from_version == 4) {
 			$sql_values = "select v.inst_id, v.atri_id, v.text_val value 
 			from omp_attributes a
@@ -231,6 +235,7 @@ class TranslatorModel extends AppModel {
 			and v.atri_id!=1
 			and v.inst_id=i.id
 			and i.status='O'
+			$imported_sql_add
 			and a.language=" . parent::escape($this->source_language, $connection) . "
 			and i.update_date >= ".parent::escape($this->since)."
 			order by v.inst_id, v.atri_id
