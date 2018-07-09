@@ -14,11 +14,13 @@ class MultiGeoCoder {
 		var $results=array();
 		var $debug_enabled=false;
 		var $real_time_debug=false;
+		var $key;
 		
-		function __construct($available_hosts, $debug_enabled=false, $real_time_debug=false) 
+		function __construct($available_hosts, $key, $debug_enabled=false, $real_time_debug=false) 
 		{
 				if ($debug_enabled) $this->debug_enabled=true;
 				if ($real_time_debug) $this->real_time_debug=true;
+				$this->key=$key;
 			
 				foreach ($available_hosts as $host)
 				{
@@ -68,7 +70,7 @@ class MultiGeoCoder {
 					$this->status="error";
 			}
 			$host=$this->get_random_host();
-			$url=$host.urlencode($geostr);
+			$url=$host.urlencode($geostr.'&key='.$this->key);
 			$this->debug("Tractant geostr: $geostr amb el host $host\n");
 
 			$provincia_id=$viewport=$bounds=$lng=$lat=$localidad=$poblacion=$provincia=$comunidad=$country=$formatted_address=$cp='';
