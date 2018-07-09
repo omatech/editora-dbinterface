@@ -12,9 +12,14 @@ class MultiGeoCoder {
 		var $raw_response='';
 		var $raw_json=null;
 		var $results=array();
+		var $debug_enabled=false;
+		var $real_time_debug=false;
 		
-		function __construct($available_hosts) 
+		function __construct($available_hosts, $debug_enabled=false, $real_time_debug=false) 
 		{
+				if ($debug_enabled) $this->debug_enabled=true;
+				if ($real_time_debug) $this->real_time_debug=true;
+			
 				foreach ($available_hosts as $host)
 				{
 						$this->debug("Testing available host $host\n");
@@ -41,7 +46,11 @@ class MultiGeoCoder {
 		
 		function debug($str)
 		{
+			if ($this->debug_enabled)
+			{
 				$this->debug_str.=$str;
+				if ($this->real_time_debug) echo $str;
+			}
 		}
 		
 		function geocode ($geostr)
