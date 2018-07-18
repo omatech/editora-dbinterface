@@ -21,7 +21,7 @@ set_time_limit(0);
 
 $options_array = getopt(null, ['from::', 'to::'
 	, 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:', 'sourcelanguage:', 'destinationlanguage:'
-	, 'outputformat:', 'tofilename:', 'what:', 'since:'
+	, 'outputformat:', 'tofilename:', 'what:', 'since:', 'excludeclasses:'
 	, 'help', 'includemetadata','debug','excludeimporteddata']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
@@ -35,6 +35,7 @@ From parameters:
 --dbname= database name 
 --sourcelanguage= Source Language (ca|es|en...)
 --since= date to extract from in mysql format
+--excludeclasses= comma separated list of class_ids to avoid, for example --excludeclasses=3 or --excludeclasses=3,4
 
 To parameters:
 --to= file | output
@@ -74,6 +75,10 @@ php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=
 
 4) Export all texts in english from a editora version 5 to the output using json
 php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=output --outputformat=json --destinationlanguage=es --what=missing 
+
+4) Export all texts in english from a editora version 4 to an excel file, avoiding classes 1 and 2
+php export-translation.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=file --outputformat=excel --tofilename=../translatable_texts.xlsx --destinationlanguage=es --what=all --excludingclasses=1,2 
+
 
 ';
 die;
@@ -124,6 +129,12 @@ $params['excludeimporteddata']=false;
 if (isset($options_array['excludeimporteddata']))
 {
 	$params['excludeimporteddata']=true;
+}
+
+$params['excludeclasses']=null;
+if (isset($options_array['excludeclasses']))
+{
+	$params['excludeclasses']=$options_array['excludeclasses'];
 }
 
 $result = array();

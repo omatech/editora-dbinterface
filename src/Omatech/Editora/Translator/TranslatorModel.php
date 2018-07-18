@@ -223,7 +223,9 @@ class TranslatorModel extends AppModel {
 	function get_all_source_texts($connection = 'conn_from') {
 		
 		$imported_sql_add="";
+		$exclude_classes_sql_add="";
 		if ($this->excludeimporteddata) $imported_sql_add=" and i.external_id is not null ";
+		if ($this->excludeclasses) $exclude_classes_sql_add=" and i.class_id not in (".$this->excludeclasses.") ";
 		
 		if ($this->from_version == 4) {
 			$sql_values = "select v.inst_id, v.atri_id, v.text_val value 
@@ -236,6 +238,7 @@ class TranslatorModel extends AppModel {
 			and v.inst_id=i.id
 			and i.status='O'
 			$imported_sql_add
+			$exclude_classes_sql_add
 			and a.language=" . parent::escape($this->source_language, $connection) . "
 			and i.update_date >= ".parent::escape($this->since)."
 			order by v.inst_id, v.atri_id
@@ -268,6 +271,8 @@ class TranslatorModel extends AppModel {
 			and v.atri_id=a.id
 			and v.inst_id=i.id
 			and i.status='O'
+			$imported_sql_add
+			$exclude_classes_sql_add
 			and i.deleted_at is not null
 			and a.language=" . parent::escape($this->source_language, $connection) . "
 			and i.updated >= ".parent::escape($this->since)."
@@ -300,7 +305,13 @@ class TranslatorModel extends AppModel {
 		return $result;
 	}
 
-	function get_missing_destination_texts($connection = 'conn_from') {
+	function get_missing_destination_texts($connection = 'conn_from') 
+	{
+		$imported_sql_add="";
+		$exclude_classes_sql_add="";
+		if ($this->excludeimporteddata) $imported_sql_add=" and i.external_id is not null ";
+		if ($this->excludeclasses) $exclude_classes_sql_add=" and i.class_id not in (".$this->excludeclasses.") ";
+
 		if ($this->from_version == 4) {
 			$sql_values = "select v.inst_id, v.atri_id, v.text_val value 
 			from omp_attributes a
@@ -315,6 +326,8 @@ class TranslatorModel extends AppModel {
 			and a2.language=" . parent::escape($this->destination_language, $connection) . "
 			and v.inst_id=i.id
 			and i.status='O'
+			$imported_sql_add
+			$exclude_classes_sql_add
 			and i.update_date >= ".parent::escape($this->since)."
 			and not exists 
 			  (select 1 
@@ -368,6 +381,8 @@ class TranslatorModel extends AppModel {
 			and v.deleted_at is null
 			and v.inst_id=i.id
 			and i.status='O'
+			$imported_sql_add
+			$exclude_classes_sql_add
 			and i.deleted_at is null
 			and i.updated >= ".parent::escape($this->since)."
 			and not exists 
