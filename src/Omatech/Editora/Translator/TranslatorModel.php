@@ -435,4 +435,77 @@ class TranslatorModel extends AppModel {
 		return $result;
 	}
 
+	
+	function get_same_as_destination_texts($connection = 'conn_from') 
+	{
+		$imported_sql_add="";
+		$exclude_classes_sql_add="";
+		if ($this->excludeimporteddata) $imported_sql_add=" and i.external_id is not null ";
+		if ($this->excludeclasses) $exclude_classes_sql_add=" and i.class_id not in (".$this->excludeclasses.") ";
+
+		if ($this->from_version == 4) {
+			$sql_values = "select v.inst_id, v.atri_id, v.text_val value 
+			from omp_attributes a
+			, omp_values v
+			, omp_attributes a2
+			, omp_instances i
+			where v.text_val is not null
+			and v.atri_id=a.id
+			and v.atri_id!=1
+			and a.language=" . parent::escape($this->source_language, $connection) . "
+			and a.tag=a2.tag
+			and a2.language=" . parent::escape($this->destination_language, $connection) . "
+			and v.inst_id=i.id
+			and i.status='O'
+			$imported_sql_add
+			$exclude_classes_sql_add
+			and i.update_date >= ".parent::escape($this->since)."
+			and v.text_val=v2.text_val
+			and v2.text_val!=''
+			";
+
+			$sql_exists = "show tables like 'omp_static_text'";
+			$row = parent::get_one($sql_exists, $connection);
+			if ($row) {
+				$sql_statics = "select st1.text_key `key`, st1.text_value value
+				from omp_static_text st1
+				, omp_static_text st2
+				where st1.language = " . parent::escape($this->source_language, $connection) . "
+				and st1.text_key=st2.text_key 
+				and st2.language=" . parent::escape($this->destination_language, $connection) . " 
+				and st2.text_value!=''
+				and st1.text_value=st2.text_value
+				";
+			} else {// posem una query que no retornara resultats perque no tenim la taula
+				$sql_statics = "select -1 `key`, -1 value
+				from omp_instances where id=-1000000
+				";
+			}
+			$sql_niceurls = "select inst_id, niceurl value
+				from  omp_niceurl s 
+				, omp_niceurl d
+				where s.language=" . parent::escape($this->source_language, $connection) . "
+				and d.inst_id=s.inst_id 
+				and d.language=" . parent::escape($this->destination_language, $connection) . " 
+				and d.niceurl=s.niceurl
+			";
+		} elseif ($this->from_version == 5) {
+			die("Incompatible version, aborting!\n");
+		} else {
+			die("Unknow version, aborting!\n");
+		}
+
+		$values_array = parent::fetchAll($sql_values, $connection);
+		$static_texts_array = parent::fetchAll($sql_statics, $connection);
+		$niceurls_array = parent::fetchAll($sql_niceurls, $connection);
+
+		$result = array();
+		$result['values'] = $values_array;
+		$result['statics'] = $static_texts_array;
+		$result['niceurls'] = $niceurls_array;
+		return $result;
+	}
+	
+	
+	
 }
