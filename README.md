@@ -156,12 +156,12 @@ phpunit tests/
 
 ## Authors
 
-Agusti Pons
-Christian Bohollo
-Javier Mogollon
-Hector Arnau
-Alvaro Aguilar
-Cesc Delgado
+* Agusti Pons
+* Christian Bohollo
+* Javier Mogollon
+* Hector Arnau
+* Alvaro Aguilar
+* Cesc Delgado
 
 ## License
 
