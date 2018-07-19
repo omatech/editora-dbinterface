@@ -176,12 +176,18 @@ foreach ($rows['values'] as $val)
 
 foreach ($rows['statics'] as $val)
 {
-	$result['data'][]=['key1'=>'statics', 'key2'=>$val['key'], 'value'=>$val['value']];
+	if (!isset($options_array['onlyclasses']))
+	{// if we're exporting only classes don't export statics
+		$result['data'][]=['key1'=>'statics', 'key2'=>$val['key'], 'value'=>$val['value']];
+	}
 }
 
 foreach ($rows['niceurls'] as $val)
 {
-	$result['data'][]=['key1'=>'niceurls', 'key2'=>$val['inst_id'], 'value'=>$val['value']];
+	if (!isset($options_array['onlyclasses']))
+	{// if we're exporting only classes don't export niceurls
+		$result['data'][]=['key1'=>'niceurls', 'key2'=>$val['inst_id'], 'value'=>$val['value']];
+	}
 }
 
 ob_start('ob_gzhandler');
