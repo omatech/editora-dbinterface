@@ -21,7 +21,7 @@ set_time_limit(0);
 
 $options_array = getopt(null, ['from::', 'to::'
 	, 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:', 'sourcelanguage:', 'destinationlanguage:'
-	, 'outputformat:', 'tofilename:', 'what:', 'since:', 'excludeclasses:'
+	, 'outputformat:', 'tofilename:', 'what:', 'since:', 'excludeclasses:', 'onlyclasses:'
 	, 'help', 'includemetadata','debug','excludeimporteddata']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
@@ -36,6 +36,7 @@ From parameters:
 --sourcelanguage= Source Language (ca|es|en...)
 --since= date to extract from in mysql format
 --excludeclasses= comma separated list of class_ids to avoid, for example --excludeclasses=3 or --excludeclasses=3,4
+--onlyclasses= comma separated list of class_ids to include, for example --onlyclasses=3 or --onlyclasses=3,4
 
 To parameters:
 --to= file | output
@@ -135,6 +136,12 @@ $params['excludeclasses']=null;
 if (isset($options_array['excludeclasses']))
 {
 	$params['excludeclasses']=$options_array['excludeclasses'];
+}
+
+$params['onlyclasses']=null;
+if (isset($options_array['onlyclasses']))
+{
+	$params['onlyclasses']=$options_array['onlyclasses'];
 }
 
 $result = array();

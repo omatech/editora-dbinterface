@@ -226,6 +226,7 @@ class TranslatorModel extends AppModel {
 		$exclude_classes_sql_add="";
 		if ($this->excludeimporteddata) $imported_sql_add=" and i.external_id is not null ";
 		if ($this->excludeclasses) $exclude_classes_sql_add=" and i.class_id not in (".$this->excludeclasses.") ";
+		if ($this->onlyclasses) $only_classes_sql_add=" and i.class_id in (".$this->onlyclasses.") ";
 		
 		if ($this->from_version == 4) {
 			$sql_values = "select v.inst_id, v.atri_id, v.text_val value 
@@ -239,6 +240,7 @@ class TranslatorModel extends AppModel {
 			and i.status='O'
 			$imported_sql_add
 			$exclude_classes_sql_add
+			$only_classes_sql_add
 			and a.language=" . parent::escape($this->source_language, $connection) . "
 			and i.update_date >= ".parent::escape($this->since)."
 			order by v.inst_id, v.atri_id
@@ -273,6 +275,7 @@ class TranslatorModel extends AppModel {
 			and i.status='O'
 			$imported_sql_add
 			$exclude_classes_sql_add
+			$only_classes_sql_add
 			and i.deleted_at is not null
 			and a.language=" . parent::escape($this->source_language, $connection) . "
 			and i.updated >= ".parent::escape($this->since)."
@@ -311,6 +314,7 @@ class TranslatorModel extends AppModel {
 		$exclude_classes_sql_add="";
 		if ($this->excludeimporteddata) $imported_sql_add=" and i.external_id is not null ";
 		if ($this->excludeclasses) $exclude_classes_sql_add=" and i.class_id not in (".$this->excludeclasses.") ";
+		if ($this->onlyclasses) $only_classes_sql_add=" and i.class_id in (".$this->onlyclasses.") ";
 
 		if ($this->from_version == 4) {
 			$sql_values = "select v.inst_id, v.atri_id, v.text_val value 
@@ -328,6 +332,7 @@ class TranslatorModel extends AppModel {
 			and i.status='O'
 			$imported_sql_add
 			$exclude_classes_sql_add
+			$only_classes_sql_add
 			and i.update_date >= ".parent::escape($this->since)."
 			and not exists 
 			  (select 1 
@@ -383,6 +388,7 @@ class TranslatorModel extends AppModel {
 			and i.status='O'
 			$imported_sql_add
 			$exclude_classes_sql_add
+			$only_classes_sql_add
 			and i.deleted_at is null
 			and i.updated >= ".parent::escape($this->since)."
 			and not exists 
@@ -442,6 +448,7 @@ class TranslatorModel extends AppModel {
 		$exclude_classes_sql_add="";
 		if ($this->excludeimporteddata) $imported_sql_add=" and i.external_id is not null ";
 		if ($this->excludeclasses) $exclude_classes_sql_add=" and i.class_id not in (".$this->excludeclasses.") ";
+		if ($this->onlyclasses) $only_classes_sql_add=" and i.class_id in (".$this->onlyclasses.") ";
 
 		if ($this->from_version == 4) {
 			$sql_values = "select v.inst_id, v.atri_id, v.text_val value 
@@ -459,6 +466,7 @@ class TranslatorModel extends AppModel {
 			and i.status='O'
 			$imported_sql_add
 			$exclude_classes_sql_add
+			$only_classes_sql_add
 			and i.update_date >= ".parent::escape($this->since)."
 			and v.text_val=v2.text_val
 			and v2.text_val!=''
