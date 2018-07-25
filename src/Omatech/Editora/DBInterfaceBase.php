@@ -14,6 +14,11 @@ class DBInterfaceBase {
 	protected $show_inmediate_debug = false;
 	protected $timings = false;
 
+	public function getParams()
+	{
+		return $this->params;
+	}
+	
 	public function setParams($params)
 	{
 		$this->params=array_merge($params, $this->params);
