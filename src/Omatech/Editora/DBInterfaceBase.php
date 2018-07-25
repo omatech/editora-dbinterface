@@ -4,7 +4,7 @@ namespace Omatech\Editora;
 class DBInterfaceBase {
 
 	protected $conn;
-	protected $params;
+	protected $params=array();
 	protected $cache_expiration = 3600;
 	protected $type_of_cache = null;
 	protected $mc = null;
