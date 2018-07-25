@@ -194,13 +194,13 @@ class Loader extends DBInterfaceBase {
 
 		$ret = $this->update_values($inst_id, array('nom_intern' => $nom_intern));
 		if (!$ret) {
-			$this->conn->executeQuery('rollback');
+			//$this->conn->executeQuery('rollback');
 			return false;
 		}
 
 		$ret = $this->updateValues($inst_id, $values);
 		if (!$ret) {
-			$this->conn->executeQuery('rollback');
+			//$this->conn->executeQuery('rollback');
 			return false;
 		}
 
@@ -308,13 +308,13 @@ class Loader extends DBInterfaceBase {
 
 		$ret = $this->updateValues($inst_id, array('nom_intern' => $nom_intern));
 		if (!$ret) {
-			$this->conn->executeQuery('rollback');
+			//$this->conn->executeQuery('rollback');
 			return false;
 		}
 
 		$ret = $this->updateValues($inst_id, $values);
 		if (!$ret) {
-			$this->conn->executeQuery('rollback');
+			//$this->conn->executeQuery('rollback');
 			return false;
 		}
 
@@ -360,13 +360,13 @@ class Loader extends DBInterfaceBase {
 
 		$ret = $this->updateValues($inst_id, ['nom_intern' => $nom_intern]);
 		if (!$ret) {
-			$this->conn->executeQuery('rollback');
+			//$this->conn->executeQuery('rollback');
 			return false;
 		}
 
 		$ret = $this->updateValues($inst_id, $values);
 		if (!$ret) {
-			$this->conn->executeQuery('rollback');
+			//$this->conn->executeQuery('rollback');
 			return false;
 		}
 
@@ -410,13 +410,13 @@ class Loader extends DBInterfaceBase {
 
 		$ret = $this->updateValues($inst_id, ['nom_intern' => $nom_intern]);
 		if (!$ret) {
-			$this->conn->executeQuery('rollback');
+			//$this->conn->executeQuery('rollback');
 			return false;
 		}
 
 		$ret = $this->updateValues($inst_id, $values);
 		if (!$ret) {
-			$this->conn->executeQuery('rollback');
+			//$this->conn->executeQuery('rollback');
 			return false;
 		}
 
