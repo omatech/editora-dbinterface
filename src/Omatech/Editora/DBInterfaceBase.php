@@ -14,7 +14,8 @@ class DBInterfaceBase {
 	protected $show_inmediate_debug = false;
 	protected $timings = false;
 
-	public function __construct($conn, $params) {
+	public function setParams($params)
+	{
 		$this->params=$params;
 		foreach ($params as $key => $value) {
 			//echo "Parsing $key=$value\n";
@@ -22,7 +23,11 @@ class DBInterfaceBase {
 				$this->$key = $value;
 			}
 		}
-		
+	}
+	
+	public function __construct($conn, $params=array()) {
+
+		$this->setParams($params);
 		if (is_array($conn)) {
 			$config = new \Doctrine\DBAL\Configuration();
 			if ($this->debug) {

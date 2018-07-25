@@ -6,7 +6,7 @@ namespace Omatech\Editora\Translator;
 
 class TranslatorModel extends AppModel {
 
-	function __construct($conn_from, $conn_to, $params, $debug = false) {// requires doctrine dbal connection or array with data			
+	function __construct($conn_from, $conn_to, $params=array(), $debug = false) {// requires doctrine dbal connection or array with data			
 		foreach ($params as $key => $val) {
 			$this->$key = $val;
 		}

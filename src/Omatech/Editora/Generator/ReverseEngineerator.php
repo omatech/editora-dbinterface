@@ -12,7 +12,7 @@ use Omatech\Editora\DBInterfaceBase;
 class ReverseEngineerator extends DBInterfaceBase {
 
 
-	public function __construct($conn, $params) {
+	public function __construct($conn, $params=array()) {
 		parent::__construct($conn, $params);
 	}
 	

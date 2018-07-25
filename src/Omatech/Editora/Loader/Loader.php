@@ -10,7 +10,7 @@ class Loader extends DBInterfaceBase {
 	public $url_base = '';
 	public $geocoder;
 
-	public function __construct($conn, $params, $geocoder = null) {
+	public function __construct($conn, $params=array(), $geocoder = null) {
 		parent::__construct($conn, $params);
 		$this->geocoder = $geocoder;
 	}

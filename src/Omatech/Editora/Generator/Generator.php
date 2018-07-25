@@ -18,7 +18,7 @@ class Generator extends DBInterfaceBase {
 	protected $queries;
 	protected $users_passwords;
 
-	public function __construct($conn, $params) {
+	public function __construct($conn, $params=array()) {
 		parent::__construct($conn, $params);
 	}
 
