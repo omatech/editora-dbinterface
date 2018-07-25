@@ -16,7 +16,7 @@ class DBInterfaceBase {
 
 	public function setParams($params)
 	{
-		$this->params=$params;
+		$this->params=array_merge($params, $this->params);
 		foreach ($params as $key => $value) {
 			//echo "Parsing $key=$value\n";
 			if (property_exists($this, $key)) {
