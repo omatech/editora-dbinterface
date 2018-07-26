@@ -176,7 +176,7 @@ CREATE TABLE IF NOT EXISTS `omp_niceurl` (
   `id` int NOT NULL AUTO_INCREMENT,
   `inst_id` int DEFAULT NULL,
   `language` varchar(3) DEFAULT NULL,
-  `niceurl` varchar(255) DEFAULT NULL,
+	`niceurl` varchar(255) character set latin1 DEFAULT NULL ,
   PRIMARY KEY (`id`),
   UNIQUE KEY `omp_niceurl_u1` (`niceurl`,`language`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
