@@ -284,7 +284,7 @@ CREATE TABLE IF NOT EXISTS `omp_search` (
 -- ----------------------------
 CREATE TABLE IF NOT EXISTS `omp_static_text` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `text_key` varchar(255) NOT NULL DEFAULT '',
+  `text_key` varchar(110) NOT NULL DEFAULT '',
   `language` varchar(3) DEFAULT NULL,
   `text_value` text,
   PRIMARY KEY (`id`),
