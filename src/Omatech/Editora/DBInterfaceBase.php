@@ -13,6 +13,7 @@ class DBInterfaceBase {
 	public $debug_messages = '';
 	protected $show_inmediate_debug = false;
 	protected $timings = false;
+	protected $lang='ALL';
 
 	public function getParams()
 	{
