@@ -46,11 +46,11 @@ class DBInterfaceBase {
 	
 	function getAttrInfo($key) {
 		if (is_numeric($key)) {
-			$key = $this->conn->quote($key);
 			$sql = "SELECT * FROM omp_attributes where id=$key";
 		} else {
 			$key = $this->conn->quote($key);
-			$sql = "SELECT * FROM omp_attributes where tag=$key";
+			$name = $this->conn->quote($key.'_'.$this->lang);
+			$sql = "SELECT * FROM omp_attributes where tag=$key and name=$name";
 		}
 		return $this->conn->fetchAssoc($sql);
 	}		
