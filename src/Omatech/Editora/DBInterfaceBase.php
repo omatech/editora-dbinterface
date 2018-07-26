@@ -13,7 +13,7 @@ class DBInterfaceBase {
 	public $debug_messages = '';
 	protected $show_inmediate_debug = false;
 	protected $timings = false;
-	protected $lang='ALL';
+
 
 	public function getParams()
 	{
@@ -50,8 +50,7 @@ class DBInterfaceBase {
 			$sql = "SELECT * FROM omp_attributes where id=$key";
 		} else {
 			$key = $this->conn->quote($key);
-			$name = $this->conn->quote($key.'_'.$this->lang);
-			$sql = "SELECT * FROM omp_attributes where tag=$key and name=$name";
+			$sql = "SELECT * FROM omp_attributes where name=$key";
 		}
 		return $this->conn->fetchAssoc($sql);
 	}		

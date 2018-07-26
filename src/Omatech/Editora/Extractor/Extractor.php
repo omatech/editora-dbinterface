@@ -4,7 +4,7 @@ namespace Omatech\Editora\Extractor;
 use \Omatech\Editora\DBInterfaceBase;
 
 class Extractor extends DBInterfaceBase {
-
+	protected $lang='ALL';
 	protected $default_limit = 10000;
 	protected $metadata = false;
 	protected $preview = false;
