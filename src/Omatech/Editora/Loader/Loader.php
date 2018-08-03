@@ -9,6 +9,7 @@ class Loader extends DBInterfaceBase {
 	public $file_base = '';
 	public $url_base = '';
 	public $geocoder;
+	public $download_images = true;
 
 	public function __construct($conn, $params=array(), $geocoder = null) {
 		parent::__construct($conn, $params);
@@ -192,7 +193,8 @@ class Loader extends DBInterfaceBase {
 				";
 		$this->conn->executeQuery($sql);
 
-		$ret = $this->update_values($inst_id, array('nom_intern' => $nom_intern));
+        //!
+		$ret = $this->updateValues($inst_id, array('nom_intern' => $nom_intern));
 		if (!$ret) {
 			//$this->conn->executeQuery('rollback');
 			return false;
@@ -437,8 +439,12 @@ class Loader extends DBInterfaceBase {
 			} else {// podem continuar, existeix l'atribut
 				//print_r($attr_info);
 				if ($attr_info['type'] == 'I') {// image
-					$this->insertUpdateImageVal($inst_id, $attr_info['id'], $value);
-				} 
+                    if($this->download_images){
+                        $this->insertUpdateImageVal($inst_id, $attr_info['id'], $value);
+                    }else{
+                        $this->insertUpdateRemoteImageVal($inst_id, $attr_info['id'], $value);
+                    }
+				}
 				elseif ($attr_info['type'] == 'B') {// string order
 					$this->insertUpdateTextVal($inst_id, $attr_info['id'], $value);
 					$this->updateInstanceOrderString($inst_id, $value);
@@ -560,7 +566,9 @@ class Loader extends DBInterfaceBase {
 
 		if (substr($value, 0, 7) == 'http://' || substr($value, 0, 8) == 'https://') {
 			$file_name=basename($value);
-			if (stripos($file_name, '.')===false) $file_name=$file_name.'.png';
+
+            if (stripos($file_name, '.')===false) $file_name=$file_name.'.png';
+
 			$img_file = $this->file_base . $this->url_base . 'downloaded/' . $file_name;
 			if (!file_exists($img_file))
 				file_put_contents($img_file, file_get_contents($value));
@@ -593,5 +601,30 @@ class Loader extends DBInterfaceBase {
 		}
 		$this->conn->executeQuery($sql);
 	}
+
+    public function insertUpdateRemoteImageVal($inst_id, $atri_id, $value) {
+
+        if (substr($value, 0, 7) == 'http://' || substr($value, 0, 8) == 'https://') {
+            list($width, $height) = getimagesize($value);
+        }
+        else {
+            return $this->insertUpdateImageVal($inst_id, $atri_id, $value);
+        }
+
+        $value = $this->conn->quote($value);
+        if ($this->existValue($inst_id, $atri_id)) {// update
+            $sql = "update omp_values v
+						set v.text_val=$value
+						, img_info='$width.$height'
+						where v.inst_id=$inst_id
+						and v.atri_id=$atri_id					  
+						and v.text_val!=$value
+						";
+        } else {// insert
+            $sql = "insert into omp_values (inst_id, atri_id, text_val, img_info)
+						values ($inst_id, $atri_id, $value, '$width.$height')";
+        }
+        $this->conn->executeQuery($sql);
+    }
 
 }

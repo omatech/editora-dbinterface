@@ -53,7 +53,22 @@ class DBInterfaceBase {
 			$sql = "SELECT * FROM omp_attributes where name=$key";
 		}
 		return $this->conn->fetchAssoc($sql);
-	}		
+	}
+
+    public function getAllClass() {
+        $this->debug("Extractor::getAllClass\n");
+
+        $sql = "select c.id class_id, c.name
+				from omp_classes c
+				order by c.id";
+
+        $this->debug($sql);
+        $row = $this->conn->fetchAll($sql);
+
+        if (!$row)
+            return null;
+        return $row;
+    }
 
 	public function findClassIDFromInstID($inst_id) {
 		$this->debug("Extractor::findClassIDFromInstID inst_id=$inst_id\n");
@@ -77,6 +92,22 @@ class DBInterfaceBase {
 			return null;
 		return $row;
 	}
+
+    public function getAllAttributesInClass($id_class) {
+        $this->debug("Extractor::getAllAttributesInClass\n");
+
+        $sql = "select a.id, a.name, a.type, a.img_width, a.img_height, a.language
+				from omp_class_attributes ca, omp_attributes a
+				where 1=1
+				AND class_id = '.$id_class.'
+				AND a.id = ca.atri_id";
+
+        $this->debug($sql);
+        $row = $this->conn->fetchAll($sql);
+        if (!$row)
+            return null;
+        return $row;
+    }
 
 	public function findRelation($relation, $inst_id) {
 		$this->debug("Extractor::findRelation relation=$relation inst_id=$inst_id\n");
