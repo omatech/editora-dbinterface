@@ -5,6 +5,8 @@ use \Omatech\Editora\DBInterfaceBase;
 use \Doctrine\DBAL\DriverManager;
 use Omatech\Editora\Loader\Loader;
 
+use Faker\Factory as Faker;
+
 class FakeContent extends DBInterfaceBase
 {
     public $file_base = '';
@@ -29,6 +31,7 @@ class FakeContent extends DBInterfaceBase
         $batch_id = time();
 
         $classes = DBInterfaceBase::getAllClass();
+        $faker = Faker::create();
 
         foreach($classes as $key=>$class){
 
@@ -55,19 +58,17 @@ class FakeContent extends DBInterfaceBase
                                 break;
 
                             case 'S':
-                                //Faker
-
-                                $attributes_values[$attribute['name']] = $attribute['name'];
-                                //$attributes_values[$attribute['name']] = $faker->text;
+                                //$attributes_values[$attribute['name']] = $attribute['name'];
+                                $attributes_values[$attribute['name']] = $faker->sentence( rand(1,3) , true) ;
                                 break;
 
                             case 'A':
                             case 'T':
-                                $attributes_values[$attribute['name']] = 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean aliquet ac nisi sed aliquam. Phasellus ac lacinia lacus. Phasellus ornare sem sit amet erat vehicula consectetur. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec maximus elit in sem tincidunt, at aliquam nunc pretium. Mauris a massa consectetur, mattis purus eu, ultricies nisl. Vivamus tincidunt risus a pretium commodo. Nam id nisi velit. Sed eu purus vitae diam porttitor pretium ut eu diam. Phasellus pharetra non urna at vestibulum.';
+                                $attributes_values[$attribute['name']] = $faker->sentence( rand(100,500) , true) ;
                                 break;
 
                             case 'K':
-                                $attributes_values[$attribute['name']] = '<b>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</b> Aenean aliquet ac nisi sed aliquam. Phasellus ac lacinia lacus. Phasellus ornare sem sit amet erat vehicula consectetur. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec maximus elit in sem tincidunt, at aliquam nunc pretium. Mauris a massa consectetur, mattis purus eu, ultricies nisl. Vivamus tincidunt risus a pretium commodo. Nam id nisi velit. Sed eu purus vitae diam porttitor pretium ut eu diam. Phasellus pharetra non urna at vestibulum.';
+                                $attributes_values[$attribute['name']] = '<b>' . $faker->sentence( rand(1,15) , true) . '</b>' . $faker->sentence( rand(50,300) , true) ;
                                 break;
 
                             case 'U':
@@ -91,7 +92,8 @@ class FakeContent extends DBInterfaceBase
                                     }
                                 }
                                 //$attributes_values[$attribute['name']] = 'http://lorempixel.com/'.$width.'/'.$height.'/nature/';
-                                $attributes_values[$attribute['name']] = 'https://www.dummyimage.com/'.$width.'x'.$height.'/000/00ffd5.png';
+                                //$attributes_values[$attribute['name']] = 'https://www.dummyimage.com/'.$width.'x'.$height.'/000/00ffd5.png';
+                                $attributes_values[$attribute['name']] = $faker->imageUrl($width, $height, 'nature', true, 'Faker');
                                 break;
 
                             case 'Y':
@@ -99,11 +101,12 @@ class FakeContent extends DBInterfaceBase
                                 break;
 
                             case 'F':
-                                //Change function as in image I.
+                                //Change function as in image I for download.
                                 $attributes_values[$attribute['name']] = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
                                 break;
 
                             //Dates
+                            //Map latitude(min,max), longitude(min,max)
                         }
 
                     }
