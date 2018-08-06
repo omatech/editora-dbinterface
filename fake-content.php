@@ -19,7 +19,7 @@ set_time_limit(0);
 
 $options_array = getopt(null, ['to::'
     , 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:'
-		, 'num_instances:', 'include_classes:', 'exclude_classes:'
+		, 'num_instances:', 'include_classes:', 'exclude_classes:', 'pictures_theme:'
     , 'help', 'debug']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
@@ -37,6 +37,7 @@ Others:
 --num_instances number of instance to create for each class
 --include_classes generate only this class_ids, comma separated
 --exclude_classes generate all but this class_ids, comma separated
+--pictures_theme generate pictures themed with that word, default:cats you can use abstract, animals, business, cats, city, food, nightlife, fashion, people, nature, sports, technics, transport
 --debug show all sqls (if not present false)
 
 example: 
@@ -52,6 +53,9 @@ php fake-content.php --to=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --db
 
 4) Generate fake content for editora 2 instances for all classes except 20 and 21
 php fake-content.php --to=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=intranetmutua --num_instances=2 --exclude_classes=20,21
+
+4) Generate fake content for editora 2 instances for all classes with nature themed pictures
+php fake-content.php --to=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=intranetmutua --num_instances=2 --pictures_theme=nature
 ';
     die;
 }
@@ -103,6 +107,11 @@ if (isset($options_array['include_classes']))
 if (isset($options_array['exclude_classes']))
 {
 	$params['exclude_classes']=$options_array['exclude_classes'];
+}
+
+if (isset($options_array['pictures_theme']))
+{
+	$params['pictures_theme']=$options_array['pictures_theme'];
 }
 
 if ($conn_to)
