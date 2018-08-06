@@ -132,6 +132,28 @@ class DBInterfaceBase {
 		return $this->findRelation($relation, $inst_id)['id'];
 	}
 
+	public function getRelationsClass($id){
+        $sql = "select id, name, parent_class_id, child_class_id, multiple_child_class_id
+				from omp_relations 
+				where parent_class_id = '.$id.';";
+
+        $this->debug($sql);
+        $row = $this->conn->fetchAll($sql);
+        if (!$row)
+            return null;
+        return $row;
+    }
+
+    public function getInstanceRandomClassID($class_id){
+        $sql = "select id from omp_instances where class_id = '.$class_id.' ORDER BY rand()";
+
+        $this->debug($sql);
+        $row = $this->conn->fetchAssoc($sql);
+        if (!$row)
+            return null;
+        return $row;
+    }
+
 	public function getInstanceLink($inst_id) {
 		$sql = "select niceurl
 				from omp_niceurl

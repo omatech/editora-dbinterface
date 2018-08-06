@@ -33,42 +33,43 @@ class FakeContent extends DBInterfaceBase
         $classes = DBInterfaceBase::getAllClass();
         $faker = Faker::create();
 
-        foreach($classes as $key=>$class){
+        //Clases
+        foreach($classes as $key=>$class) {
 
             //No lo aplica para: Global, Home.
-            if($class['class_id'] != 1 && $class['class_id'] != 10){
+            if ($class['class_id'] != 1 && $class['class_id'] != 10) {
 
                 $attributes = DBInterfaceBase::getAllAttributesInClass($class['class_id']);
                 $attributes_values = [];
 
                 //Number of elements to create.
-                for($i=1; $i<4; $i++){
+                for ($i = 1; $i < 4; $i++) {
 
-                    $nom_intern = $class['name'].'_FAKE';
+                    $nom_intern = $class['name'] . '_FAKE';
                     $inst_id = $loader->insertInstanceWithExternalID($class['class_id'], $nom_intern, $external_id, $batch_id, []);
 
-                    foreach($attributes as $key1=>$attribute){
+                    foreach ($attributes as $key1 => $attribute) {
 
-                        switch($attribute['type']){
+                        switch ($attribute['type']) {
 
                             case 'Z':
-                                $niceurl = $attribute['name'] .'_'.$inst_id;
+                                $niceurl = $attribute['name'] . '_' . $inst_id;
                                 $attributes_values[$attribute['name']] = $niceurl;
                                 $loader->insertUrlNice($niceurl, $inst_id, $attribute['language']);
                                 break;
 
                             case 'S':
                                 //$attributes_values[$attribute['name']] = $attribute['name'];
-                                $attributes_values[$attribute['name']] = $faker->sentence( rand(1,3) , true) ;
+                                $attributes_values[$attribute['name']] = $faker->sentence(rand(1, 3), true);
                                 break;
 
                             case 'A':
                             case 'T':
-                                $attributes_values[$attribute['name']] = $faker->sentence( rand(100,500) , true) ;
+                                $attributes_values[$attribute['name']] = $faker->sentence(rand(100, 500), true);
                                 break;
 
                             case 'K':
-                                $attributes_values[$attribute['name']] = '<b>' . $faker->sentence( rand(1,15) , true) . '</b>' . $faker->sentence( rand(50,300) , true) ;
+                                $attributes_values[$attribute['name']] = '<b>' . $faker->sentence(rand(1, 15), true) . '</b>' . $faker->sentence(rand(50, 300), true);
                                 break;
 
                             case 'U':
@@ -76,17 +77,17 @@ class FakeContent extends DBInterfaceBase
                                 break;
 
                             case 'I':
-                                if(empty($attribute['img_width']) && empty($attribute['img_height'])){
+                                if (empty($attribute['img_width']) && empty($attribute['img_height'])) {
                                     $width = '600';
                                     $height = '600';
-                                }else {
+                                } else {
                                     if (empty($attribute['img_width'])) {
                                         $width = $attribute['img_height'];
                                         $height = $attribute['img_height'];
-                                    }elseif(empty($attribute['img_height'])){
+                                    } elseif (empty($attribute['img_height'])) {
                                         $width = $attribute['img_width'];
                                         $height = $attribute['img_width'];
-                                    }else{
+                                    } else {
                                         $width = $attribute['img_width'];
                                         $height = $attribute['img_height'];
                                     }
@@ -111,11 +112,48 @@ class FakeContent extends DBInterfaceBase
 
                     }
 
-                    $attributes_values['nom_intern'] = $nom_intern.'_'.$inst_id;
-                    $loader->updateInstance($inst_id, $attributes_values['nom_intern'], $attributes_values );
+                    $attributes_values['nom_intern'] = $nom_intern . '_' . $inst_id;
+                    $loader->updateInstance($inst_id, $attributes_values['nom_intern'], $attributes_values);
                     echo('.');
                 }
             }
         }
+
+        //Relaciones
+        foreach($classes as $key=>$class){
+
+            //No lo aplica para: Global, Home.
+            if($class['class_id'] != 1 && $class['class_id'] != 10) {
+
+                $relations = DBInterfaceBase::getRelationsClass($class['class_id']);
+                if(isset($relations)) {
+
+                    foreach ($relations as $relation) {
+
+                        $instances_class = $loader->getAllInstancesClassId($relation['parent_class_id'], $batch_id);
+
+                        foreach ($instances_class as $key_instance_class => $instance_class) {
+
+                            $instances_rel = [];
+                            if (strcmp($relation['child_class_id'], '0') == 0) {
+                                $classes_rel = explode(",", $relation['multiple_child_class_id']);
+                                foreach ($classes_rel as $key_rel => $class_rel) {
+                                    $instances_rel[$key_rel] = DBInterfaceBase::getInstanceRandomClassID($class_rel);
+                                }
+                            } else {
+                                $instances_rel[0] = DBInterfaceBase::getInstanceRandomClassID($relation['child_class_id']);
+                            }
+
+                            foreach ($instances_rel as $instance_rel) {
+                                $result = $loader->insertRelationInstance($relation['id'], $instance_class['id'], $instance_rel['id'], -1, $batch_id);
+                            }
+                            echo('.');
+                        }
+                    }
+                }
+            }
+        }
+
     }
+
 }

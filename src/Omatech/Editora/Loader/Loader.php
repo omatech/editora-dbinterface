@@ -56,6 +56,27 @@ class Loader extends DBInterfaceBase {
 		return true;
 	}
 
+    public function getAllInstancesClassId($class_id, $batch_id=null){
+        $sql = 'select id
+				from omp_instances
+				where class_id = "'.$class_id.'"';
+
+        if ($batch_id!=null)
+        {
+            $sql .= ' AND batch_id = "'.$batch_id.'";';
+        }else{
+            $sql .= ';';
+        }
+
+        $row = $this->conn->fetchAll($sql);
+        if (!$row)
+            return null;
+        return $row;
+
+
+        return $this->conn->executeQuery($sql);
+    }
+
 	public function insertRelationInstance($rel_id, $parent_inst_id, $child_inst_id, $external_id=null, $batch_id=null) {
 		$rel_instance_id = $this->relationInstanceExist($rel_id, $parent_inst_id, $child_inst_id);
 		if ($rel_instance_id) {
