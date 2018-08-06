@@ -55,12 +55,26 @@ class DBInterfaceBase {
 		return $this->conn->fetchAssoc($sql);
 	}
 
-    public function getAllClass() {
-        $this->debug("Extractor::getAllClass\n");
+    public function getAllClasses($include='', $exclude='') {
+        $this->debug("Extractor::getAllClasses\n");
 
-        $sql = "select c.id class_id, c.name
+				$sql_add="";
+				if ($include)
+				{
+					$sql_add.=" and c.id in ($include) ";
+				}
+				
+				if ($exclude)
+				{
+					$sql_add.=" and c.id not in ($exclude) ";
+				}
+
+				$sql = "select c.id class_id, c.name
 				from omp_classes c
-				order by c.id";
+				where 1=1
+				$sql_add
+				order by c.id
+				";
 
         $this->debug($sql);
         $row = $this->conn->fetchAll($sql);
@@ -93,13 +107,13 @@ class DBInterfaceBase {
 		return $row;
 	}
 
-    public function getAllAttributesInClass($id_class) {
+    public function getAllAttributesInClass($class_id) {
         $this->debug("Extractor::getAllAttributesInClass\n");
 
         $sql = "select a.id, a.name, a.type, a.img_width, a.img_height, a.language
 				from omp_class_attributes ca, omp_attributes a
 				where 1=1
-				AND class_id = '.$id_class.'
+				AND class_id = $class_id
 				AND a.id = ca.atri_id";
 
         $this->debug($sql);
@@ -132,7 +146,7 @@ class DBInterfaceBase {
 		return $this->findRelation($relation, $inst_id)['id'];
 	}
 
-	public function getRelationsClass($id){
+	public function getClassRelations($id){
         $sql = "select id, name, parent_class_id, child_class_id, multiple_child_class_id
 				from omp_relations 
 				where parent_class_id = '.$id.';";

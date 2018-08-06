@@ -12,6 +12,9 @@ class FakeContent extends DBInterfaceBase
     public $file_base = '';
     public $url_base = '';
     public $geocoder;
+		public $num_instances=4;
+		public $include_classes='';
+		public $exclude_classes='';
 
     public function __construct($conn, $params=array(), $geocoder = null) {
 
@@ -29,8 +32,11 @@ class FakeContent extends DBInterfaceBase
         $loader=new Loader($conn, array('download_images'=>false));
         $external_id = -1;
         $batch_id = time();
+				$attribute_count=0;
+				$relation_instance_count=0;
+				$instance_count=0;
 
-        $classes = DBInterfaceBase::getAllClass();
+        $classes = DBInterfaceBase::getAllClasses($this->include_classes, $this->exclude_classes);
         $faker = Faker::create();
 
         //Clases
@@ -43,7 +49,7 @@ class FakeContent extends DBInterfaceBase
                 $attributes_values = [];
 
                 //Number of elements to create.
-                for ($i = 1; $i < 4; $i++) {
+                for ($i = 0; $i <= $this->num_instances; $i++) {
 
                     $nom_intern = $class['name'] . '_FAKE';
                     $inst_id = $loader->insertInstanceWithExternalID($class['class_id'], $nom_intern, $external_id, $batch_id, []);
@@ -109,12 +115,14 @@ class FakeContent extends DBInterfaceBase
                             //Dates
                             //Map latitude(min,max), longitude(min,max)
                         }
-
+												
                     }
 
                     $attributes_values['nom_intern'] = $nom_intern . '_' . $inst_id;
                     $loader->updateInstance($inst_id, $attributes_values['nom_intern'], $attributes_values);
-                    echo('.');
+										$attribute_count+=count($attributes_values);
+										$instance_count++;
+                    echo('i');
                 }
             }
         }
@@ -125,7 +133,7 @@ class FakeContent extends DBInterfaceBase
             //No lo aplica para: Global, Home.
             if($class['class_id'] != 1 && $class['class_id'] != 10) {
 
-                $relations = DBInterfaceBase::getRelationsClass($class['class_id']);
+                $relations = DBInterfaceBase::getClassRelations($class['class_id']);
                 if(isset($relations)) {
 
                     foreach ($relations as $relation) {
@@ -146,14 +154,16 @@ class FakeContent extends DBInterfaceBase
 
                             foreach ($instances_rel as $instance_rel) {
                                 $result = $loader->insertRelationInstance($relation['id'], $instance_class['id'], $instance_rel['id'], -1, $batch_id);
+																$relation_instance_count++;
                             }
-                            echo('.');
+                            echo('r');
                         }
                     }
                 }
             }
         }
-
+				echo "\nContent created: $instance_count instances $attribute_count attributes and $relation_instance_count relation instances created with batch_id=$batch_id\n";
     }
+
 
 }

@@ -87,7 +87,6 @@ if ($conn_to)
 {
     $loader=new Loader($conn_to);
 		$loader->delete_instances_in_batch($batch_id);
-		$loader->delete_relation_instances_in_batch($batch_id);
 
     echo "\n\nFinish!\n";
 }
