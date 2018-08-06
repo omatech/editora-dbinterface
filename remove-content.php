@@ -12,12 +12,12 @@ require_once __DIR__.$autoload_location;
 //require_once __DIR__.'/conf/config.php';
 
 use \Doctrine\DBAL\Configuration;
-use \Omatech\Editora\FakeContent\FakeContent;
+use \Omatech\Editora\Loader\Loader;
 
 ini_set("memory_limit", "5000M");
 set_time_limit(0);
 
-$options_array = getopt(null, ['to::'
+$options_array = getopt(null, ['to::', 'batch_id::'
     , 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:'
     , 'help', 'debug']);
 //print_r($options_array);
@@ -26,6 +26,7 @@ if (isset($options_array['help'])) {
 
 Parameters:
 --to= db4 | db5 (only db4 supported by now)
+--batch_id= ID of the batch content to remove
 --dbhost= database host
 --dbuser= database user
 --dbpass= database password 
@@ -37,8 +38,8 @@ Others:
 
 example: 
 	
-1) Generate fake content for editora
-php fake-content.php --to=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=intranetmutua 
+1) Remove fake content from editora
+php remove-content.php --to=db4 --batch_id=76767 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=intranetmutua 
 ';
     die;
 }
@@ -47,6 +48,13 @@ if (!isset($options_array['to'])) {
     echo "Missing TO parameter, use --help for help!\n";
     die;
 }
+
+if (!isset($options_array['batch_id'])) {
+    echo "Missing BATCH_ID parameter, use --help for help!\n";
+    die;
+}
+$batch_id=$options_array['batch_id'];
+
 
 $to_version = 4;
 if ($options_array['to'] == 'db5') {
@@ -77,9 +85,9 @@ if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') {
 
 if ($conn_to)
 {
-
-    $fakecontent=new FakeContent($conn_to, array());
-    $fakecontent->createContentEditora($conn_to);
+    $loader=new Loader($conn_to);
+		$loader->delete_instances_in_batch($batch_id);
+		$loader->delete_relation_instances_in_batch($batch_id);
 
     echo "\n\nFinish!\n";
 }
