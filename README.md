@@ -128,7 +128,7 @@ The global params can be:
 ## Extraction params
 
 
-## Tests
+## Test the Extractor
 
 1) Create a database if not exists with utf8_mb4 and collate utf8_mb4_general_ci in this example assume editora_test in localhost, we'll assume user root and without password
 2) Go to Commands folder
@@ -137,12 +137,12 @@ cd Commands
 
 3) Generate the editora structure (remember to change your database connection params)
 
-php generate-editora.php --from=file --inputformat=array --inputfile=../sql/sample_editora_array.php --to=db4 --dbtohost=localhost --dbtouser=root --dbtopass= --dbtoname=editora_test
+php generate-editora.php --from=file --inputformat=array --inputfile=../data/sample_editora_array.php --to=db4 --dbtohost=localhost --dbtouser=root --dbtopass= --dbtoname=editora_test
 
 The command will output 2 users with random passwords, for example:
 
-New user: omatech with password e2U%?m6D
-New user: test with password J@9T*MvU
+New user: omatech with password eJjZQU&5
+New user: test with password 6r4!QBPB
 
 4) Populate the editora with fake content
 
@@ -165,11 +165,11 @@ cd ..
 
 In windows
 
-phpunit tests/ --bootstrap data/phpunit_bootstrap_sample.php
+phpunit ./tests/Omatech/Editora/Extractor/ExtractorTest
 
 o in Linux
 
-vendor/bin/phpunit tests/ --bootstrap --bootstrap data/phpunit_bootstrap_sample.php
+vendor/bin/phpunit ./tests/Omatech/Editora/Extractor/ExtractorTest
 
 
 

@@ -4,7 +4,7 @@ define('DBHOST', 'localhost');
 define('DBUSER', 'root');
 define('DBPASS', '');
 define('DBNAME', 'editora_test');
-define('DEBUG', true);
+define('DEBUG', false);
 
 
 error_reporting(E_ALL);
@@ -34,9 +34,6 @@ $connection_params = array(
 );
 
 $conn = \Doctrine\DBAL\DriverManager::getConnection($connection_params, $dbal_config);
-echo "estoy aqui\n";
-$conn->query("SHOW TABLES");
-
 
 class PHPUnit_Bootstrap_Sample {
 

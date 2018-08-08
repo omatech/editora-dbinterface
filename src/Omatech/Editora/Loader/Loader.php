@@ -693,7 +693,19 @@ class Loader extends DBInterfaceBase {
     public function insertUpdateRemoteImageVal($inst_id, $atri_id, $value) {
 
         if (substr($value, 0, 7) == 'http://' || substr($value, 0, 8) == 'https://') {
-            list($width, $height) = getimagesize($value);
+						if (substr($value,0,23)=='https://lorempixel.com/')
+						{
+							$path=parse_url($value, PHP_URL_PATH);
+							//echo "$path\n";
+							$arr_path=explode('/', $path);
+							//print_r($arr_path);
+							$width=$arr_path[1];
+							$height=$arr_path[2];
+						}
+						else
+						{
+							list($width, $height) = getimagesize($value);
+						}
         }
         else {
             return $this->insertUpdateImageVal($inst_id, $atri_id, $value);

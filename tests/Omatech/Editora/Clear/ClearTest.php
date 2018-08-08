@@ -45,6 +45,7 @@ class ClearTest extends TestCaseBase
         $this->assertEmpty($query_result);
     }
 
+		
     public function testTableOmpInstancesNotTruncated()
     {
         $class = 'test_class_'.rand();

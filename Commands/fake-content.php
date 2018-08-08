@@ -13,6 +13,7 @@ require_once __DIR__.$autoload_location;
 
 use \Doctrine\DBAL\Configuration;
 use \Omatech\Editora\FakeContent\FakeContent;
+use \Omatech\Editora\Clear\Clear;
 
 ini_set("memory_limit", "5000M");
 set_time_limit(0);
@@ -20,7 +21,7 @@ set_time_limit(0);
 $options_array = getopt(null, ['to::'
     , 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:'
 		, 'num_instances:', 'include_classes:', 'exclude_classes:', 'pictures_theme:'
-    , 'help', 'debug']);
+    , 'help', 'debug', 'delete_previous_data']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
     echo 'Modernize editora DB to include latest changes in DB structure
@@ -39,6 +40,7 @@ Others:
 --exclude_classes generate all but this class_ids, comma separated
 --pictures_theme generate pictures themed with that word, default:cats you can use abstract, animals, business, cats, city, food, nightlife, fashion, people, nature, sports, technics, transport
 --debug show all sqls (if not present false)
+--delete_previous_data USE WITH CAUTION, if set deletes all the previous data before generating the fake data
 
 example: 
 	
@@ -54,8 +56,12 @@ php fake-content.php --to=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --db
 4) Generate fake content for editora 2 instances for all classes except 20 and 21
 php fake-content.php --to=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=intranetmutua --num_instances=2 --exclude_classes=20,21
 
-4) Generate fake content for editora 2 instances for all classes with nature themed pictures
+5) Generate fake content for editora 2 instances for all classes with nature themed pictures
 php fake-content.php --to=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=intranetmutua --num_instances=2 --pictures_theme=nature
+
+7) Generate fake content for editora 4 instances for each class by default BUT REMOVING ALL PREVIOUS CONTENT
+php fake-content.php --to=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=intranetmutua --delete_previous_data
+
 ';
     die;
 }
@@ -117,7 +123,14 @@ if (isset($options_array['pictures_theme']))
 if ($conn_to)
 {
 
-    $fakecontent=new FakeContent($conn_to, $params);
+    $fakecontent=new FakeContent($conn_to, $params);	
+		
+		if (isset($options_array['delete_previous_data']))
+		{
+			$cleaner=new Clear($conn_to, $params);
+			$cleaner->deleteAllContent();
+		}		
+		
     $fakecontent->createContentEditora($conn_to);
 
     echo "\n\nFinish!\n";
