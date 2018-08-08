@@ -122,6 +122,44 @@ class DBInterfaceBase {
             return null;
         return $row;
     }
+		
+	public function findParentRelation($relation, $inst_id) {
+		$this->debug("Extractor::findParentRelation relation=$relation inst_id=$inst_id\n");
+
+		$class_id=$this->findClassIDFromInstID($inst_id);
+		$sql = "select r.id, r.tag, r.parent_class_id, r.child_class_id, r.multiple_child_class_id
+				from omp_relations r
+				where 1=1
+				" . $this->getRelationFilter($relation) . "
+				and (r.child_class_id = $class_id OR FIND_IN_SET($class_id, r.multiple_child_class_id))
+				limit 1
+				";
+
+		$this->debug($sql);
+		$row = $this->conn->fetchAssoc($sql);
+		if (!$row)
+			return null;
+		return $row;
+	}
+	
+	public function findChildRelation($relation, $inst_id) {
+		$this->debug("Extractor::findChildRelation relation=$relation inst_id=$inst_id\n");
+
+		$class_id=$this->findClassIDFromInstID($inst_id);
+		$sql = "select r.id, r.tag, r.parent_class_id, r.child_class_id, r.multiple_child_class_id
+				from omp_relations r
+				where 1=1
+				" . $this->getRelationFilter($relation) . "
+				and r.parent_class_id = $class_id
+				limit 1
+				";
+
+		$this->debug($sql);
+		$row = $this->conn->fetchAssoc($sql);
+		if (!$row)
+			return null;
+		return $row;
+	}	
 
 	public function findRelation($relation, $inst_id) {
 		$this->debug("Extractor::findRelation relation=$relation inst_id=$inst_id\n");

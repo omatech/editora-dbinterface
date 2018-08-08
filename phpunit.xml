@@ -1,0 +1,6 @@
+<phpunit 
+	bootstrap="data/phpunit_bootstrap_sample.php"
+	backupGlobals="false"
+	backupStaticAttributes="false"
+	>
+</phpunit>

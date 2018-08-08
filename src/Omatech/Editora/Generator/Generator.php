@@ -262,7 +262,7 @@ class Generator extends DBInterfaceBase {
 
 		$this->queries = array();
 
-		$editora_structure = file_get_contents(__DIR__ . '/../../../../sql/editora.sql');
+		$editora_structure = file_get_contents(__DIR__ . '/../../../../data/editora.sql');
 		array_push($this->queries, $editora_structure);
 
 		// Creem l'atribut nom_intern

@@ -52,7 +52,7 @@ Others:
 example: 
 	
 1) Generate an editora from file
-php generate-editora.php --from=file --inputformat=array --inputfile=sql/sample_editora_array.php --to=db4 --dbtohost=localhost --dbtouser=root --dbtopass=xxx --dbtoname=intranetmutua 
+php generate-editora.php --from=file --inputformat=array --inputfile=../data/sample_editora_array.php --to=db4 --dbtohost=localhost --dbtouser=root --dbtopass=xxx --dbtoname=intranetmutua 
 ';
 die;
 }

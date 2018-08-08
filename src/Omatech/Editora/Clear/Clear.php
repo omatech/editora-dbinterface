@@ -45,7 +45,7 @@ class Clear extends DBInterfaceBase
 
         $this->conn->executeQuery($commands);
 
-        $editora_structure = file_get_contents(__DIR__ .'/../../../../sql/editora.sql');
+        $editora_structure = file_get_contents(__DIR__ .'/../../../../data/editora.sql');
 
         $this->conn->executeQuery($editora_structure);
     }
@@ -67,7 +67,7 @@ class Clear extends DBInterfaceBase
 
         $this->conn->executeQuery($queries);
 
-        $editora_structure = file_get_contents(__DIR__ .'/../../../../sql/editora.sql');
+        $editora_structure = file_get_contents(__DIR__ .'/../../../../data/editora.sql');
 
         $this->conn->executeQuery($editora_structure);
     }

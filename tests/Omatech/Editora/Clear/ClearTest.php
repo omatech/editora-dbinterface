@@ -29,6 +29,7 @@ class ClearTest extends TestCaseBase
            'tag' => $class,
         ));
         $query_result = $this->connection->fetchAssoc($query);
+				
 
         if(is_array($query_result) && !empty($query_result['name'])){
             $this->assertArrayHasKey('name', $query_result);

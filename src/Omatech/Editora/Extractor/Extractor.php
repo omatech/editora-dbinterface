@@ -157,7 +157,7 @@ class Extractor extends DBInterfaceBase {
 		$this->debug("Extractor::findChildInstances\n");
 		$this->debug("relation=$relation inst_id=$inst_id\n");
 
-		$relation_row = $this->findRelation($relation, $inst_id);
+		$relation_row = $this->findChildRelation($relation, $inst_id);
 		$rel_id = $relation_row['id'];
 		if (!$rel_id) return array();
 
@@ -210,7 +210,7 @@ class Extractor extends DBInterfaceBase {
 		$this->debug("Extractor::findParentInstances\n");
 		$this->debug("inst_id=$inst_id relation=$relation\n");
 
-		$relation_row = $this->findRelation($relation, $inst_id);
+		$relation_row = $this->findParentRelation($relation, $inst_id);
 		$rel_id = $relation_row['id'];
 		if (!$rel_id) return array();
 

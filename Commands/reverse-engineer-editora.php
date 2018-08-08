@@ -46,13 +46,13 @@ Others:
 example: 
 	
 1) Take info from an existing editora and dump array to file
-php reverse-engineer-editora.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=intranetmutua --to=file --outputformat=array --outputfile=../sql/reverse_engineer_editora_array.php
+php reverse-engineer-editora.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=intranetmutua --to=file --outputformat=array --outputfile=../data/reverse_engineer_editora_array.php
 
 2) Take info from an existing editora and dump array to file in json format
-php reverse-engineer-editora.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=intranetmutua --to=file --outputformat=json --outputfile=../sql/reverse_engineer_editora.json
+php reverse-engineer-editora.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=intranetmutua --to=file --outputformat=json --outputfile=../data/reverse_engineer_editora.json
 
 3) Take info from an existing editora and dump to the standard output in print_r format
-php reverse-engineer-editora.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=intranetmutua --to=file --outputformat=json --outputfile=../sql/reverse_engineer_editora.json
+php reverse-engineer-editora.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=intranetmutua --to=file --outputformat=json --outputfile=../data/reverse_engineer_editora.json
 
 ';
 	die;
