@@ -13,13 +13,14 @@ require_once __DIR__.$autoload_location;
 
 use \Doctrine\DBAL\Configuration;
 use \Omatech\Editora\Loader\Loader;
+use \Omatech\Editora\Clear\Clear;
 
 ini_set("memory_limit", "5000M");
 set_time_limit(0);
 
 $options_array = getopt(null, ['to::', 'batch_id::'
     , 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:'
-    , 'help', 'debug']);
+    , 'help', 'debug', 'delete_previous_data']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
     echo 'Modernize editora DB to include latest changes in DB structure
@@ -35,11 +36,15 @@ Parameters:
 Others:
 --help this help!
 --debug show all sqls (if not present false)
+--delete_previous_data USE WITH CAUTION, if set deletes all the previous data before generating the fake data
 
 example: 
 	
-1) Remove fake content from editora
+1) Remove fake content from editora with batch_id=76767
 php remove-content.php --to=db4 --batch_id=76767 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=intranetmutua 
+
+2) Remove ALL the content of the editora
+php remove-content.php --to=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=intranetmutua --delete_previous_data
 ';
     die;
 }
@@ -49,11 +54,16 @@ if (!isset($options_array['to'])) {
     die;
 }
 
-if (!isset($options_array['batch_id'])) {
-    echo "Missing BATCH_ID parameter, use --help for help!\n";
+if (!isset($options_array['batch_id']) && !isset($options_array['delete_previous_data'])) {
+    echo "Missing BATCH_ID parameter or DELETE_PREVIOUS_DATA, use --help for help!\n";
     die;
 }
-$batch_id=$options_array['batch_id'];
+
+$batch_id=false;
+if (isset($options_array['batch_id']))
+{
+	$batch_id=$options_array['batch_id'];
+}
 
 
 $to_version = 4;
@@ -67,7 +77,11 @@ if ($to_version!=4){
 }
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
-if (isset($options_array['debug'])) $dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+if (isset($options_array['debug'])) 
+{
+	$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+	$params['debug']=true;
+}
 
 $conn_to = null;
 if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') {
@@ -85,10 +99,26 @@ if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') {
 
 if ($conn_to)
 {
+	if ($batch_id)
+	{
+		echo "\nCleaning BATCH=$batch_id\n";
     $loader=new Loader($conn_to);
 		$loader->delete_instances_in_batch($batch_id);
-
-    echo "\n\nFinish!\n";
+	}
+	else
+	{
+		if (isset($options_array['delete_previous_data']))
+		{
+			echo "\nCleaning all previous content in the database\n";
+			$cleaner=new Clear($conn_to, $params);
+			$cleaner->deleteAllContent();
+		}
+		else
+		{
+			echo "\nWeird! we have not batch ID and neither delete_previous_data flag, no action taken!\n";
+		}
+	}
+  echo "\n\nFinish!\n";
 }
 else
 {

@@ -72,8 +72,11 @@ if ($from_version == 5)
 	die("DB5 not supported yet!\n");
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
-if (isset($options_array['debug']))
+if (isset($options_array['debug'])) 
+{
 	$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+	$params['debug']=true;
+}
 
 $conn_from = null;
 if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {

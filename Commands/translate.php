@@ -80,7 +80,11 @@ if ($options_array['from'] == 'db5' || $options_array['from'] == 'editora5file' 
 
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
-if (isset($options_array['debug'])) $dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+if (isset($options_array['debug'])) 
+{
+	$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+	$params['debug']=true;
+}
 
 $conn_from = null;
 if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {

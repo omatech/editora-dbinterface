@@ -1,0 +1,168 @@
+<?php
+
+$autoload_location = '/vendor/autoload.php';
+$tries=0;
+while (!is_file(__DIR__.$autoload_location))
+{
+    $autoload_location='/..'.$autoload_location;
+    $tries++;
+    if ($tries>10) die("Error trying to find autoload file try to make a composer update first\n");
+}
+require_once __DIR__.$autoload_location;
+//require_once __DIR__.'/conf/config.php';
+
+use \Doctrine\DBAL\Configuration;
+use \Omatech\Editora\Extractor\Extractor;
+
+
+ini_set("memory_limit", "5000M");
+set_time_limit(0);
+
+$options_array = getopt(null, ['from::', 'to::'
+    , 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:'
+		, 'outputformat:', 'tofilename:'
+		, 'include_classes:', 'exclude_classes:'
+    , 'help', 'debug', 'metadata']);
+//print_r($options_array);
+if (isset($options_array['help'])) {
+    echo 'Export all editora contents to a file (json or array)
+
+Parameters:
+--from= db4 | db5 (only db4 supported by now)
+--dbhost= database host
+--dbuser= database user
+--dbpass= database password 
+--dbname= database name 
+--to=file|output
+--tofilename=path of the file to export
+--outputformat= array|json 
+
+Others:
+--help this help!
+--include_classes generate only this class_ids, comma separated
+--exclude_classes generate all but this class_ids, comma separated
+--debug show all sqls (if not present false)
+
+example: 
+	
+1) Export all content of an editora in json format
+php export-content.php --from=db4 --dbhost=localhost --dbuser=root --dbpass= --dbname=editora_test --to=file --outputformat=json --tofilename=../data/sample-contents.json
+
+';
+    die;
+}
+
+if (!isset($options_array['to'])) {
+    echo "Missing TO parameter, use --help for help!\n";
+    die;
+}
+
+if (!isset($options_array['from'])) {
+    echo "Missing TO parameter, use --help for help!\n";
+    die;
+}
+
+$from_version = 4;
+if ($options_array['from'] != 'db4') {
+    echo "Only --from=db4 supported by now, use --help for help!\n";
+    die;
+}
+
+$to = 'file';
+if ($options_array['to'] != 'file') {
+    echo "Only --to=file supported by now, use --help for help!\n";
+    die;
+}
+
+$dbal_config = new \Doctrine\DBAL\Configuration();
+if (isset($options_array['debug'])) 
+{
+	$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+	$params['debug']=true;
+}
+
+$conn_from = null;
+if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
+    $connection_params = array(
+        'dbname' => $options_array['dbname'],
+        'user' => $options_array['dbuser'],
+        'password' => $options_array['dbpass'],
+        'host' => $options_array['dbhost'],
+        'driver' => 'pdo_mysql',
+        'charset' => 'utf8'
+    );
+
+    $conn_from = \Doctrine\DBAL\DriverManager::getConnection($connection_params, $dbal_config);
+}
+
+$params=array();
+
+if (isset($options_array['include_classes']))
+{
+	$params['include_classes']=$options_array['include_classes'];
+}
+else
+{
+	$params['include_classes']=null;
+}
+
+if (isset($options_array['exclude_classes']))
+{
+	$params['exclude_classes']=$options_array['exclude_classes'];
+}
+else
+{
+	$params['exclude_classes']=null;
+}
+
+
+$params['metadata']=true;
+
+if ($conn_from)
+{
+
+    $extractor=new Extractor($conn_from, $params);
+		$classes = $extractor->getAllClasses($params['include_classes'], $params['exclude_classes']);
+		$res=array();
+		foreach($classes as $class)
+		{
+			$class_id=$class['class_id'];
+			$res['classes'][$class_id]['class_name']=$class['name'];
+			$instances=$extractor->findInstancesInClass($class_id);
+			$res['classes'][$class_id]['instances']=$instances;
+		}
+
+		if ($options_array['outputformat']=='json')
+		{
+			$output= json_encode($res, JSON_PRETTY_PRINT);
+		}
+		else
+		{
+			$output=print_r($res, true);
+		}
+		
+		if ($options_array['to']=='output')
+		{
+			echo $output;
+		}
+		elseif ($options_array['to']=='file')
+		{
+			if (isset($options_array['tofilename']))
+			{
+				file_put_contents($options_array['tofilename'], $output);
+			}
+			else
+			{
+				die("You must especify a valid filename with tofilename parameter when outputing to file. Aborting\n");
+			}
+		}
+		 else {
+			 die('Unknown to parameter, aborting!\n');
+		}		
+
+    echo "\n\nFinish!\n";
+}
+else
+{
+    die("DB to connection not set, see help for more info\n");
+}

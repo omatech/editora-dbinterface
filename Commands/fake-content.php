@@ -24,7 +24,7 @@ $options_array = getopt(null, ['to::'
     , 'help', 'debug', 'delete_previous_data']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
-    echo 'Modernize editora DB to include latest changes in DB structure
+    echo 'Populate the editora CMS with fake content
 
 Parameters:
 --to= db4 | db5 (only db4 supported by now)
@@ -82,7 +82,11 @@ if ($to_version!=4){
 }
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
-if (isset($options_array['debug'])) $dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+if (isset($options_array['debug'])) 
+{
+	$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+	$params['debug']=true;
+}
 
 $conn_to = null;
 if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') {
@@ -127,6 +131,7 @@ if ($conn_to)
 		
 		if (isset($options_array['delete_previous_data']))
 		{
+			echo "\nCleaning all previous content in the database\n";
 			$cleaner=new Clear($conn_to, $params);
 			$cleaner->deleteAllContent();
 		}		

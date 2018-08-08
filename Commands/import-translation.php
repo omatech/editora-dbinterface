@@ -74,7 +74,11 @@ if ($options_array['to'] == 'db5') {
 }
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
-if (isset($options_array['debug'])) $dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+if (isset($options_array['debug'])) 
+{
+	$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+	$params['debug']=true;
+}
 
 $conn_from = null;
 if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') {
