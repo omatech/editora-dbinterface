@@ -170,54 +170,57 @@ o in Linux
 
 vendor/bin/phpunit ./tests/Omatech/Editora/Extractor/ExtractorTest
 
-#Commands
 
-##Editora Structure
+# Commands
 
-###generate-editora.php
+## Editora Structure
+
+### generate-editora.php
 Generate editora structure from an array or json file
 
-###reverse-engineer-editora.php
+### reverse-engineer-editora.php
 Takes out the editora structure and generates a compatible generator file
 
-###modernize.php
+### modernize.php
 Modernize editora DB to include latest changes in DB structure
 
-###regenerate-passwords.php
+### regenerate-passwords.php
 Reset all the passwords in the database using a string with uppercase, lowercase, symbols and numbers
  
-##Content manipulation
+## Content manipulation
 
-###fake-content.php
+### fake-content.php
 Populate the editora CMS with fake content
 
-###export-content.php
+### export-content.php
 Export all editora contents to a file or input (json or serialized array)
 
-###import-content.php
+### import-content.php
 Import all editora contents from a file or input (json or serialized_array)
 
-###remove-content.php
+### remove-content.php
 Remove all content with a given batch_id or all content except Global and Home if delete_previous_data flag is present
 
-##Translation
+## Translation
 
-##export-translation.php
+## export-translation.php
 Export strings in one language from editora database to excel file or output
 
-##import-translation.php
+## import-translation.php
 Import strings from an excel, json file or input to editora database
 
-##Experimental
+## Experimental
 
-###data-transfer.php 
+### data-transfer.php 
 Use data_transfer.php to extract editora4 information and get it into editora5 format
 
-###translate.php
+### translate.php
 Use Google translate API to automatically translate content
 
-###migrator.php
+### migrator.php
 Use migrator.php to extract editora4 information and get it into editora5 format, transfer directly to a db5 database or generate 3 different file formats (full, minimal, generator)
+
+
 
 # Attributes types:
  
