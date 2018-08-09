@@ -82,8 +82,26 @@ if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') {
 if ($conn_to)
 {
 	$generator=new Generator($conn_to, array());
+	
+$generator->startTransaction();
+$start = microtime(true);
+try {	
+	
 	$changes=$generator->modernize();
 	echo "$changes changes made!\n";
+
+} catch (\Exception $e) {
+	$generator->rollback();
+	echo "Error found: " . $e->getMessage() . "\n";
+	echo "Rolling back!!!\n";
+	die;
+}
+$generator->commit();
+$end = microtime(true);
+$seconds = round($end - $start, 2);
+echo "\nFinished succesfully in $seconds seconds!\n";
+	
+	
 }
 else
 {

@@ -136,17 +136,34 @@ else
 if ($conn_to)
 {
 	$generator=new Generator($conn_to, array());
-	$generator->createEditora($data);
-	$data=$generator->getFinalData();
-	$new_passwords=$generator->get_users_passwords();
-	foreach ($new_passwords as $user=>$password_array)
-	{
-		if ($generator->checkPassword($user, $password_array[1]))
-		{// El password es igual, quiere decir que lo acabamos de generar correctamente
-			echo "New user: $user with password $password_array[0]\n";
-		}
-	}
 	
+	$generator->startTransaction();
+	$start = microtime(true);
+	try {	
+	
+		$generator->createEditora($data);
+		$data=$generator->getFinalData();
+		$new_passwords=$generator->get_users_passwords();
+		foreach ($new_passwords as $user=>$password_array)
+		{
+			if ($generator->checkPassword($user, $password_array[1]))
+			{// El password es igual, quiere decir que lo acabamos de generar correctamente
+				echo "New user: $user with password $password_array[0]\n";
+			}
+		}
+
+	} catch (\Exception $e) {
+		$generator->rollback();
+		echo "Error found: " . $e->getMessage() . "\n";
+		echo "Rolling back!!!\n";
+		die;
+	}
+	$generator->commit();
+	$end = microtime(true);
+	$seconds = round($end - $start, 2);
+	echo "\nFinished succesfully in $seconds seconds!\n";
+		
+		
 	//print_r($generator->getQueries());
 }
 else

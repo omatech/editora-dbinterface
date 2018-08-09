@@ -87,6 +87,11 @@ if ($options_array['length'] && is_numeric($options_array['length'])) $length=$o
 if ($conn_to)
 {
 	$generator=new Generator($conn_to, array());
+	
+$generator->startTransaction();
+$start = microtime(true);
+try {
+
 	$generator->resetPasswords($length);
 	$new_passwords=$generator->get_users_passwords();
 	foreach ($new_passwords as $user=>$password_array)
@@ -97,6 +102,19 @@ if ($conn_to)
 		}
 	}
 	//print_r($generator->getQueries());
+	
+} catch (\Exception $e) {
+	$generator->rollback();
+	echo "Error found: " . $e->getMessage() . "\n";
+	echo "Rolling back!!!\n";
+	die;
+}
+$generator->commit();
+$end = microtime(true);
+$seconds = round($end - $start, 2);
+echo "\nFinished succesfully in $seconds seconds!\n";
+	
+		
 }
 else
 {

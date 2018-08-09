@@ -120,19 +120,34 @@ if ($conn_to) {
 		die("Only array inputformat supported see help for more info\n");
 	}
 
-	if (isset($options_array['delete_previous_data'])) {
-		echo "\nCleaning all previous content in the database\n";
-		$cleaner = new Clear($conn_to, $params);
-		$cleaner->deleteAllContent();
+	$loader = new Loader($conn_to, $params);
+
+	$loader->startTransaction();
+	$start = microtime(true);
+	try {
+
+
+		if (isset($options_array['delete_previous_data'])) {
+			echo "\nCleaning all previous content in the database\n";
+			$cleaner = new Clear($conn_to, $params);
+			$cleaner->deleteAllContent();
+		}
+
+		$loader->bulkImportInstances($data['omp_instances']);
+		$loader->bulkImportRelationInstances($data['omp_relation_instances']);
+		$loader->bulkImportStaticTexts($data['omp_static_text']);
+		$loader->bulkImportValues($data['omp_values']);
+		
+	} catch (\Exception $e) {
+		$loader->rollback();
+		echo "Error found: " . $e->getMessage() . "\n";
+		echo "Rolling back!!!\n";
+		die;
 	}
-
-	$loader=new Loader($conn_to, $params);
-	$loader->bulkImportInstances($data['omp_instances']);
-	$loader->bulkImportRelationInstances($data['omp_relation_instances']);
-	$loader->bulkImportStaticTexts($data['omp_static_text']);
-	$loader->bulkImportValues($data['omp_values']);
-
-	echo "\n\nFinish!\n";
+	$loader->commit();
+	$end = microtime(true);
+	$seconds = round($end - $start, 2);
+	echo "\nFinished succesfully in $seconds seconds!\n";
 } else {
 	die("DB to connection not set, see help for more info\n");
 }

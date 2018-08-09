@@ -99,10 +99,15 @@ if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') {
 
 if ($conn_to)
 {
+	$loader=new Loader($conn_to);
+	
+	$loader->startTransaction();
+	$start = microtime(true);
+	try {
+
 	if ($batch_id)
 	{
 		echo "\nCleaning BATCH=$batch_id\n";
-    $loader=new Loader($conn_to);
 		$loader->delete_instances_in_batch($batch_id);
 	}
 	else
@@ -118,7 +123,19 @@ if ($conn_to)
 			echo "\nWeird! we have not batch ID and neither delete_previous_data flag, no action taken!\n";
 		}
 	}
-  echo "\n\nFinish!\n";
+
+	
+	} catch (\Exception $e) {
+		$loader->rollback();
+		echo "Error found: " . $e->getMessage() . "\n";
+		echo "Rolling back!!!\n";
+		die;
+	}
+	$loader->commit();
+	$end = microtime(true);
+	$seconds = round($end - $start, 2);
+	echo "\nFinished succesfully in $seconds seconds!\n";	
+	
 }
 else
 {
