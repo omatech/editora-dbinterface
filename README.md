@@ -125,7 +125,6 @@ The global params can be:
 - sql_select_instances (mysql select string) (default: select i.*, c.name class_name, c.tag class_tag, c.id class_id, i.key_fields nom_intern, i.update_date, ifnull(unix_timestamp(i.update_date),0) update_timestamp)
 - timings (boolean) default false show start and end and total milliseconds for each extraction, only make sense if metadata is true
 
-## Extraction params
 
 
 ## Test the Extractor
@@ -171,9 +170,56 @@ o in Linux
 
 vendor/bin/phpunit ./tests/Omatech/Editora/Extractor/ExtractorTest
 
+#Commands
 
+##Editora Structure
 
-## Attributes types:
+###generate-editora.php
+Generate editora structure from an array or json file
+
+###reverse-engineer-editora.php
+Takes out the editora structure and generates a compatible generator file
+
+###modernize.php
+Modernize editora DB to include latest changes in DB structure
+
+###regenerate-passwords.php
+Reset all the passwords in the database using a string with uppercase, lowercase, symbols and numbers
+ 
+##Content manipulation
+
+###fake-content.php
+Populate the editora CMS with fake content
+
+###export-content.php
+Export all editora contents to a file or input (json or serialized array)
+
+###import-content.php
+Import all editora contents from a file or input (json or serialized_array)
+
+###remove-content.php
+Remove all content with a given batch_id or all content except Global and Home if delete_previous_data flag is present
+
+##Translation
+
+##export-translation.php
+Export strings in one language from editora database to excel file or output
+
+##import-translation.php
+Import strings from an excel, json file or input to editora database
+
+##Experimental
+
+###data-transfer.php 
+Use data_transfer.php to extract editora4 information and get it into editora5 format
+
+###translate.php
+Use Google translate API to automatically translate content
+
+###migrator.php
+Use migrator.php to extract editora4 information and get it into editora5 format, transfer directly to a db5 database or generate 3 different file formats (full, minimal, generator)
+
+# Attributes types:
  
 * A -> text_val (Text Area)
 * B -> text_val (Short string used to order instances)
@@ -193,7 +239,7 @@ vendor/bin/phpunit ./tests/Omatech/Editora/Extractor/ExtractorTest
 * Z -> text_val (url nice)
 
 
-## Authors
+# Authors
 
 * Agusti Pons
 * Christian Bohollo
@@ -202,7 +248,7 @@ vendor/bin/phpunit ./tests/Omatech/Editora/Extractor/ExtractorTest
 * Alvaro Aguilar
 * Cesc Delgado
 
-## License
+# License
 
 This project is licensed under the MIT License 
 

@@ -23,7 +23,7 @@ $options_array = getopt(null, ['to::', 'batch_id::'
     , 'help', 'debug', 'delete_previous_data']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
-    echo 'Modernize editora DB to include latest changes in DB structure
+    echo 'Remove all content with a given batch_id or all content except Global and Home if delete_previous_data flag is present
 
 Parameters:
 --to= db4 | db5 (only db4 supported by now)

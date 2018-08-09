@@ -40,7 +40,7 @@ Others:
 example: 
 	
 1) move data from a db4 to a db5 editora
-php data_transfer.php --from=db4 --to=db5 --dbpass=xxx --dbfromname=panreac --dbtoname=panreac5
+php data-transfer.php --from=db4 --to=db5 --dbpass=xxx --dbfromname=panreac --dbtoname=panreac5
 ';
 die;
 }

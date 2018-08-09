@@ -24,7 +24,7 @@ $options_array = getopt(null, ['from::', 'to::'
 	, 'help']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
-	echo 'Import strings from a file or input to editora database
+	echo 'Import strings from an excel, json file or input to editora database
 
 From parameters:
 --from= input, file 

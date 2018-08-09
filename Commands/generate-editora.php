@@ -25,7 +25,7 @@ $options_array = getopt(null, ['from::', 'to::'
 	, 'help', 'debug']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
-	echo 'Generate editora structure from a driver file
+	echo 'Generate editora structure from an array or json file
 
 From parameters:
 --from= file | db4 | db5 (only file supported by now)
