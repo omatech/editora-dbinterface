@@ -72,6 +72,19 @@ class Clear extends DBInterfaceBase
         $this->conn->executeQuery($editora_structure);
     }
 		
+		public function deleteAllContentExceptHomeAndGlobal()
+		{
+			$this->conn->executeQuery("delete from omp_instances where id not in (1,2)");
+			$this->conn->executeQuery("delete from omp_instances_backup");
+			$this->conn->executeQuery("delete from omp_instances_cache");
+			$this->conn->executeQuery("delete from omp_niceurl where inst_id not in (1,2)");
+			$this->conn->executeQuery("delete from omp_relation_instances");
+			$this->conn->executeQuery("delete from omp_search");
+			$this->conn->executeQuery("delete from omp_static_text");
+			$this->conn->executeQuery("delete from omp_user_instances where inst_id not in (1,2)");
+			$this->conn->executeQuery("delete from omp_values where inst_id not in (1,2)");
+		}
+		
 		public function deleteAllContent()
 		{
 			$this->conn->executeQuery("delete from omp_instances");
@@ -83,6 +96,6 @@ class Clear extends DBInterfaceBase
 			$this->conn->executeQuery("delete from omp_static_text");
 			$this->conn->executeQuery("delete from omp_user_instances");
 			$this->conn->executeQuery("delete from omp_values");
-		}
+		}		
 
 }

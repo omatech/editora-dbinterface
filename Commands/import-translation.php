@@ -80,7 +80,7 @@ if (isset($options_array['debug']))
 	$params['debug']=true;
 }
 
-$conn_from = null;
+$conn_to = null;
 if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') {
 	$connection_params = array(
 		'dbname' => $options_array['dbname'],

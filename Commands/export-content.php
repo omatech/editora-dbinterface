@@ -22,10 +22,10 @@ $options_array = getopt(null, ['from::', 'to::'
     , 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:'
 		, 'outputformat:', 'tofilename:'
 		, 'include_classes:', 'exclude_classes:'
-    , 'help', 'debug', 'metadata']);
+    , 'help', 'debug']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
-    echo 'Export all editora contents to a file (json or array)
+    echo 'Export all editora contents to a file or input (json or serialized array)
 
 Parameters:
 --from= db4 | db5 (only db4 supported by now)
@@ -35,7 +35,7 @@ Parameters:
 --dbname= database name 
 --to=file|output
 --tofilename=path of the file to export
---outputformat= array|json 
+--outputformat= serialized_array|json 
 
 Others:
 --help this help!
@@ -58,7 +58,7 @@ if (!isset($options_array['to'])) {
 }
 
 if (!isset($options_array['from'])) {
-    echo "Missing TO parameter, use --help for help!\n";
+    echo "Missing FROM parameter, use --help for help!\n";
     die;
 }
 
@@ -81,7 +81,7 @@ if (isset($options_array['debug']))
 	$params['debug']=true;
 }
 
-$conn_from = null;
+$conn_to = null;
 if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
     $connection_params = array(
         'dbname' => $options_array['dbname'],
@@ -92,7 +92,7 @@ if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
         'charset' => 'utf8'
     );
 
-    $conn_from = \Doctrine\DBAL\DriverManager::getConnection($connection_params, $dbal_config);
+    $conn_to = \Doctrine\DBAL\DriverManager::getConnection($connection_params, $dbal_config);
 }
 
 $params=array();
@@ -116,29 +116,26 @@ else
 }
 
 
-$params['metadata']=true;
-
-if ($conn_from)
+if ($conn_to)
 {
-
-    $extractor=new Extractor($conn_from, $params);
-		$classes = $extractor->getAllClasses($params['include_classes'], $params['exclude_classes']);
 		$res=array();
-		foreach($classes as $class)
-		{
-			$class_id=$class['class_id'];
-			$res['classes'][$class_id]['class_name']=$class['name'];
-			$instances=$extractor->findInstancesInClass($class_id);
-			$res['classes'][$class_id]['instances']=$instances;
-		}
+    $extractor=new Extractor($conn_to, $params);
+		$res['omp_instances']=$extractor->getBulkInstances($params['include_classes'], $params['exclude_classes']);
+		$res['omp_relation_instances']=$extractor->getBulkRelationInstances();
+		$res['omp_static_text']=$extractor->getBulkStaticTexts();
+		$res['omp_values']=$extractor->getBulkValues();
 
 		if ($options_array['outputformat']=='json')
 		{
 			$output= json_encode($res, JSON_PRETTY_PRINT);
 		}
+		elseif ($options_array['outputformat']=='serialized_array')
+		{
+			$output=serialize($res);
+		}
 		else
 		{
-			$output=print_r($res, true);
+			die ("Unknown output_format, see --help for help. Aborting");
 		}
 		
 		if ($options_array['to']=='output')

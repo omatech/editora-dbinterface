@@ -86,7 +86,7 @@ if (isset($options_array['debug']))
 	$params['debug']=true;
 }
 
-$conn_from = null;
+$conn_to = null;
 if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 	$connection_params_from = array(
 		'dbname' => $options_array['dbfromname'],
@@ -97,7 +97,7 @@ if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 		'charset' => 'utf8'
 	);
 
-	$conn_from = \Doctrine\DBAL\DriverManager::getConnection($connection_params_from, $dbal_config);
+	$conn_to = \Doctrine\DBAL\DriverManager::getConnection($connection_params_from, $dbal_config);
 }
 
 $conn_to = null;
@@ -125,7 +125,7 @@ $result = array();
 
 unset($options_array['dbpass']);
 
-$model = new \Omatech\Translator\TranslatorModel($conn_from, $conn_to, $params, false);
+$model = new \Omatech\Translator\TranslatorModel($conn_to, $conn_to, $params, false);
 
 $rows = $model->get_missing_destination_texts('conn_from');
 

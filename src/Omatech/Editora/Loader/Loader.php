@@ -1,6 +1,7 @@
 <?php
 
 namespace Omatech\Editora\Loader;
+
 use \Omatech\Editora\DBInterfaceBase;
 use \Doctrine\DBAL\DriverManager;
 
@@ -11,19 +12,78 @@ class Loader extends DBInterfaceBase {
 	public $geocoder;
 	public $download_images = true;
 
-	public function __construct($conn, $params=array(), $geocoder = null) {
+	public function __construct($conn, $params = array(), $geocoder = null) {
 		parent::__construct($conn, $params);
 		$this->geocoder = $geocoder;
 	}
-	
 
-	public function delete_relation_instances_in_batch($batch_id)
-	{
-		$sql="delete from omp_relation_instances where batch_id=:batch_id";
-		$statement=$this->conn->prepare($sql);
+	public function bulkImportInstances ($rows) {
+		$this->bulkImportTable('omp_instances', $rows);
+	}
+
+	public function bulkImportRelationInstances ($rows) {
+		$this->bulkImportTable('omp_relation_instances', $rows);
+	}
+
+	public function bulkImportStaticTexts ($rows) {
+		$this->bulkImportTable('omp_static_text', $rows);
+	}
+
+	public function bulkImportValues ($rows) {	
+		$this->bulkImportTable('omp_values', $rows);
+	}
+
+	public function bulkImportTable($table_name, $rows, $rows_to_process = 1000, $delete_first = false) {
+		if ($delete_first) {
+			$conn->executeQuery("delete from $table_name");
+		}
+
+		$fields_array = array();
+		if (!$rows) return;
+		foreach ($rows[0] as $key => $val) {
+			$fields_array[] = $key;
+		}
+		$fields = implode(',', $fields_array);
+
+		$i = 1;
+		$initial_sql = "insert into $table_name ($fields)	values ";
+		$sql = $initial_sql;
+		foreach ($rows as $row) {
+			$sql .= '(';
+			foreach ($row as $val) {
+				if (isset($val) && !is_numeric($val)) $val=$this->conn->quote($val);
+				if (!$val) $val='null';
+				$sql .= "$val,";
+			}
+			$sql = substr($sql, 0, -1);
+			$sql .= "),";
+
+
+			if ($i % $rows_to_process == 0) {// ja portem 1000, executem
+				$sql = substr($sql, 0, -1); // eliminem la ultima ,
+				echo $i;
+				//echo PHP_EOL . $i . ' - ' . $sql . PHP_EOL;
+				$$this->conn->query($sql);
+				$sql = $initial_sql;
+			} else {
+				echo '.';
+			}
+			$i++;
+		}
+		$sql = substr($sql, 0, -1); // eliminem la ultima ,
+		echo "$i\n";
+		//echo "$sql\n";
+		//$this->last_massive_sql = $sql;
+		$this->conn->query($sql);
+		return $i;
+	}
+
+	public function delete_relation_instances_in_batch($batch_id) {
+		$sql = "delete from omp_relation_instances where batch_id=:batch_id";
+		$statement = $this->conn->prepare($sql);
 		$statement->bindValue('batch_id', $batch_id);
 		$statement->execute();
-		echo $statement->rowCount()." relation instances deleted\n";
+		echo $statement->rowCount() . " relation instances deleted\n";
 	}
 
 	public function delete_instances_in_batch($batch_id) {
@@ -81,7 +141,6 @@ class Loader extends DBInterfaceBase {
 
 		return true;
 	}
-	
 
 	public function deleteInstance($inst_id) {
 		$sql_values = 'DELETE
@@ -123,28 +182,27 @@ class Loader extends DBInterfaceBase {
 		return true;
 	}
 
-    public function getAllInstancesClassId($class_id, $batch_id=null){
-        $sql = 'select id
+	public function getAllInstancesClassId($class_id, $batch_id = null) {
+		$sql = 'select id
 				from omp_instances
-				where class_id = "'.$class_id.'"';
+				where class_id = "' . $class_id . '"';
 
-        if ($batch_id!=null)
-        {
-            $sql .= ' AND batch_id = "'.$batch_id.'";';
-        }else{
-            $sql .= ';';
-        }
+		if ($batch_id != null) {
+			$sql .= ' AND batch_id = "' . $batch_id . '";';
+		} else {
+			$sql .= ';';
+		}
 
-        $row = $this->conn->fetchAll($sql);
-        if (!$row)
-            return null;
-        return $row;
+		$row = $this->conn->fetchAll($sql);
+		if (!$row)
+			return null;
+		return $row;
 
 
-        return $this->conn->executeQuery($sql);
-    }
+		return $this->conn->executeQuery($sql);
+	}
 
-	public function insertRelationInstance($rel_id, $parent_inst_id, $child_inst_id, $external_id=null, $batch_id=null) {
+	public function insertRelationInstance($rel_id, $parent_inst_id, $child_inst_id, $external_id = null, $batch_id = null) {
 		$rel_instance_id = $this->relationInstanceExist($rel_id, $parent_inst_id, $child_inst_id);
 		if ($rel_instance_id) {
 			return $rel_instance_id;
@@ -164,20 +222,18 @@ class Loader extends DBInterfaceBase {
 				$weight = $weight_row["weight"];
 			}
 
-			$sql_fields_add='';
-			$sql_values_add='';
-			if ($external_id!=null)
-			{
-				$sql_fields_add.=', external_id';
-				$sql_values_add.=", $external_id";
+			$sql_fields_add = '';
+			$sql_values_add = '';
+			if ($external_id != null) {
+				$sql_fields_add .= ', external_id';
+				$sql_values_add .= ", $external_id";
 			}
-			if ($batch_id!=null)
-			{
-				$sql_fields_add.=', batch_id';
-				$sql_values_add.=", $batch_id";
+			if ($batch_id != null) {
+				$sql_fields_add .= ', batch_id';
+				$sql_values_add .= ", $batch_id";
 			}
-			
-			
+
+
 			$sql = "insert into omp_relation_instances 
 						(rel_id, parent_inst_id , child_inst_id, weight, relation_date $sql_fields_add)
 						values
@@ -194,12 +250,11 @@ class Loader extends DBInterfaceBase {
 		// -4 some value is different
 		// -5 some value not exists in current instance
 		// 0 same!
-		if (!$this->existInstance($inst_id))
-		{
+		if (!$this->existInstance($inst_id)) {
 			$difference = -1;
 			return true;
 		}
-		
+
 		$current_inst = $this->getInstanceRowAndExistingValues($inst_id);
 		if ($status != $current_inst['status']) {
 			$difference = -1;
@@ -244,7 +299,7 @@ class Loader extends DBInterfaceBase {
 		$difference = 0;
 		return false;
 	}
-	
+
 	public function updateInstance($inst_id, $nom_intern, $values, $status = 'O', $publishing_begins = null, $publishing_ends = null) {
 		if (!$this->existInstance($inst_id))
 			return false;
@@ -281,7 +336,7 @@ class Loader extends DBInterfaceBase {
 				";
 		$this->conn->executeQuery($sql);
 
-        //!
+		//!
 		$ret = $this->updateValues($inst_id, array('nom_intern' => $nom_intern));
 		if (!$ret) {
 			//$this->conn->executeQuery('rollback');
@@ -299,8 +354,6 @@ class Loader extends DBInterfaceBase {
 
 		return $inst_id;
 	}
-
-
 
 	public function updateUrlNice($nice_url, $inst_id, $language) {
 		if ($this->existsURLNice($nice_url, $language))
@@ -339,7 +392,7 @@ class Loader extends DBInterfaceBase {
 			echo "Nothing to delete for batch_id=$batch_id\n";
 		}
 	}
-	
+
 	public function deleteRelationInstancesInBatch($batch_id) {
 		//$batch_id = $this->conn->quote($batch_id);
 		$sql = "select id from omp_relation_instances where batch_id=$batch_id";
@@ -354,15 +407,12 @@ class Loader extends DBInterfaceBase {
 		} else {
 			echo "Nothing to delete for batch_id=$batch_id\n";
 		}
-	}	
-	
-	public function deleteRelationInstance ($id)
-	{
-		$sql="delete from omp_relation_instances where id=$id";
-		$this->conn->executeQuery($sql);
 	}
 
-
+	public function deleteRelationInstance($id) {
+		$sql = "delete from omp_relation_instances where id=$id";
+		$this->conn->executeQuery($sql);
+	}
 
 	public function insertInstanceWithExternalID($class_id, $nom_intern, $external_id, $batch_id, $values, $status = 'O', $publishing_begins = null, $publishing_ends = null, $creation_date = 'now()', $update_date = 'now()') {
 
@@ -470,7 +520,7 @@ class Loader extends DBInterfaceBase {
 	public function insertInstanceForcingID($inst_id, $class_id, $nom_intern, $values, $status = 'O', $publishing_begins = null, $publishing_ends = null) {
 
 		$status = $this->conn->quote($status);
-		$sql="delete from omp_instances where id=$inst_id";
+		$sql = "delete from omp_instances where id=$inst_id";
 		$this->conn->executeQuery($sql);
 
 		if ($publishing_begins == null) {
@@ -527,24 +577,20 @@ class Loader extends DBInterfaceBase {
 			} else {// podem continuar, existeix l'atribut
 				//print_r($attr_info);
 				if ($attr_info['type'] == 'I') {// image
-                    if($this->download_images){
-                        $this->insertUpdateImageVal($inst_id, $attr_info['id'], $value);
-                    }else{
-                        $this->insertUpdateRemoteImageVal($inst_id, $attr_info['id'], $value);
-                    }
-				}
-				elseif ($attr_info['type'] == 'B') {// string order
+					if ($this->download_images) {
+						$this->insertUpdateImageVal($inst_id, $attr_info['id'], $value);
+					} else {
+						$this->insertUpdateRemoteImageVal($inst_id, $attr_info['id'], $value);
+					}
+				} elseif ($attr_info['type'] == 'B') {// string order
 					$this->insertUpdateTextVal($inst_id, $attr_info['id'], $value);
 					$this->updateInstanceOrderString($inst_id, $value);
-				} 
-				elseif ($attr_info['type'] == 'D') {// date
+				} elseif ($attr_info['type'] == 'D') {// date
 					$this->insertUpdateDateVal($inst_id, $attr_info['id'], $value);
-				} 
-				elseif ($attr_info['type'] == 'E') {// date order
+				} elseif ($attr_info['type'] == 'E') {// date order
 					$this->insertUpdateDateVal($inst_id, $attr_info['id'], $value);
 					$this->updateInstanceOrderDate($inst_id, $value);
-				} 
-				elseif ($attr_info['type'] == 'N') {// number
+				} elseif ($attr_info['type'] == 'N') {// number
 					$this->insertUpdateNumVal($inst_id, $attr_info['id'], $value);
 				} elseif ($attr_info['type'] == 'L') {// lookup
 					$this->insertUpdateLookupVal($inst_id, $attr_info['id'], $attr_info['lookup_id'], $value);
@@ -557,9 +603,6 @@ class Loader extends DBInterfaceBase {
 		}
 		return true;
 	}
-
-
-
 
 	public function insertUpdateGeoposVal($inst_id, $atri_id, $value) {
 		$geoinfo = $this->$geocoder->geocode($value);
@@ -653,9 +696,10 @@ class Loader extends DBInterfaceBase {
 	public function insertUpdateImageVal($inst_id, $atri_id, $value) {
 
 		if (substr($value, 0, 7) == 'http://' || substr($value, 0, 8) == 'https://') {
-			$file_name=basename($value);
+			$file_name = basename($value);
 
-            if (stripos($file_name, '.')===false) $file_name=$file_name.'.png';
+			if (stripos($file_name, '.') === false)
+				$file_name = $file_name . '.png';
 
 			$img_file = $this->file_base . $this->url_base . 'downloaded/' . $file_name;
 			if (!file_exists($img_file))
@@ -663,7 +707,7 @@ class Loader extends DBInterfaceBase {
 
 			if (!file_exists($img_file))
 				die("No existe el fichero " . $img_file . ", error!\n");
-			
+
 			list($width, $height) = getimagesize($img_file);
 			$value = 'downloaded/' . $file_name;
 		}
@@ -690,41 +734,37 @@ class Loader extends DBInterfaceBase {
 		$this->conn->executeQuery($sql);
 	}
 
-    public function insertUpdateRemoteImageVal($inst_id, $atri_id, $value) {
+	public function insertUpdateRemoteImageVal($inst_id, $atri_id, $value) {
 
-        if (substr($value, 0, 7) == 'http://' || substr($value, 0, 8) == 'https://') {
-						if (substr($value,0,23)=='https://lorempixel.com/')
-						{
-							$path=parse_url($value, PHP_URL_PATH);
-							//echo "$path\n";
-							$arr_path=explode('/', $path);
-							//print_r($arr_path);
-							$width=$arr_path[1];
-							$height=$arr_path[2];
-						}
-						else
-						{
-							list($width, $height) = getimagesize($value);
-						}
-        }
-        else {
-            return $this->insertUpdateImageVal($inst_id, $atri_id, $value);
-        }
+		if (substr($value, 0, 7) == 'http://' || substr($value, 0, 8) == 'https://') {
+			if (substr($value, 0, 23) == 'https://lorempixel.com/') {
+				$path = parse_url($value, PHP_URL_PATH);
+				//echo "$path\n";
+				$arr_path = explode('/', $path);
+				//print_r($arr_path);
+				$width = $arr_path[1];
+				$height = $arr_path[2];
+			} else {
+				list($width, $height) = getimagesize($value);
+			}
+		} else {
+			return $this->insertUpdateImageVal($inst_id, $atri_id, $value);
+		}
 
-        $value = $this->conn->quote($value);
-        if ($this->existValue($inst_id, $atri_id)) {// update
-            $sql = "update omp_values v
+		$value = $this->conn->quote($value);
+		if ($this->existValue($inst_id, $atri_id)) {// update
+			$sql = "update omp_values v
 						set v.text_val=$value
 						, img_info='$width.$height'
 						where v.inst_id=$inst_id
 						and v.atri_id=$atri_id					  
 						and v.text_val!=$value
 						";
-        } else {// insert
-            $sql = "insert into omp_values (inst_id, atri_id, text_val, img_info)
+		} else {// insert
+			$sql = "insert into omp_values (inst_id, atri_id, text_val, img_info)
 						values ($inst_id, $atri_id, $value, '$width.$height')";
-        }
-        $this->conn->executeQuery($sql);
-    }
+		}
+		$this->conn->executeQuery($sql);
+	}
 
 }

@@ -74,7 +74,7 @@ if (isset($options_array['debug']))
 	$params['debug']=true;
 }
 
-$conn_from = null;
+$conn_to = null;
 if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 	$connection_params = array(
 		'dbname' => $options_array['dbfromname'],
@@ -85,7 +85,7 @@ if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 		'charset' => 'utf8'
 	);
 
-	$conn_from = \Doctrine\DBAL\DriverManager::getConnection($connection_params, $dbal_config);
+	$conn_to = \Doctrine\DBAL\DriverManager::getConnection($connection_params, $dbal_config);
 }
 
 $conn_to = null;

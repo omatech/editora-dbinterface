@@ -111,7 +111,7 @@ if ($conn_to)
 		{
 			echo "\nCleaning all previous content in the database\n";
 			$cleaner=new Clear($conn_to, $params);
-			$cleaner->deleteAllContent();
+			$cleaner->deleteAllContentExceptHomeAndGlobal();
 		}
 		else
 		{

@@ -10,7 +10,6 @@ class Extractor extends DBInterfaceBase {
 	protected $preview = false;
 	protected $extract_values = true;
 	protected $preview_date = 'NOW()';
-	protected $sql_select_instances = 'select i.*, c.name class_name, c.tag class_tag, c.id class_id, i.key_fields nom_intern, i.update_date, ifnull(unix_timestamp(i.update_date),0) update_timestamp';
 
 	public function findInstanceById($inst_id, $params = null, callable $callback = null) {
 		$this->debug("Extractor::findInstanceById inst_id=$inst_id\n");

@@ -78,7 +78,7 @@ if (isset($options_array['debug']))
 	$params['debug']=true;
 }
 
-$conn_from = null;
+$conn_to = null;
 if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 	$connection_params = array(
 		'dbname' => $options_array['dbname'],
@@ -89,11 +89,11 @@ if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 		'charset' => 'utf8'
 	);
 
-	$conn_from = \Doctrine\DBAL\DriverManager::getConnection($connection_params, $dbal_config);
+	$conn_to = \Doctrine\DBAL\DriverManager::getConnection($connection_params, $dbal_config);
 }
 
-if ($conn_from) {
-	$reverseengineerator = new \Omatech\Editora\Generator\ReverseEngineerator($conn_from, array());
+if ($conn_to) {
+	$reverseengineerator = new \Omatech\Editora\Generator\ReverseEngineerator($conn_to, array());
 	$data = $reverseengineerator->reverseEngineerEditora();
 	//echo \Omatech\Editora\Utils\Strings::array2string($data);
 	//print_r($data);

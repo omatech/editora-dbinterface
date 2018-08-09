@@ -99,7 +99,7 @@ if (stripos($options_array['to'], 'minimalfile') || $options_array['to']=='edito
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
 
-$conn_from = null;
+$conn_to = null;
 if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 	$connection_params_from = array(
 		'dbname' => $options_array['dbfromname'],
@@ -110,7 +110,7 @@ if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 		'charset' => 'utf8'
 	);
 
-	$conn_from = \Doctrine\DBAL\DriverManager::getConnection($connection_params_from, $dbal_config);
+	$conn_to = \Doctrine\DBAL\DriverManager::getConnection($connection_params_from, $dbal_config);
 }
 
 $conn_to = null;
@@ -154,7 +154,7 @@ $result['metadata']['params'] = $params;
 $result['metadata']['generated_at'] = time();
 $result['metadata']['generated_at_human'] = date('Y-m-d H:i:s');
 
-$model = new \Omatech\Editora\Migrator\Migrator($conn_from, $conn_to, $params, false);
+$model = new \Omatech\Editora\Migrator\Migrator($conn_to, $conn_to, $params, false);
 
 if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 	
