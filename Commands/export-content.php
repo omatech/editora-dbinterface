@@ -20,7 +20,7 @@ set_time_limit(0);
 
 $options_array = getopt(null, ['from::', 'to::'
     , 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:'
-		, 'outputformat:', 'tofilename:'
+		, 'outputformat:', 'outputfile:'
 		, 'include_classes:', 'exclude_classes:'
     , 'help', 'debug']);
 //print_r($options_array);
@@ -34,7 +34,7 @@ Parameters:
 --dbpass= database password 
 --dbname= database name 
 --to=file|output
---tofilename=path of the file to export
+--outputfile=path of the file to export
 --outputformat= serialized_array|json 
 
 Others:
@@ -46,7 +46,7 @@ Others:
 example: 
 	
 1) Export all content of an editora in json format
-php export-content.php --from=db4 --dbhost=localhost --dbuser=root --dbpass= --dbname=editora_test --to=file --outputformat=json --tofilename=../data/sample-contents.json
+php export-content.php --from=db4 --dbhost=localhost --dbuser=root --dbpass= --dbname=editora_test --to=file --outputformat=json --outputfile=../data/sample-contents.json
 
 ';
     die;
@@ -144,13 +144,13 @@ if ($conn_to)
 		}
 		elseif ($options_array['to']=='file')
 		{
-			if (isset($options_array['tofilename']))
+			if (isset($options_array['outputfile']))
 			{
-				file_put_contents($options_array['tofilename'], $output);
+				file_put_contents($options_array['outputfile'], $output);
 			}
 			else
 			{
-				die("You must especify a valid filename with tofilename parameter when outputing to file. Aborting\n");
+				die("You must especify a valid filename with outputfile parameter when outputing to file. Aborting\n");
 			}
 		}
 		 else {

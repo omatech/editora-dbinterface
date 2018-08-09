@@ -339,8 +339,11 @@ class Generator extends DBInterfaceBase {
 			//$password = substr(md5(rand()), 0, 7);
 			$password = Strings::generateStrongPassword(8);
 			$hashed_password = $hasher->make($password);
+			
+			$username=$this->conn->quote($user[0]);
+			$complete_name=$this->conn->quote($user[1]);
 
-			array_push($this->queries, "insert ignore into omp_users (username, password, complete_name, language, rol_id, tipus) values ('$user[0]', '$hashed_password', '$user[1]', '$user[2]', '$user[3]', '$user[4]');");
+			array_push($this->queries, "insert ignore into omp_users (username, password, complete_name, language, rol_id, tipus) values ($username, '$hashed_password', $complete_name, '$user[2]', '$user[3]', '$user[4]');");
 			$this->users_passwords[$user[0]] = array($password, $hashed_password);
 		}
 
@@ -682,14 +685,7 @@ class Generator extends DBInterfaceBase {
 		$this->startTransaction();
 
 		foreach ($this->queries as $aQuery) {
-			try {
-				$this->conn->executeQuery($aQuery);
-				
-			} catch (\Exception $exception) {
-				$this->rollback();
-				return false;
-			}
-			
+			$this->conn->executeQuery($aQuery);
 		}
 		
 		// Creem les instancies home i global si no les teniem

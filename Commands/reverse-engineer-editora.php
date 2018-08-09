@@ -71,6 +71,9 @@ if ($options_array['from'] == 'db5') {
 if ($from_version == 5)
 	die("DB5 not supported yet!\n");
 
+if (!isset($options_array['outputformat'])) die("Missing --outputformat parameter, use --help for help!\n");
+
+
 $dbal_config = new \Doctrine\DBAL\Configuration();
 if (isset($options_array['debug'])) 
 {
@@ -78,7 +81,7 @@ if (isset($options_array['debug']))
 	$params['debug']=true;
 }
 
-$conn_to = null;
+$conn_from = null;
 if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 	$connection_params = array(
 		'dbname' => $options_array['dbname'],
@@ -89,11 +92,11 @@ if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 		'charset' => 'utf8'
 	);
 
-	$conn_to = \Doctrine\DBAL\DriverManager::getConnection($connection_params, $dbal_config);
+	$conn_from = \Doctrine\DBAL\DriverManager::getConnection($connection_params, $dbal_config);
 }
 
-if ($conn_to) {
-	$reverseengineerator = new \Omatech\Editora\Generator\ReverseEngineerator($conn_to, array());
+if ($conn_from) {
+	$reverseengineerator = new \Omatech\Editora\Generator\ReverseEngineerator($conn_from, array());
 	$data = $reverseengineerator->reverseEngineerEditora();
 	//echo \Omatech\Editora\Utils\Strings::array2string($data);
 	//print_r($data);
@@ -102,6 +105,7 @@ if ($conn_to) {
 } else {
 	die("DB from connection not set, see help for more info\n");
 }
+
 
 if ($options_array['outputformat'] == 'array') {
 	$result = $reverseengineerator->arrayToCode($data);
@@ -112,6 +116,7 @@ if ($options_array['outputformat'] == 'array') {
 } else {
 	die("Only array, json or print_r outputformat supported see help for more info\n");
 }
+
 
 
 if (isset($options_array['outputfile'])) {

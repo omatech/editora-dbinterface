@@ -63,7 +63,7 @@ class Loader extends DBInterfaceBase {
 				$sql = substr($sql, 0, -1); // eliminem la ultima ,
 				echo $i;
 				//echo PHP_EOL . $i . ' - ' . $sql . PHP_EOL;
-				$$this->conn->query($sql);
+				$this->conn->query($sql);
 				$sql = $initial_sql;
 			} else {
 				echo '.';
