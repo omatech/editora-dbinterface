@@ -71,14 +71,14 @@ if ($options_array['from'] == 'db5') {
 if ($from_version == 5)
 	die("DB5 not supported yet!\n");
 
-if (!isset($options_array['outputformat'])) die("Missing --outputformat parameter, use --help for help!\n");
+if (!isset($options_array['outputformat']))
+	die("Missing --outputformat parameter, use --help for help!\n");
 
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
-if (isset($options_array['debug'])) 
-{
+if (isset($options_array['debug'])) {
 	$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
-	$params['debug']=true;
+	$params['debug'] = true;
 }
 
 $conn_from = null;
@@ -86,7 +86,7 @@ if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 	$connection_params = array(
 		'dbname' => $options_array['dbname'],
 		'user' => $options_array['dbuser'],
-		'password' => $options_array['dbpass'],
+		'password' => (isset($options_array['dbpass']) ? $options_array['dbpass'] : ''),
 		'host' => $options_array['dbhost'],
 		'driver' => 'pdo_mysql',
 		'charset' => 'utf8'

@@ -93,7 +93,7 @@ if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') {
 	$connection_params = array(
 		'dbname' => $options_array['dbname'],
 		'user' => $options_array['dbuser'],
-		'password' => $options_array['dbpass'],
+		'password' => (isset($options_array['dbpass']) ? $options_array['dbpass'] : ''),
 		'host' => $options_array['dbhost'],
 		'driver' => 'pdo_mysql',
 		'charset' => 'utf8'
@@ -135,8 +135,6 @@ if ($conn_to) {
 		}
 
 		$fakecontent->createContentEditora($conn_to);
-		
-		
 	} catch (\Exception $e) {
 		$fakecontent->rollback();
 		echo "Error found: " . $e->getMessage() . "\n";
@@ -147,8 +145,6 @@ if ($conn_to) {
 	$end = microtime(true);
 	$seconds = round($end - $start, 2);
 	echo "\nFinished succesfully in $seconds seconds!\n";
-
-	
-	} else {
+} else {
 	die("DB to connection not set, see help for more info\n");
 }

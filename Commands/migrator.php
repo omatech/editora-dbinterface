@@ -1,26 +1,26 @@
 <?php
 
 $autoload_location = '/vendor/autoload.php';
-$tries=0;
-while (!is_file(__DIR__.$autoload_location)) 
-{ 
-	$autoload_location='/..'.$autoload_location;
+$tries = 0;
+while (!is_file(__DIR__ . $autoload_location)) {
+	$autoload_location = '/..' . $autoload_location;
 	$tries++;
-	if ($tries>10) die("Error trying to find autoload file try to make a composer update first\n");
+	if ($tries > 10)
+		die("Error trying to find autoload file try to make a composer update first\n");
 }
-require_once __DIR__.$autoload_location;
+require_once __DIR__ . $autoload_location;
 
 use \Doctrine\DBAL\Configuration;
 
 ini_set("memory_limit", "5000M");
 set_time_limit(0);
 
-$default_language='es';
-$input_processed=false;
-$output_processed=false;
-$input_action='';
-$output_action='';
-$data_transfered=false;
+$default_language = 'es';
+$input_processed = false;
+$output_processed = false;
+$input_action = '';
+$output_action = '';
+$data_transfered = false;
 
 $options_array = getopt(null, ['from::', 'to::'
 	, 'dbfromuser:', 'dbfrompass:', 'dbfromhost:', 'dbfromname:', 'fromfile:'
@@ -83,17 +83,17 @@ if (!isset($options_array['from']) || !isset($options_array['to'])) {
 }
 
 $to_version = 4;
-if ($options_array['to'] == 'editora5file' || $options_array['to'] == 'editora5minimalfile' || $options_array['to'] == 'db5'|| $options_array['to'] == 'editora5generatorfile') {
+if ($options_array['to'] == 'editora5file' || $options_array['to'] == 'editora5minimalfile' || $options_array['to'] == 'db5' || $options_array['to'] == 'editora5generatorfile') {
 	$to_version = 5;
 }
 
 $from_version = 4;
-if ($options_array['from'] == 'db5' || $options_array['from'] == 'editora5file' || $options_array['from'] == 'editora5minimalfile'|| $options_array['to'] == 'editora5generatorfile') {
+if ($options_array['from'] == 'db5' || $options_array['from'] == 'editora5file' || $options_array['from'] == 'editora5minimalfile' || $options_array['to'] == 'editora5generatorfile') {
 	$from_version = 5;
 }
 
 $minimal = false;
-if (stripos($options_array['to'], 'minimalfile') || $options_array['to']=='editora5generatorfile') {
+if (stripos($options_array['to'], 'minimalfile') || $options_array['to'] == 'editora5generatorfile') {
 	$minimal = true;
 }
 
@@ -104,7 +104,7 @@ if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 	$connection_params_from = array(
 		'dbname' => $options_array['dbfromname'],
 		'user' => $options_array['dbfromuser'],
-		'password' => $options_array['dbfrompass'],
+		'password' => (isset($options_array['dbpass']) ? $options_array['dbpass'] : ''),
 		'host' => $options_array['dbfromhost'],
 		'driver' => 'pdo_mysql',
 		'charset' => 'utf8'
@@ -134,14 +134,12 @@ $params = [
 	, 'from_version' => $from_version
 ];
 
-if (isset($options_array['dbfromname']))
-{
-	$params['from_dbname']=$options_array['dbfromname'];
+if (isset($options_array['dbfromname'])) {
+	$params['from_dbname'] = $options_array['dbfromname'];
 }
 
-if (isset($options_array['dbtoname']))
-{
-	$params['to_dbname']=$options_array['dbtoname'];
+if (isset($options_array['dbtoname'])) {
+	$params['to_dbname'] = $options_array['dbtoname'];
 }
 
 
@@ -157,7 +155,7 @@ $result['metadata']['generated_at_human'] = date('Y-m-d H:i:s');
 $model = new \Omatech\Editora\Migrator\Migrator($conn_to, $conn_to, $params, false);
 
 if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
-	
+
 	$result['roles'] = $model->get_roles();
 	$result['languages'] = $model->get_languages();
 	$result['tabs'] = $model->get_tabs();
@@ -167,27 +165,25 @@ if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 	$result['attributes'] = $model->get_attributes();
 	$result['classes'] = $model->get_classes();
 
-	$input_processed=true;
-	$input_action='db';
+	$input_processed = true;
+	$input_action = 'db';
 }
 
-if ($options_array['from'] == 'editora5generatorfile')
-{
-	$input_file_contents=file_get_contents($options_array['fromfile']);
-	$input_array=json_decode($input_file_contents, true);
-	
-	$result['attributes']=$model->transform_attributes_fromgenerator5_to5($input_array);	
-	$result['relations']=$model->transform_relations_fromgenerator5_to5($input_array);
-	$result['classes']=$model->transform_classes_fromgenerator5_to5($input_array);	
-	$result['class_groups']=$model->transform_class_groups_fromgenerator5_to5($input_array);	
-	$result['languages']=$model->transform_languages_fromgenerator5_to5($input_array);	
-	$result['tabs']=$model->transform_tabs_fromgenerator5_to5($input_array);	
-	$result['users']=$model->transform_users_fromgenerator5_to5($input_array);	
-	$result['roles']=$model->transform_roles_fromgenerator5_to5($input_array);	
-			
-	$input_processed=true;
-	$input_action='generator';
+if ($options_array['from'] == 'editora5generatorfile') {
+	$input_file_contents = file_get_contents($options_array['fromfile']);
+	$input_array = json_decode($input_file_contents, true);
 
+	$result['attributes'] = $model->transform_attributes_fromgenerator5_to5($input_array);
+	$result['relations'] = $model->transform_relations_fromgenerator5_to5($input_array);
+	$result['classes'] = $model->transform_classes_fromgenerator5_to5($input_array);
+	$result['class_groups'] = $model->transform_class_groups_fromgenerator5_to5($input_array);
+	$result['languages'] = $model->transform_languages_fromgenerator5_to5($input_array);
+	$result['tabs'] = $model->transform_tabs_fromgenerator5_to5($input_array);
+	$result['users'] = $model->transform_users_fromgenerator5_to5($input_array);
+	$result['roles'] = $model->transform_roles_fromgenerator5_to5($input_array);
+
+	$input_processed = true;
+	$input_action = 'generator';
 }
 
 if (($options_array['from'] == 'db4' || $options_array['from'] == 'editora5generatorfile') && $options_array['to'] == 'db5') {
@@ -211,64 +207,54 @@ if (($options_array['from'] == 'db4' || $options_array['from'] == 'editora5gener
 	echo "$ret classes inserted\n";
 	$model->commit('conn_to');
 
-	$output_processed=true;
-	$output_action='db';
+	$output_processed = true;
+	$output_action = 'db';
 }
 
-if ($options_array['from'] == 'db4' && $options_array['to'] == 'db5'
-&& $options_array['dbfromuser'] == 'root' 
-&& $options_array['dbfromhost']==$options_array['dbtohost']
-&& isset($options_array['transferdata'])) 
-{
+if ($options_array['from'] == 'db4' && $options_array['to'] == 'db5' && $options_array['dbfromuser'] == 'root' && $options_array['dbfromhost'] == $options_array['dbtohost'] && isset($options_array['transferdata'])) {
 	$model->transfer_data_from4_to5();
 
-	$data_transfered=true;
+	$data_transfered = true;
 }
 
 if ($options_array['to'] == 'editora5file' || $options_array['to'] == 'editora5minimalfile') {
 	echo json_encode($result, JSON_PRETTY_PRINT);
 
-	$output_processed=true;
-	$output_action='file';	
+	$output_processed = true;
+	$output_action = 'file';
 }
 
-if ($options_array['to']=='editora5generatorfile' && $from_version==5)
-{
-	$generator_array=array();
-	$generator_array['metadata']=$result['metadata'];
+if ($options_array['to'] == 'editora5generatorfile' && $from_version == 5) {
+	$generator_array = array();
+	$generator_array['metadata'] = $result['metadata'];
 
-	$generator_array['attributes']=$model->transform_attributes_from5_togenerator5($result, $default_language);
-	$generator_array['relations']=$model->transform_relations_from5_togenerator5($result);
-	$generator_array['classes']=$model->transform_classes_from5_togenerator5($result);
-	$generator_array['class_groups']=$model->transform_class_groups_from5_togenerator5($result);
-	$generator_array['users']=$model->transform_users_from5_togenerator5($result);
-	$generator_array['languages']=$model->transform_languages_from5_togenerator5($result);
-	
-	echo json_encode($generator_array, JSON_PRETTY_PRINT);	
-	
-	$output_processed=true;
-	$output_action='file';	
+	$generator_array['attributes'] = $model->transform_attributes_from5_togenerator5($result, $default_language);
+	$generator_array['relations'] = $model->transform_relations_from5_togenerator5($result);
+	$generator_array['classes'] = $model->transform_classes_from5_togenerator5($result);
+	$generator_array['class_groups'] = $model->transform_class_groups_from5_togenerator5($result);
+	$generator_array['users'] = $model->transform_users_from5_togenerator5($result);
+	$generator_array['languages'] = $model->transform_languages_from5_togenerator5($result);
 
+	echo json_encode($generator_array, JSON_PRETTY_PRINT);
+
+	$output_processed = true;
+	$output_action = 'file';
 }
 
-if ($options_array['from'] == 'db4' && $options_array['to'] == 'db4') 
-{// direct transfer
-		echo "Run that command on your own risk!\n";
-		echo "mysqldump --default-character-set=utf8 -u ".$options_array['dbfromuser']." -p".$options_array['dbfrompass']." ".$options_array['dbfromhost']." ".$options_array['dbfromname']." \
+if ($options_array['from'] == 'db4' && $options_array['to'] == 'db4') {// direct transfer
+	echo "Run that command on your own risk!\n";
+	echo "mysqldump --default-character-set=utf8 -u " . $options_array['dbfromuser'] . " -p" . $options_array['dbfrompass'] . " " . $options_array['dbfromhost'] . " " . $options_array['dbfromname'] . " \
 			omp_attributes omp_class_attributes omp_class_groups omp_classes omp_lookups omp_lookups_values omp_relations omp_roles omp_roles_classes omp_tabs omp_users \
-			mysql --default-character-set=utf8 -u ".$options_array['dbtouser']." -p".$options_array['dbtopass']." ".$options_array['dbtohost']." ".$options_array['dbtoname']."\n\n";
-		$output_processed=true;
-		$output_action='command line';
-	
+			mysql --default-character-set=utf8 -u " . $options_array['dbtouser'] . " -p" . $options_array['dbtopass'] . " " . $options_array['dbtohost'] . " " . $options_array['dbtoname'] . "\n\n";
+	$output_processed = true;
+	$output_action = 'command line';
 }
 
-if (!$input_processed || !$output_processed)
-{
+if (!$input_processed || !$output_processed) {
 	echo "Something weird happen, input or output are not been processed, please review the parameters\n
 	input_action=$input_action
 	output_action=$output_action
-	".print_r($options_array);
-	
+	" . print_r($options_array);
 }
 
 

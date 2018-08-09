@@ -1,15 +1,14 @@
 <?php
 
 $autoload_location = '/vendor/autoload.php';
-$tries=0;
-while (!is_file(__DIR__.$autoload_location)) 
-{ 
-	$autoload_location='/..'.$autoload_location;
+$tries = 0;
+while (!is_file(__DIR__ . $autoload_location)) {
+	$autoload_location = '/..' . $autoload_location;
 	$tries++;
-	if ($tries>10) die("Error trying to find autoload file try to make a composer update first\n");
+	if ($tries > 10)
+		die("Error trying to find autoload file try to make a composer update first\n");
 }
-require_once __DIR__.$autoload_location;
-
+require_once __DIR__ . $autoload_location;
 
 use \Doctrine\DBAL\Configuration;
 use \Omatech\Editora\Translator\TranslatorModel;
@@ -22,7 +21,7 @@ set_time_limit(0);
 $options_array = getopt(null, ['from::', 'to::'
 	, 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:', 'sourcelanguage:', 'destinationlanguage:'
 	, 'outputformat:', 'tofilename:', 'what:', 'since:', 'excludeclasses:', 'onlyclasses:'
-	, 'help', 'includemetadata','debug','excludeimporteddata']);
+	, 'help', 'includemetadata', 'debug', 'excludeimporteddata']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
 	echo 'Export strings in one language from editora database to excel file or output
@@ -82,7 +81,7 @@ php export-translation.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=
 
 
 ';
-die;
+	die;
 }
 
 if (!isset($options_array['from']) || !isset($options_array['to'])) {
@@ -96,10 +95,9 @@ if ($options_array['from'] == 'db5') {
 }
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
-if (isset($options_array['debug'])) 
-{
+if (isset($options_array['debug'])) {
 	$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
-	$params['debug']=true;
+	$params['debug'] = true;
 }
 
 $conn_to = null;
@@ -107,7 +105,7 @@ if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 	$connection_params = array(
 		'dbname' => $options_array['dbname'],
 		'user' => $options_array['dbuser'],
-		'password' => $options_array['dbpass'],
+		'password' => (isset($options_array['dbpass']) ? $options_array['dbpass'] : ''),
 		'host' => $options_array['dbhost'],
 		'driver' => 'pdo_mysql',
 		'charset' => 'utf8'
@@ -125,27 +123,23 @@ $params = [
 	, 'what' => $options_array['what']
 ];
 
-if (isset($options_array['since']))
-{
-	$params['since']=$options_array['since'];
+if (isset($options_array['since'])) {
+	$params['since'] = $options_array['since'];
 }
 
-$params['excludeimporteddata']=false;
-if (isset($options_array['excludeimporteddata']))
-{
-	$params['excludeimporteddata']=true;
+$params['excludeimporteddata'] = false;
+if (isset($options_array['excludeimporteddata'])) {
+	$params['excludeimporteddata'] = true;
 }
 
-$params['excludeclasses']=null;
-if (isset($options_array['excludeclasses']))
-{
-	$params['excludeclasses']=$options_array['excludeclasses'];
+$params['excludeclasses'] = null;
+if (isset($options_array['excludeclasses'])) {
+	$params['excludeclasses'] = $options_array['excludeclasses'];
 }
 
-$params['onlyclasses']=null;
-if (isset($options_array['onlyclasses']))
-{
-	$params['onlyclasses']=$options_array['onlyclasses'];
+$params['onlyclasses'] = null;
+if (isset($options_array['onlyclasses'])) {
+	$params['onlyclasses'] = $options_array['onlyclasses'];
 }
 
 $result = array();
@@ -158,116 +152,85 @@ $result['metadata']['generated_at_human'] = date('Y-m-d H:i:s');
 
 $model = new TranslatorModel($conn, $conn, $params, false);
 
-if ($options_array['what']=='missing')
-{
-	$rows=$model->get_missing_destination_texts();
-}
-elseif ($options_array['what']=='all') {
-	$rows=$model->get_all_source_texts();
-}
-elseif ($options_array['what']=='same') {
-	$rows=$model->get_same_as_destination_texts();
-}
-else
-{
+if ($options_array['what'] == 'missing') {
+	$rows = $model->get_missing_destination_texts();
+} elseif ($options_array['what'] == 'all') {
+	$rows = $model->get_all_source_texts();
+} elseif ($options_array['what'] == 'same') {
+	$rows = $model->get_same_as_destination_texts();
+} else {
 	die("Unknow what parameter, see --help for help. Aborting\n");
 }
 
-foreach ($rows['values'] as $val)
-{
-	$result['data'][]=['key1'=>$val['inst_id'], 'key2'=>$val['atri_id'], 'value'=>$val['value']];
+foreach ($rows['values'] as $val) {
+	$result['data'][] = ['key1' => $val['inst_id'], 'key2' => $val['atri_id'], 'value' => $val['value']];
 }
 
-foreach ($rows['statics'] as $val)
-{
-	if (!isset($options_array['onlyclasses']))
-	{// if we're exporting only classes don't export statics
-		$result['data'][]=['key1'=>'statics', 'key2'=>$val['key'], 'value'=>$val['value']];
+foreach ($rows['statics'] as $val) {
+	if (!isset($options_array['onlyclasses'])) {// if we're exporting only classes don't export statics
+		$result['data'][] = ['key1' => 'statics', 'key2' => $val['key'], 'value' => $val['value']];
 	}
 }
 
-foreach ($rows['niceurls'] as $val)
-{
-	if (!isset($options_array['onlyclasses']))
-	{// if we're exporting only classes don't export niceurls
-		$result['data'][]=['key1'=>'niceurls', 'key2'=>$val['inst_id'], 'value'=>$val['value']];
+foreach ($rows['niceurls'] as $val) {
+	if (!isset($options_array['onlyclasses'])) {// if we're exporting only classes don't export niceurls
+		$result['data'][] = ['key1' => 'niceurls', 'key2' => $val['inst_id'], 'value' => $val['value']];
 	}
 }
 
 ob_start('ob_gzhandler');
-if ($options_array['outputformat']=='array')
-{
-	if(isset($options_array['includemetadata']))
-	{
+if ($options_array['outputformat'] == 'array') {
+	if (isset($options_array['includemetadata'])) {
 		print_r($result);
+	} else {// only data
+		print_r($result['data']);
 	}
-	else
-	{// only data
-		print_r($result['data']);			
-	}
-}
-elseif ($options_array['outputformat']=='json')
-{
-	if(isset($options_array['includemetadata']))
-	{
+} elseif ($options_array['outputformat'] == 'json') {
+	if (isset($options_array['includemetadata'])) {
 		echo json_encode($result, JSON_PRETTY_PRINT);
-	}
-	else
-	{// only data
+	} else {// only data
 		echo json_encode($result['data'], JSON_PRETTY_PRINT);
 	}
-}	
-elseif ($options_array['outputformat']=='excel')
-{	
+} elseif ($options_array['outputformat'] == 'excel') {
 	$objSpreadsheet = new Spreadsheet();
 	// Set document properties
 	$objSpreadsheet->getProperties()->setCreator("Omatech")
-								 ->setLastModifiedBy("Omatech")
-								 ->setTitle("Translator Export from editora from ".$options_array['sourcelanguage']." to ".$options_array['destinationlanguage'])
-								 ->setSubject("Translator Export from editora")
-								 ->setDescription("Translator Export from editora ".$options_array['dbname']." version $from_version at ".$result['metadata']['generated_at_human']." source language is ".$options_array['sourcelanguage']." detination language ".$options_array['destinationlanguage'])
-								 ->setCategory("Translator");
+		->setLastModifiedBy("Omatech")
+		->setTitle("Translator Export from editora from " . $options_array['sourcelanguage'] . " to " . $options_array['destinationlanguage'])
+		->setSubject("Translator Export from editora")
+		->setDescription("Translator Export from editora " . $options_array['dbname'] . " version $from_version at " . $result['metadata']['generated_at_human'] . " source language is " . $options_array['sourcelanguage'] . " detination language " . $options_array['destinationlanguage'])
+		->setCategory("Translator");
 	$objSpreadsheet->setActiveSheetIndex(0);
-	$i=1;
+	$i = 1;
 	$objSpreadsheet->getActiveSheet()->setTitle('Omatech Translator');
 	$objSpreadsheet->getActiveSheet()->setCellValue("A$i", 'key1');
 	$objSpreadsheet->getActiveSheet()->setCellValue("B$i", 'key2');
 	$objSpreadsheet->getActiveSheet()->setCellValue("C$i", 'value');
 	$i++;
-	foreach ($result['data'] as $row)
-	{
+	foreach ($result['data'] as $row) {
 		$objSpreadsheet->getActiveSheet()->setCellValue("A$i", $row['key1']);
 		$objSpreadsheet->getActiveSheet()->setCellValue("B$i", $row['key2']);
 		$objSpreadsheet->getActiveSheet()->setCellValue("C$i", $row['value']);
 		$i++;
 	}
-  $objWriter = IOFactory::createWriter($objSpreadsheet, 'Xlsx');
-	$objWriter->save('php://output');		
-}
-else
-{
+	$objWriter = IOFactory::createWriter($objSpreadsheet, 'Xlsx');
+	$objWriter->save('php://output');
+} else {
 	die("Unknown output format, aborting!\n");
 }
 
-$output=ob_get_contents();
+$output = ob_get_contents();
 ob_end_clean();
-if ($options_array['to']=='output')
-{
+if ($options_array['to'] == 'output') {
 	echo $output;
-}
-elseif ($options_array['to']=='file')
-{
-	if (isset($options_array['tofilename']))
-	{
+} elseif ($options_array['to'] == 'file') {
+	if (isset($options_array['tofilename'])) {
 		file_put_contents($options_array['tofilename'], $output);
-	}
-	else
-	{
+	} else {
 		die("You must especify a valid filename with tofilename parameter when outputing to file. Aborting\n");
 	}
-}
- else {
-	 die('Unknown to parameter, aborting!\n');
+} else {
+	die('Unknown to parameter, aborting!\n');
 }
 
 

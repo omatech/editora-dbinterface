@@ -18,7 +18,7 @@ class Generator extends DBInterfaceBase {
 	protected $queries;
 	protected $users_passwords;
 
-	public function __construct($conn, $params=array()) {
+	public function __construct($conn, $params = array()) {
 		parent::__construct($conn, $params);
 	}
 
@@ -45,25 +45,21 @@ class Generator extends DBInterfaceBase {
 		}
 		return $changes;
 	}
-	
-	public function tryToCreateIndex($table, $num, $columns_array, $unique=false)
-	{
-		$changes=0;
-		$index_name=$table.'_n'.$num;
-		$unique_flag='';
-		if ($unique)
-		{
-			$index_name=$table.'_u'.$num;
-			$unique_flag=' unique ';
+
+	public function tryToCreateIndex($table, $num, $columns_array, $unique = false) {
+		$changes = 0;
+		$index_name = $table . '_n' . $num;
+		$unique_flag = '';
+		if ($unique) {
+			$index_name = $table . '_u' . $num;
+			$unique_flag = ' unique ';
 		}
-		$index_name=
-		$sql="create $unique_flag index $index_name on $table (".implode(',', $columns_array).") ";
+		$index_name = $sql = "create $unique_flag index $index_name on $table (" . implode(',', $columns_array) . ") ";
 		try {
 			$this->conn->executeQuery($sql);
 			echo "Created!\n";
 			$changes++;
-		} catch (\Doctrine\DBAL\DBALException $e)
-		{
+		} catch (\Doctrine\DBAL\DBALException $e) {
 			echo "Already created!\n";
 		}
 		return $changes;
@@ -94,28 +90,32 @@ class Generator extends DBInterfaceBase {
 
 		echo "Testing omp_users table\n";
 		$changes += $this->fromEnumToVarchar('omp_users', ['language']);
-				
-		$table='omp_instances';
+
+		$table = 'omp_instances';
 		$sql = "show columns from $table";
 		$rows = $this->conn->fetchAll($sql);
-		
-		$order_string_found=false;
-		$order_date_found=false;
-		$external_id_found=false;
-		$batch_id_found=false;
+
+		$order_string_found = false;
+		$order_date_found = false;
+		$external_id_found = false;
+		$batch_id_found = false;
 		foreach ($rows as $row) {
-			if ($row['Field']=='order_string') $order_string_found=true;
-			if ($row['Field']=='order_date') $order_date_found=true;
-			if ($row['Field']=='external_id') $external_id_found=true;
-			if ($row['Field']=='batch_id') $batch_id_found=true;
-		}	
+			if ($row['Field'] == 'order_string')
+				$order_string_found = true;
+			if ($row['Field'] == 'order_date')
+				$order_date_found = true;
+			if ($row['Field'] == 'external_id')
+				$external_id_found = true;
+			if ($row['Field'] == 'batch_id')
+				$batch_id_found = true;
+		}
 		if (!$order_string_found) {
 			$sql = "alter table $table add column order_string varchar(250) default null\n";
 			$this->conn->executeQuery($sql);
 			$sql = "alter table $table add key omp_instances_n7 (order_string)\n";
 			$this->conn->executeQuery($sql);
 			$changes++;
-		}		
+		}
 		if (!$order_date_found) {
 			$sql = "alter table $table add column order_date datetime default null\n";
 			$this->conn->executeQuery($sql);
@@ -131,18 +131,18 @@ class Generator extends DBInterfaceBase {
 			$this->conn->executeQuery($sql);
 			$changes++;
 		}
-		
+
 		$changes += $this->tryToCreateIndex('omp_attributes', 1, ['tag']);
 
 		$changes += $this->tryToCreateIndex('omp_class_attributes', 1, ['class_id']);
 		$changes += $this->tryToCreateIndex('omp_class_attributes', 2, ['atri_id']);
 		$changes += $this->tryToCreateIndex('omp_class_attributes', 3, ['rel_id']);
 		$changes += $this->tryToCreateIndex('omp_class_attributes', 4, ['tab_id']);
-		
+
 		$changes += $this->tryToCreateIndex('omp_classes', 1, ['name'], true);
 		$changes += $this->tryToCreateIndex('omp_classes', 1, ['tag']);
 		$changes += $this->tryToCreateIndex('omp_classes', 2, ['grp_id']);
-		
+
 		$changes += $this->tryToCreateIndex('omp_instances', 1, ['class_id']);
 		$changes += $this->tryToCreateIndex('omp_instances', 2, ['publishing_begins', 'publishing_ends']);
 		$changes += $this->tryToCreateIndex('omp_instances', 3, ['status']);
@@ -151,21 +151,21 @@ class Generator extends DBInterfaceBase {
 		$changes += $this->tryToCreateIndex('omp_instances', 6, ['batch_id']);
 		$changes += $this->tryToCreateIndex('omp_instances', 7, ['order_string']);
 		$changes += $this->tryToCreateIndex('omp_instances', 8, ['order_date']);
-		
+
 		$changes += $this->tryToCreateIndex('omp_instances_backup', 1, ['inst_id', 'language']);
-		
+
 		$changes += $this->tryToCreateIndex('omp_instances_cache', 1, ['inst_id', 'language'], true);
-		
+
 		$changes += $this->tryToCreateIndex('omp_lookups_values', 1, ['lookup_id', 'ordre']);
 
 		$changes += $this->tryToCreateIndex('omp_niceurl', 1, ['niceurl', 'language'], true);
-	
+
 		$changes += $this->tryToCreateIndex('omp_relation_instances', 1, ['child_inst_id']);
 		$changes += $this->tryToCreateIndex('omp_relation_instances', 2, ['parent_inst_id']);
 		$changes += $this->tryToCreateIndex('omp_relation_instances', 3, ['external_id']);
 		$changes += $this->tryToCreateIndex('omp_relation_instances', 4, ['batch_id']);
 		$changes += $this->tryToCreateIndex('omp_relation_instances', 5, ['rel_id']);
-		
+
 		$changes += $this->tryToCreateIndex('omp_relations', 1, ['parent_class_id']);
 		$changes += $this->tryToCreateIndex('omp_relations', 2, ['child_class_id']);
 		$changes += $this->tryToCreateIndex('omp_relations', 3, ['name']);
@@ -173,9 +173,9 @@ class Generator extends DBInterfaceBase {
 
 		$changes += $this->tryToCreateIndex('omp_roles_classes', 1, ['class_id']);
 		$changes += $this->tryToCreateIndex('omp_roles_classes', 2, ['rol_id']);
-		
+
 		$changes += $this->tryToCreateIndex('omp_static_text', 1, ['text_key', 'language']);
-		
+
 		$changes += $this->tryToCreateIndex('omp_user_instances', 1, ['user_id', 'tipo_acceso']);
 
 		$changes += $this->tryToCreateIndex('omp_users', 1, ['username'], true);
@@ -339,9 +339,9 @@ class Generator extends DBInterfaceBase {
 			//$password = substr(md5(rand()), 0, 7);
 			$password = Strings::generateStrongPassword(8);
 			$hashed_password = $hasher->make($password);
-			
-			$username=$this->conn->quote($user[0]);
-			$complete_name=$this->conn->quote($user[1]);
+
+			$username = $this->conn->quote($user[0]);
+			$complete_name = $this->conn->quote($user[1]);
 
 			array_push($this->queries, "insert ignore into omp_users (username, password, complete_name, language, rol_id, tipus) values ($username, '$hashed_password', $complete_name, '$user[2]', '$user[3]', '$user[4]');");
 			$this->users_passwords[$user[0]] = array($password, $hashed_password);
@@ -687,23 +687,21 @@ class Generator extends DBInterfaceBase {
 		foreach ($this->queries as $aQuery) {
 			$this->conn->executeQuery($aQuery);
 		}
-		
+
 		// Creem les instancies home i global si no les teniem
-		$loader=new \Omatech\Editora\Loader\Loader($this->conn, $this->params);
-		$ret=$loader->ExistingInstanceIsDifferent(1, 'Home', ['nom_intern'=>'Home'], 'O', $difference, $attr_difference);
-        if ($ret){
-            $loader->insertInstanceForcingID (1, 10, 'Home', ['nom_intern'=>'Home']);
+		$loader = new \Omatech\Editora\Loader\Loader($this->conn, $this->params);
+		$ret = $loader->ExistingInstanceIsDifferent(1, 'Home', ['nom_intern' => 'Home'], 'O', $difference, $attr_difference);
+		if ($ret) {
+			$loader->insertInstanceForcingID(1, 10, 'Home', ['nom_intern' => 'Home']);
 
-            foreach ($languages as $key_lang => $val_lang) {
-                $loader->insertUrlNice('home', 1, $val_lang);
-                $loader->insertUpdateTextVal(1, 2, 'home');
-            }
-        }
-		$ret=$loader->ExistingInstanceIsDifferent(2, 'GLOBAL', ['nom_intern'=>'GLOBAL'], 'O', $difference, $attr_difference);
-		if ($ret) $loader->insertInstanceForcingID (2, 1, 'GLOBAL', ['nom_intern'=>'GLOBAL']);
-
-		
-		$this->commit();
+			foreach ($languages as $key_lang => $val_lang) {
+				$loader->insertUrlNice('home', 1, $val_lang);
+				$loader->insertUpdateTextVal(1, 2, 'home');
+			}
+		}
+		$ret = $loader->ExistingInstanceIsDifferent(2, 'GLOBAL', ['nom_intern' => 'GLOBAL'], 'O', $difference, $attr_difference);
+		if ($ret)
+			$loader->insertInstanceForcingID(2, 1, 'GLOBAL', ['nom_intern' => 'GLOBAL']);
 
 		return true;
 	}

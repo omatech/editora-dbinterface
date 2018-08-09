@@ -86,7 +86,7 @@ if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') {
 	$connection_params = array(
 		'dbname' => $options_array['dbname'],
 		'user' => $options_array['dbuser'],
-		'password' => $options_array['dbpass'],
+		'password' => (isset($options_array['dbpass']) ? $options_array['dbpass'] : ''),
 		'host' => $options_array['dbhost'],
 		'driver' => 'pdo_mysql',
 		'charset' => 'utf8'
@@ -137,7 +137,6 @@ if ($conn_to) {
 		$loader->bulkImportRelationInstances($data['omp_relation_instances']);
 		$loader->bulkImportStaticTexts($data['omp_static_text']);
 		$loader->bulkImportValues($data['omp_values']);
-		
 	} catch (\Exception $e) {
 		$loader->rollback();
 		echo "Error found: " . $e->getMessage() . "\n";

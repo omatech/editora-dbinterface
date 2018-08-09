@@ -1,15 +1,14 @@
 <?php
 
 $autoload_location = '/vendor/autoload.php';
-$tries=0;
-while (!is_file(__DIR__.$autoload_location)) 
-{ 
-	$autoload_location='/..'.$autoload_location;
+$tries = 0;
+while (!is_file(__DIR__ . $autoload_location)) {
+	$autoload_location = '/..' . $autoload_location;
 	$tries++;
-	if ($tries>10) die("Error trying to find autoload file try to make a composer update first\n");
+	if ($tries > 10)
+		die("Error trying to find autoload file try to make a composer update first\n");
 }
-require_once __DIR__.$autoload_location;
-
+require_once __DIR__ . $autoload_location;
 
 use \Doctrine\DBAL\Configuration;
 
@@ -42,7 +41,7 @@ example:
 1) move data from a db4 to a db5 editora
 php data-transfer.php --from=db4 --to=db5 --dbpass=xxx --dbfromname=panreac --dbtoname=panreac5
 ';
-die;
+	die;
 }
 
 if (!isset($options_array['from']) || !isset($options_array['to'])) {
@@ -67,7 +66,7 @@ if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 	$connection_params_from = array(
 		'dbname' => $options_array['dbfromname'],
 		'user' => 'root',
-		'password' => $options_array['dbpass'],
+		'password' => (isset($options_array['dbpass']) ? $options_array['dbpass'] : ''),
 		'host' => 'localhost',
 		'driver' => 'pdo_mysql',
 		'charset' => 'utf8'
@@ -95,11 +94,10 @@ $result['metadata']['generated_at_human'] = date('Y-m-d H:i:s');
 
 $model = new \Omatech\Editora\Migrator\Migrator($conn_to, null, $params, false);
 
-if ($options_array['from'] == 'db4' && $options_array['to'] == 'db5') 
-{
+if ($options_array['from'] == 'db4' && $options_array['to'] == 'db5') {
 	$model->start_transaction();
 	$model->transfer_data_from4_to5();
-	$model->commit();	
+	$model->commit();
 }
 
 

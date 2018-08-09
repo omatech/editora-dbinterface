@@ -1,14 +1,14 @@
 <?php
 
 $autoload_location = '/vendor/autoload.php';
-$tries=0;
-while (!is_file(__DIR__.$autoload_location)) 
-{ 
-	$autoload_location='/..'.$autoload_location;
+$tries = 0;
+while (!is_file(__DIR__ . $autoload_location)) {
+	$autoload_location = '/..' . $autoload_location;
 	$tries++;
-	if ($tries>10) die("Error trying to find autoload file try to make a composer update first\n");
+	if ($tries > 10)
+		die("Error trying to find autoload file try to make a composer update first\n");
 }
-require_once __DIR__.$autoload_location;
+require_once __DIR__ . $autoload_location;
 
 $usleep_pause = 500000;
 $price_per_character = 0.002;
@@ -80,10 +80,9 @@ if ($options_array['from'] == 'db5' || $options_array['from'] == 'editora5file' 
 
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
-if (isset($options_array['debug'])) 
-{
+if (isset($options_array['debug'])) {
 	$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
-	$params['debug']=true;
+	$params['debug'] = true;
 }
 
 $conn_to = null;
@@ -91,7 +90,7 @@ if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 	$connection_params_from = array(
 		'dbname' => $options_array['dbfromname'],
 		'user' => $options_array['dbfromuser'],
-		'password' => $options_array['dbfrompass'],
+		'password' => (isset($options_array['dbfrompass']) ? $options_array['dbfrompass'] : ''),
 		'host' => $options_array['dbfromhost'],
 		'driver' => 'pdo_mysql',
 		'charset' => 'utf8'
@@ -105,7 +104,7 @@ if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') {
 	$connection_params_to = array(
 		'dbname' => $options_array['dbtoname'],
 		'user' => $options_array['dbtouser'],
-		'password' => $options_array['dbtopass'],
+		'password' => (isset($options_array['dbtopass']) ? $options_array['dbtopass'] : ''),
 		'host' => $options_array['dbtohost'],
 		'driver' => 'pdo_mysql',
 		'charset' => 'utf8'
