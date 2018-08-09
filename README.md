@@ -28,12 +28,12 @@ $e=new Extractor($conn, $params);
 ## Extract information using the extractor
 
 ### findInstanceById($inst_id, $params, callable $callback = null);
-- * inst_id (id of the instance to be extracted)
+- inst_id * (id of the instance to be extracted)
 - params (particular params for this extraction, see "Extraction Params" and "Instance Params" for more info)
 - callback (closure function)
 
 ### findInstancesInClass($class, $num=null, $params=null, callable $callback = null)
-- * class (id or tag of the class)
+- class * (id or tag of the class)
 - num (number of instances to extract, if not set get all instances of the class. Use an int to not use pagination or syntax "10/2" to give the records 11 to 20)
 - params (particular params for this extraction, see "Extraction Params" and "Instance Params" for more info)
 - callback (closure function)
@@ -44,7 +44,7 @@ $e=new Extractor($conn, $params);
 
 
 ### findInstancesInList($inst_ids, $params = null, callable $callback = null)
-- *inst_ids (comma separated ids of instances to extract)
+- inst_ids * (comma separated ids of instances to extract)
 - params (particular params for this extraction, see "Extraction Params" and "Instance Params" for more info)
 - callback (closure function)
 
@@ -52,7 +52,7 @@ Note: The order of the extraction is forced by the order of the IDs in the list
 
 
 ### findInstancesBySearch($query, $num=null, $class=null, $params = null, callable $callback = null)
-- * query (the search term)
+- query * (the search term)
 - num (number of instances to extract, if not set get all instances of the class). Use an int to not use pagination or syntax "10/2" to give the records 11 to 20)
 - class (filter one particular class by tag or id)
 - params (particular params for this extraction, see "Extraction Params" and "Instance Params" for more info)
@@ -62,8 +62,8 @@ Note: The order of the extraction is forced by the relevance of the search term 
 
 
 ### findRelatedInstances($inst_id, $relation, $num=null, $params = null, callable $callback = null)
-- * inst_id (parent or child instance to start search)
-- * relation (tag or id of the relation)
+- inst_id * (parent or child instance to start search)
+- relation * (tag or id of the relation)
 - num (number of instances to extract, if not set get all instances of the class). Use an int to not use pagination or syntax "10/2" to give the records 11 to 20)
 - params (particular params for this extraction, see "Extraction Params" and "Instance Params" for more info)
 - callback (closure function)
@@ -94,10 +94,10 @@ The instance params affect the behaviour of the extraction of the instance itsel
 ## Additional calls
 
 ### findClass($class)
-- * class (filter one particular class by tag or id)
+- class * (filter one particular class by tag or id)
 
 ## findRelation($relation)
-- * relation (tag or id of the relation)
+- relation * (tag or id of the relation)
 
 ## Global Params
 
