@@ -100,8 +100,8 @@ class FakeContent extends DBInterfaceBase
                                     }
                                 }
                                 //$attributes_values[$attribute['name']] = 'http://lorempixel.com/'.$width.'/'.$height.'/nature/';
-                                //$attributes_values[$attribute['name']] = 'https://www.dummyimage.com/'.$width.'x'.$height.'/000/00ffd5.png';
-                                $attributes_values[$attribute['name']] = $faker->imageUrl($width, $height, $this->pictures_theme, true, 'Omatech');
+                                $attributes_values[$attribute['name']] = 'https://www.dummyimage.com/'.$width.'x'.$height.'/000/00ffd5.png';
+                                //$attributes_values[$attribute['name']] = $faker->imageUrl($width, $height, $this->pictures_theme, true, 'Omatech');
                                 break;
 
                             case 'Y':

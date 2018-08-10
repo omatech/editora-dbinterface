@@ -744,7 +744,17 @@ class Loader extends DBInterfaceBase {
 				//print_r($arr_path);
 				$width = $arr_path[1];
 				$height = $arr_path[2];
-			} else {
+			}
+			elseif (substr($value, 0, 27) == 'https://www.dummyimage.com/') {
+				$path = parse_url($value, PHP_URL_PATH);
+				//echo "$path\n";
+				$arr_path = explode('/', $path);
+				//print_r($arr_path);
+				$medidas=$arr_path[1];
+				$arr_medidas=explode('x', $medidas);
+				$width = $arr_medidas[0];
+				$height = $arr_path[1];			
+		}else {
 				list($width, $height) = getimagesize($value);
 			}
 		} else {
