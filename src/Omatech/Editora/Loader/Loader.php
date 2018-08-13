@@ -752,8 +752,9 @@ class Loader extends DBInterfaceBase {
 				//print_r($arr_path);
 				$medidas=$arr_path[1];
 				$arr_medidas=explode('x', $medidas);
+				//print_r($arr_medidas);
 				$width = $arr_medidas[0];
-				$height = $arr_path[1];			
+				$height = $arr_medidas[1];			
 		}else {
 				list($width, $height) = getimagesize($value);
 			}
