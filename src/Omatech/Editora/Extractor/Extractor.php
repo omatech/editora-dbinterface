@@ -13,6 +13,37 @@ class Extractor extends DBInterfaceBase {
 	protected $extract_values = true;
 	protected $preview_date = 'NOW()';
 	protected $paginator = null;
+	
+	public function getPaginator($prefix='', $postfix='') 
+	{
+		//lastPage
+		//firstPage
+		//hasMorePages
+		//nextPage
+		//previousPage
+		//onFirstPage
+		//previousPage
+		//currentPage
+		
+		// generate elements if not exists
+		
+		if ($this->paginator)
+		{
+			if (!$this->paginator['elements'])
+			{
+				for ($i=$this->paginator['firstPage'];$i<=$this->paginator['lastPage'];$i++)
+				{
+					$element=array();
+					$element['url']=$prefix.$i.$postfix;
+					$element['isFirst']=$i==$this->paginator['firstPage'];
+					$element['isLast']=$i==$this->paginator['lastPage'];
+					$element['isCurrent']=$i==$this->paginator['currentPage'];
+					$this->paginator['elements'][$i]=$element;
+				}
+			}
+		}
+		return $this->paginator;
+	}
 
 	public function findInstanceById($inst_id, $params = null, callable $callback = null) {
 		$this->debug("Extractor::findInstanceById inst_id=$inst_id\n");
@@ -37,9 +68,7 @@ class Extractor extends DBInterfaceBase {
 		return $this->prepareInstanceResultStructure($row, $params, $callback);
 	}
 
-	public function getPaginator() {
-		return $this->paginator;
-	}
+
 
 	public function findInstancesInClass($class, $num = null, $params = null, callable $callback = null) {
 		// $params['order'] = order class instances by order criteria, update_date|publishing_begins|inst_id|key_fields|order_date|order_string default publishing_begins
@@ -634,6 +663,7 @@ class Extractor extends DBInterfaceBase {
           ";
 					$total = $this->conn->fetchColumn($sql);
 					$pagination_info['lastPage'] = (int) ceil($total / $pagination_array[0]);
+					$pagination_info['firstPage'] = 1;
 					if ($total > $limit + $offset) {
 						$pagination_info['hasMorePages'] = true;
 						$pagination_info['nextPage'] = (int) $pagination_array[1] + 1;
