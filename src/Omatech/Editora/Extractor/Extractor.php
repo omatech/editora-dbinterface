@@ -41,46 +41,6 @@ class Extractor extends DBInterfaceBase {
 		return $this->paginator;
 	}
 
-	private function setPagination($num, $class_filter, $preview_filter, $order_filter) {
-		if ($num != null && $this->paginator == null) {
-			if (stripos($num, '/')) {
-				$pagination_array = explode("/", $num);
-				if (isset($pagination_array[0]) && isset($pagination_array[1]) && is_numeric($pagination_array[0]) && is_numeric($pagination_array[1]) && $pagination_array[1] > 0) {
-
-					$limit = $pagination_array[0];
-					$offset = ($pagination_array[1] - 1) * $limit;
-					$sql = "select count(*) num 
-               from omp_instances i 
-               , omp_classes c
-               where 1=1
-               $class_filter
-               and c.id=i.class_id
-               " . $preview_filter . "
-               $order_filter
-               ";
-					$total = $this->conn->fetchColumn($sql);
-					$pagination_info['lastPage']=(int)$total/$pagination_array[0];
-					if ($total > $limit + $offset) {
-						$pagination_info['hasMorePages'] = true;
-						$pagination_info['nextPage'] = (int)$pagination_array[1] + 1;
-					} else {
-						$pagination_info['hasMorePages'] = false;
-						$pagination_info['previousPage'] = null;
-					}
-					if ($pagination_array[1] == 1) {
-						$pagination_info['onFirstPage'] = true;
-						$pagination_info['previousPage'] = null;
-					} else {
-						$pagination_info['onFirstPage'] = false;
-						$pagination_info['previousPage'] = (int)$pagination_array[1] - 1;
-					}
-					$pagination_info['currentPage'] = $pagination_array[1];
-				}
-			}
-			$this->paginator = $pagination_info;
-		}
-	}
-
 	public function findInstancesInClass($class, $num = null, $params = null, callable $callback = null) {
 		// $params['order'] = order class instances by order criteria, update_date|publishing_begins|inst_id|key_fields|order_date|order_string default publishing_begins
 		// $params['order_direction'] = direction of the order by clause, desc|asc defaults to asc
@@ -128,14 +88,19 @@ class Extractor extends DBInterfaceBase {
 		$class_filter = $this->getClassFilter($class);
 		$order_filter = " order by FIELD(i.id, " . $inst_ids . ") ";
 
+		$preview_filter = $this->getPreviewFilter();
+		$ids_filter = $this->getIDsListFilter($inst_ids);
+		$this->setPagination($num, $class_filter, $preview_filter, $order_filter, $ids_filter);
+
+
 		$sql = $this->sql_select_instances . "  
 			from omp_instances i 
 			, omp_classes c
 			where 1=1
 			$class_filter
 			and c.id=i.class_id
-			" . $this->getPreviewFilter() . "
-			" . $this->getIDsListFilter($inst_ids) . "
+			$preview_filter
+			$ids_filter
 			$order_filter
 			";
 
@@ -158,6 +123,10 @@ class Extractor extends DBInterfaceBase {
 		$order_filter = " order by relevance ";
 		$search_filter = $this->getSearchFilter($query);
 
+		$preview_filter = $this->getPreviewFilter();
+		$ids_filter = $this->getIDsListFilter($inst_ids);
+		$this->setPagination($num, $class_filter, $preview_filter, $order_filter, null, $search_filter);
+
 		$sql = $this->sql_select_instances . " , MATCH (s.text) AGAINST ('" . $query . "') relevance
 			from omp_search s
 			, omp_instances i
@@ -165,7 +134,7 @@ class Extractor extends DBInterfaceBase {
 			$search_filter
 			$class_filter
 				and s.inst_id=i.id
-			" . $this->getPreviewFilter() . "
+			$preview_filter
 			" . $this->getLimitFilter($num) . "
 			$order_filter
 			";
@@ -642,6 +611,48 @@ class Extractor extends DBInterfaceBase {
 			}
 		}
 		return $values;
+	}
+
+	private function setPagination($num, $class_filter, $preview_filter, $order_filter, $ids_filter = "", $search_filter = "") {
+		if ($num != null && $this->paginator == null) {
+			if (stripos($num, '/')) {
+				$pagination_array = explode("/", $num);
+				if (isset($pagination_array[0]) && isset($pagination_array[1]) && is_numeric($pagination_array[0]) && is_numeric($pagination_array[1]) && $pagination_array[1] > 0) {
+
+					$limit = $pagination_array[0];
+					$offset = ($pagination_array[1] - 1) * $limit;
+					$sql = "select count(*) num 
+          from omp_instances i 
+          , omp_classes c
+          where 1=1
+          $class_filter
+          and c.id=i.class_id
+          $preview_filter
+					$ids_filter
+					$search_filter
+          $order_filter
+          ";
+					$total = $this->conn->fetchColumn($sql);
+					$pagination_info['lastPage'] = (int) ceil($total / $pagination_array[0]);
+					if ($total > $limit + $offset) {
+						$pagination_info['hasMorePages'] = true;
+						$pagination_info['nextPage'] = (int) $pagination_array[1] + 1;
+					} else {
+						$pagination_info['hasMorePages'] = false;
+						$pagination_info['previousPage'] = null;
+					}
+					if ($pagination_array[1] == 1) {
+						$pagination_info['onFirstPage'] = true;
+						$pagination_info['previousPage'] = null;
+					} else {
+						$pagination_info['onFirstPage'] = false;
+						$pagination_info['previousPage'] = (int) $pagination_array[1] - 1;
+					}
+					$pagination_info['currentPage'] = $pagination_array[1];
+				}
+			}
+			$this->paginator = $pagination_info;
+		}
 	}
 
 }
