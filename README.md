@@ -151,7 +151,7 @@ Use the call getPaginator to get all the relevant information about the paginate
 for example:
 
 ```
-$paginator=$extractor->getPaginator('/ca/News/', '?utm_source=xxx');
+$paginator=$extractor->getPaginator('/ca/news/', '?utm_source=xxx');
 ```
 
 This will generate the following output (assuming that the last pagination option was 10/3 third page with 10 elements and that the total records are 51)
