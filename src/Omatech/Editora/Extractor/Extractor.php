@@ -22,7 +22,6 @@ class Extractor extends DBInterfaceBase {
 		//nextPage
 		//previousPage
 		//onFirstPage
-		//previousPage
 		//currentPage
 		
 		// generate elements if not exists

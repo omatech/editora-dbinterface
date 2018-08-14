@@ -34,7 +34,7 @@ $e=new Extractor($conn, $params);
 
 ### findInstancesInClass($class, $num=null, $params=null, callable $callback = null)
 - class * (id or tag of the class)
-- num (number of instances to extract, if not set get all instances of the class. Use an int to not use pagination or syntax "10/2" to give the records 11 to 20)
+- num (number of instances to extract, if not set get all instances of the class. Use an int to not use pagination or syntax "10/2" to give the records 11 to 20) (see paginator section for details)
 - params (particular params for this extraction, see "Extraction Params" and "Instance Params" for more info)
 - callback (closure function)
 
@@ -53,7 +53,7 @@ Note: The order of the extraction is forced by the order of the IDs in the list
 
 ### findInstancesBySearch($query, $num=null, $class=null, $params = null, callable $callback = null)
 - query * (the search term)
-- num (number of instances to extract, if not set get all instances of the class). Use an int to not use pagination or syntax "10/2" to give the records 11 to 20)
+- num (number of instances to extract, if not set get all instances of the class). Use an int to not use pagination or syntax "10/2" to give the records 11 to 20) (see paginator section for details)
 - class (filter one particular class by tag or id)
 - params (particular params for this extraction, see "Extraction Params" and "Instance Params" for more info)
 - callback (closure function)
@@ -64,7 +64,7 @@ Note: The order of the extraction is forced by the relevance of the search term 
 ### findRelatedInstances($inst_id, $relation, $num=null, $params = null, callable $callback = null)
 - inst_id * (parent or child instance to start search)
 - relation * (tag or id of the relation)
-- num (number of instances to extract, if not set get all instances of the class). Use an int to not use pagination or syntax "10/2" to give the records 11 to 20)
+- num (number of instances to extract, if not set get all instances of the class). Use an int to not use pagination or syntax "10/2" to give the records 11 to 20) (see paginator section for details)
 - params (particular params for this extraction, see "Extraction Params" and "Instance Params" for more info)
 - callback (closure function)
 
@@ -96,8 +96,16 @@ The instance params affect the behaviour of the extraction of the instance itsel
 ### findClass($class)
 - class * (filter one particular class by tag or id)
 
-## findRelation($relation)
+### findRelation($relation)
+- relation * (tag or id of the relation in case of collision you can use the calls below)
+
+### findParentRelation($relation, $inst_id)
 - relation * (tag or id of the relation)
+- inst_id * (instance to start looking at parent relations)
+
+### findChildRelation($relation, $inst_id)
+- relation * (tag or id of the relation)
+- inst_id * (instance to start looking at children relations)
 
 ## Global Params
 
@@ -125,7 +133,72 @@ The global params can be:
 - sql_select_instances (mysql select string) (default: select i.*, c.name class_name, c.tag class_tag, c.id class_id, i.key_fields nom_intern, i.update_date, ifnull(unix_timestamp(i.update_date),0) update_timestamp)
 - timings (boolean) default false show start and end and total milliseconds for each extraction, only make sense if metadata is true
 
+## Pagination
 
+In the main calls of the extractor you can use pagination syntax in the $num parameter, for example:
+
+- use 10/3 to extract page 3 of instances with 10 elements per page
+- use 50/1 to extract first page with 50 elements per page
+
+### How to get more info about the pagination once used?
+
+Use the call getPaginator to get all the relevant information about the paginated results.
+
+### getPaginator ($prefix='', $postfix='')
+- prefix is the prefix of the url to generate in the results of paginator
+- postfix is the postfix of the url to generate in the results of paginator
+
+for example:
+
+```
+$paginator=$extractor->getPaginator('/ca/News/', '?utm_source=xxx');
+```
+
+This will generate the following output (assuming that the last pagination option was 10/3 third page with 10 elements and that the total records are 51)
+
+```
+$paginator=[
+'lastPage'=>false
+,'firstPage'=>false
+,'hasMorePages'=>true
+,'nextPage'=>4
+,'previousPage'=>2
+,'onFirstPage'=>false
+,'currentPage'=>3
+'elements'=>[
+	1=>['url'=>'/ca/news/1?utm_source=xxx'
+		, 'isFirst'=>true
+		, 'isLast'=>false
+		, 'isCurrent=>false
+	]
+	2=>['url'=>'/ca/news/2?utm_source=xxx'
+		, 'isFirst'=>false
+		, 'isLast'=>false
+		, 'isCurrent=>false
+	]
+	3=>['url'=>'/ca/news/3?utm_source=xxx'
+		, 'isFirst'=>false
+		, 'isLast'=>false
+		, 'isCurrent=>true
+	]
+	4=>['url'=>'/ca/news/4?utm_source=xxx'
+		, 'isFirst'=>false
+		, 'isLast'=>false
+		, 'isCurrent=>false
+	]
+	5=>['url'=>'/ca/news/5?utm_source=xxx'
+		, 'isFirst'=>false
+		, 'isLast'=>false
+		, 'isCurrent=>false
+	]
+	6=>['url'=>'/ca/news/6?utm_source=xxx'
+		, 'isFirst'=>false
+		, 'isLast'=>true
+		, 'isCurrent=>false
+	]
+]
+];
+```
 
 ## Test the Extractor
 
