@@ -4,6 +4,7 @@ namespace Omatech\Editora;
 
 class DBInterfaceBase {
 
+	public $debug_messages = '';
 	protected $conn;
 	protected $params = array();
 	protected $cache_expiration = 3600;
@@ -11,7 +12,6 @@ class DBInterfaceBase {
 	protected $mc = null;
 	protected $debug = false;
 	protected $avoid_cache = false;
-	public $debug_messages = '';
 	protected $show_inmediate_debug = false;
 	protected $timings = false;
 	protected $sql_select_instances = 'select i.*, c.name class_name, c.tag class_tag, c.id class_id, i.key_fields nom_intern, i.update_date, ifnull(unix_timestamp(i.update_date),0) update_timestamp';
