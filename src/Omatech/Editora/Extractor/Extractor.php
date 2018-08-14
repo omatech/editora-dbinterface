@@ -29,7 +29,7 @@ class Extractor extends DBInterfaceBase {
 		
 		if ($this->paginator)
 		{
-			if (!$this->paginator['elements'])
+			if (!isset($this->paginator['elements']))
 			{
 				for ($i=$this->paginator['firstPage'];$i<=$this->paginator['lastPage'];$i++)
 				{
