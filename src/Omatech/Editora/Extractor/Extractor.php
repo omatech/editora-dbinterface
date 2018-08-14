@@ -1,15 +1,18 @@
 <?php
 
 namespace Omatech\Editora\Extractor;
+
 use \Omatech\Editora\DBInterfaceBase;
 
 class Extractor extends DBInterfaceBase {
-	protected $lang='ALL';
+
+	protected $lang = 'ALL';
 	protected $default_limit = 10000;
 	protected $metadata = false;
 	protected $preview = false;
 	protected $extract_values = true;
 	protected $preview_date = 'NOW()';
+	protected $paginator = null;
 
 	public function findInstanceById($inst_id, $params = null, callable $callback = null) {
 		$this->debug("Extractor::findInstanceById inst_id=$inst_id\n");
@@ -28,9 +31,54 @@ class Extractor extends DBInterfaceBase {
 		$this->debug($sql);
 		//$row=Model::get_one($sql);
 		$row = $this->conn->fetchAssoc($sql);
-		if (!$row) return array();
+		if (!$row)
+			return array();
 
 		return $this->prepareInstanceResultStructure($row, $params, $callback);
+	}
+
+	public function getPaginator() {
+		return $this->paginator;
+	}
+
+	private function setPagination($num, $class_filter, $preview_filter, $order_filter) {
+		if ($num != null && $this->paginator == null) {
+			if (stripos($num, '/')) {
+				$pagination_array = explode("/", $num);
+				if (isset($pagination_array[0]) && isset($pagination_array[1]) && is_numeric($pagination_array[0]) && is_numeric($pagination_array[1]) && $pagination_array[1] > 0) {
+
+					$limit = $pagination_array[0];
+					$offset = ($pagination_array[1] - 1) * $limit;
+					$sql = "select count(*) num 
+               from omp_instances i 
+               , omp_classes c
+               where 1=1
+               $class_filter
+               and c.id=i.class_id
+               " . $preview_filter . "
+               $order_filter
+               ";
+					$total = $this->conn->fetchColumn($sql);
+					$pagination_info['lastPage']=(int)$total/$pagination_array[0];
+					if ($total > $limit + $offset) {
+						$pagination_info['hasMorePages'] = true;
+						$pagination_info['nextPage'] = (int)$pagination_array[1] + 1;
+					} else {
+						$pagination_info['hasMorePages'] = false;
+						$pagination_info['previousPage'] = null;
+					}
+					if ($pagination_array[1] == 1) {
+						$pagination_info['onFirstPage'] = true;
+						$pagination_info['previousPage'] = null;
+					} else {
+						$pagination_info['onFirstPage'] = false;
+						$pagination_info['previousPage'] = (int)$pagination_array[1] - 1;
+					}
+					$pagination_info['currentPage'] = $pagination_array[1];
+				}
+			}
+			$this->paginator = $pagination_info;
+		}
 	}
 
 	public function findInstancesInClass($class, $num = null, $params = null, callable $callback = null) {
@@ -43,22 +91,24 @@ class Extractor extends DBInterfaceBase {
 		$class_filter = $this->getClassFilter($class);
 		if (isset($params['order'])) {
 			$order_filter = $this->getOrderFilter($params['order'], $params['order_direction']);
-		}
-		else
-		{// si no tenemos order ordenamos por los publicados recientemente
+		} else {// si no tenemos order ordenamos por los publicados recientemente
 			$order_filter = $this->getOrderFilter('publishing_begins', 'desc');
 		}
+		$preview_filter = $this->getPreviewFilter();
 
+		$this->setPagination($num, $class_filter, $preview_filter, $order_filter);
 		$sql = $this->sql_select_instances . "  
 					from omp_instances i 
 					, omp_classes c
 					where 1=1
 					$class_filter
 					and c.id=i.class_id
-					" . $this->getPreviewFilter() . "
+					$preview_filter
 				  $order_filter
 					" . $this->getLimitFilter($num) . "
 					";
+
+
 
 		$this->debug("SQL a findInstancesInClass\n");
 		$this->debug($sql);
@@ -158,7 +208,8 @@ class Extractor extends DBInterfaceBase {
 
 		$relation_row = $this->findChildRelation($relation, $inst_id);
 		$rel_id = $relation_row['id'];
-		if (!$rel_id) return array();
+		if (!$rel_id)
+			return array();
 
 		if (isset($params['alias'])) {
 			$tag = $params['alias'];
@@ -211,7 +262,8 @@ class Extractor extends DBInterfaceBase {
 
 		$relation_row = $this->findParentRelation($relation, $inst_id);
 		$rel_id = $relation_row['id'];
-		if (!$rel_id) return array();
+		if (!$rel_id)
+			return array();
 
 		if (isset($params['alias'])) {
 			$tag = $params['alias'];
@@ -286,9 +338,6 @@ class Extractor extends DBInterfaceBase {
 		return null;
 	}
 
-
-
-
 	private function prepareInstanceResultStructure($row, $params = null, callable $callback = null, $start = null) {
 		if (!$start)
 			$start = microtime(true);
@@ -355,9 +404,8 @@ class Extractor extends DBInterfaceBase {
 
 		if ($callback != null) {
 			$this->debug("Voy a hacer el callback con inst_id=$inst_id\n");
-			$relations=$callback($inst_id);
-			if ($relations)
-			{
+			$relations = $callback($inst_id);
+			if ($relations) {
 				$instance['relations'] = $relations;
 			}
 		}
@@ -595,7 +643,5 @@ class Extractor extends DBInterfaceBase {
 		}
 		return $values;
 	}
-	
-
 
 }
