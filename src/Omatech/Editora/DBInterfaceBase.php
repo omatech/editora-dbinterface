@@ -43,10 +43,9 @@ class DBInterfaceBase {
 		}
 		$this->conn = $conn;
 	}
-	
-	function getBulkInstances ($include='', $exclude='')
-	{
-		
+
+	function getBulkInstances($include = '', $exclude = '') {
+
 		$sql_add = $this->getIncludeExcludeClassesFilter($include, $exclude);
 		$sql = "select i.*  
 					from omp_instances i 
@@ -57,24 +56,21 @@ class DBInterfaceBase {
 					";
 		return $this->conn->fetchAll($sql);
 	}
-	
-	function getBulkRelationInstances ()
-	{
-		$sql="select * from omp_relation_instances";
+
+	function getBulkRelationInstances() {
+		$sql = "select * from omp_relation_instances";
 		return $this->conn->fetchAll($sql);
 	}
-	
-	function getBulkStaticTexts ()
-	{
-		$sql="select * from omp_static_text";
+
+	function getBulkStaticTexts() {
+		$sql = "select * from omp_static_text";
 		return $this->conn->fetchAll($sql);
-	}	
-	
-	function getBulkValues ()
-	{
-		$sql="select * from omp_values";
+	}
+
+	function getBulkValues() {
+		$sql = "select * from omp_values";
 		return $this->conn->fetchAll($sql);
-	}		
+	}
 
 	function getAttrInfo($key) {
 		if (is_numeric($key)) {
@@ -85,8 +81,6 @@ class DBInterfaceBase {
 		}
 		return $this->conn->fetchAssoc($sql);
 	}
-	
-	
 
 	public function getAllClasses($include = '', $exclude = '') {
 		$this->debug("Extractor::getAllClasses include=$include exclude=$exclude\n");
@@ -253,6 +247,73 @@ class DBInterfaceBase {
 		}
 
 		return $link;
+	}
+
+	public function getUrlData($language, $nice_url) {
+		if (!isset($language)) {
+			return ['type' => 'Home', 'class_tag' => 'Home'];
+		} else {// tenim idioma
+			if (!isset($nice_url)) {
+				$sql = "select count(*) num
+								from omp_niceurl n
+								where n.language=:language
+								";
+
+				$prepare = $this->conn->prepare($sql);
+				$prepare->bindParam(':language', $language, PDO::PARAM_STR);
+				$prepare->execute();
+				$row = $prepare->fetch();
+
+				if ($row['num'] == 0) {// error language not found!
+					return ['type' => 'Error', 'language' => $language];
+				} else {// change language ok
+					return ['type' => 'Home', 'class_tag' => 'Home', 'language' => $language];
+					//return ['type' => 'ChangeLanguage', 'language' => $language];										
+				}
+			} else {// check valid urlnice
+				$sql = "select n.inst_id, n.niceurl, i.class_id, c.tag, i.key_fields nom_intern
+								from omp_niceurl n
+								, omp_instances i
+								, omp_classes c
+								where n.language = :language
+								and n.niceurl = :nice_url
+								and i.id=n.inst_id
+								and i.class_id=c.id
+								";
+
+				$prepare = $this->conn->prepare($sql);
+				$prepare->bindParam(':language', $language, PDO::PARAM_STR);
+				$prepare->bindParam(':nice_url', $nice_url, PDO::PARAM_STR);
+				$prepare->execute();
+				$row = $prepare->fetch();
+
+				if ($row) {
+					return ['type' => 'Instance'
+						, 'id' => $row['inst_id']
+						, 'class_tag' => ucfirst($row['tag'])
+						, 'class_id' => $row['class_id']
+						, 'nom_intern' => $row['nom_intern']
+						, 'language' => $language
+					];
+				} else {
+					return ['type' => 'Error', 'language' => $language];
+				}
+			}
+		}
+	}
+
+	static function otherLanguagesUrl($inst_id, $lang) {// return an array of language, niceurl
+		$sql = "select language, niceurl
+				from omp_niceurl
+				where inst_id=:inst_id
+				and language!=:lang
+				";
+
+		$prepare = $this->conn->prepare($sql);
+		$prepare->bindParam(':lang', $lang, PDO::PARAM_STR);
+		$prepare->bindParam(':inst_id', $inst_id, PDO::PARAM_INT);
+		$prepare->execute();
+		return $prepare->fetchAll();
 	}
 
 	function setCache($memcache_key, $memcache_value) {
