@@ -260,7 +260,7 @@ class DBInterfaceBase {
 								";
 
 				$prepare = $this->conn->prepare($sql);
-				$prepare->bindParam(':language', $language, PDO::PARAM_STR);
+				$prepare->bindValue('language', $language);
 				$prepare->execute();
 				$row = $prepare->fetch();
 
@@ -282,8 +282,8 @@ class DBInterfaceBase {
 								";
 
 				$prepare = $this->conn->prepare($sql);
-				$prepare->bindParam(':language', $language, PDO::PARAM_STR);
-				$prepare->bindParam(':nice_url', $nice_url, PDO::PARAM_STR);
+				$prepare->bindValue('language', $language);
+				$prepare->bindValue('nice_url', $nice_url);
 				$prepare->execute();
 				$row = $prepare->fetch();
 
@@ -310,8 +310,8 @@ class DBInterfaceBase {
 				";
 
 		$prepare = $this->conn->prepare($sql);
-		$prepare->bindParam(':lang', $lang, PDO::PARAM_STR);
-		$prepare->bindParam(':inst_id', $inst_id, PDO::PARAM_INT);
+		$prepare->bindValue('lang', $lang);
+		$prepare->bindValue('inst_id', $inst_id);
 		$prepare->execute();
 		return $prepare->fetchAll();
 	}
