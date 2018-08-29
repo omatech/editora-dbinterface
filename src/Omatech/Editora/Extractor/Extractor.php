@@ -120,7 +120,6 @@ class Extractor extends DBInterfaceBase {
 		$ids_filter = $this->getIDsListFilter($inst_ids);
 		$this->setPagination($num, $class_filter, $preview_filter, $order_filter, $ids_filter);
 
-
 		$sql = $this->sql_select_instances . "  
 			from omp_instances i 
 			, omp_classes c
@@ -130,6 +129,7 @@ class Extractor extends DBInterfaceBase {
 			$preview_filter
 			$ids_filter
 			$order_filter
+			" . $this->getLimitFilter($num) . "
 			";
 
 		$this->debug("SQL a findInstancesInList\n");
