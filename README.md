@@ -245,6 +245,43 @@ o in Linux
 
 vendor/bin/phpunit ./tests/Omatech/Editora/Extractor/ExtractorTest
 
+# Editora-Loader
+
+## Compare methods
+
+### relationInstanceExist($rel_id, $parent_inst_id, $child_inst_id)
+
+### existsInstanceWithExternalID($class_id, $external_id)
+
+### ExistingInstanceIsDifferent($inst_id, $nom_intern, $values, $status = 'O', &$difference, &$attr_difference) 
+		// -1 instance not exist
+		// -2 status is different
+		// -3 nom_intern is different
+		// -4 some value is different
+		// -5 some value not exists in current instance
+		// 0 same!
+
+## Insert/Update methods
+
+### insertRelationInstance($rel_id, $parent_inst_id, $child_inst_id, $external_id = null, $batch_id = null)
+
+### updateInstance($inst_id, $nom_intern, $values, $status = 'O', $publishing_begins = null, $publishing_ends = null)
+
+### insertInstanceWithExternalID($class_id, $nom_intern, $external_id, $batch_id, $values, $status = 'O', $publishing_begins = null, $publishing_ends = null, $creation_date = 'now()', $update_date = 'now()') {
+
+### insertInstance($class_id, $nom_intern, $values, $status = 'O', $publishing_begins = null, $publishing_ends = null)
+
+### insertInstanceForcingID($inst_id, $class_id, $nom_intern, $values, $status = 'O', $publishing_begins = null, $publishing_ends = null)
+
+### updateUrlNice($nice_url, $inst_id, $language)
+
+### insertUrlNice($nice_url, $inst_id, $language)
+
+## Delete methods
+
+### deleteInstance ($inst_id)
+- inst_id * (instance to delete)
+
 
 # Commands
 
