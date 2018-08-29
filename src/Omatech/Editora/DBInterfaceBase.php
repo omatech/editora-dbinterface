@@ -302,7 +302,7 @@ class DBInterfaceBase {
 		}
 	}
 
- function otherLanguagesUrl($inst_id, $lang) {// return an array of language, niceurl
+	function otherLanguagesUrl($inst_id, $lang) {// return an array of language, niceurl
 		$sql = "select language, niceurl
 				from omp_niceurl
 				where inst_id=:inst_id
@@ -688,12 +688,14 @@ class DBInterfaceBase {
 	}
 
 	protected function getClassFilter($class) {
-		if (is_numeric($class)) {
-
-			return " and c.id=$class ";
-		} else {
-			return " and c.tag='$class' ";
+		if ($class != false) {
+			if (is_numeric($class)) {
+				return " and c.id=$class ";
+			} else {
+				return " and c.tag='$class' ";
+			}
 		}
+		return "";
 	}
 
 	protected function getRelationFilter($relation) {

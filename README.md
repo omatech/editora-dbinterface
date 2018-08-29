@@ -43,8 +43,10 @@ $e=new Extractor($conn, $params);
 - order_direction = direction of the order by clause, desc|asc defaults to asc
 
 
-### findInstancesInList($inst_ids, $params = null, callable $callback = null)
+### findInstancesInList($inst_ids, $num=null, $class=null, $params = null, callable $callback = null)
 - inst_ids * (comma separated ids of instances to extract)
+- num (number of instances to extract, if not set get all instances of the class). Use an int to not use pagination or syntax "10/2" to give the records 11 to 20) (see paginator section for details)
+- class (filter one particular class by tag or id)
 - params (particular params for this extraction, see "Extraction Params" and "Instance Params" for more info)
 - callback (closure function)
 

@@ -109,7 +109,7 @@ class Extractor extends DBInterfaceBase {
 		return $result;
 	}
 
-	public function findInstancesInList($inst_ids, $class = null, $params = null, callable $callback = null) {
+	public function findInstancesInList($inst_ids, $num=null, $class = null, $params = null, callable $callback = null) {
 		$start = microtime(true);
 
 		$this->debug("Extractor::getInstanceList class=$class inst_ids=$inst_ids\n");
