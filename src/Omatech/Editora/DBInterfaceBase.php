@@ -302,7 +302,7 @@ class DBInterfaceBase {
 		}
 	}
 
-	static function otherLanguagesUrl($inst_id, $lang) {// return an array of language, niceurl
+ function otherLanguagesUrl($inst_id, $lang) {// return an array of language, niceurl
 		$sql = "select language, niceurl
 				from omp_niceurl
 				where inst_id=:inst_id
