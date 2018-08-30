@@ -572,7 +572,6 @@ class Loader extends DBInterfaceBase {
 		foreach ($values as $key => $value) {
 			$attr_info = $this->getAttrInfo($key);
 			if (empty($attr_info)) {
-				echo("No existeix l'attribut: $key\n");
 				return false;
 			} else {// podem continuar, existeix l'atribut
 				//print_r($attr_info);
