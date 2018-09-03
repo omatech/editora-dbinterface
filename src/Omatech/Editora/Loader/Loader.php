@@ -101,45 +101,35 @@ class Loader extends DBInterfaceBase {
 			echo "Nothing to delete for batch_id=$batch_id\n";
 		}
 	}
+	
+	public function deleteInstancesWithExternalID ($external_id, $class_id)
+	{
+		$sql = "select id from omp_instances where external_id=$external_id and class_id=$class_id";
+		$rows = $this->conn->fetchAll($sql);
+		
+		if ($rows) {
+			foreach ($rows as $row) {
+				$inst_id = $row['id'];
+				echo "Deleting instance $inst_id\n";
+				$this->delete_instance($inst_id);
+			}
+		} else {
+			echo "Nothing to delete for external_id=$external_id\n";
+		}
+	}
 
+	
+	public function deleteRelationInstancesWithExternalID($external_id, $rel_id) {
+		$sql = "delete from omp_relation_instances where external_id=:external_id and rel_id=:rel_id";
+		$statement = $this->conn->prepare($sql);
+		$statement->bindValue('external_id', $external_id);
+		$statement->bindValue('rel_id', $rel_id);
+		$statement->execute();
+		echo $statement->rowCount() . " relation instances deleted\n";
+	}
+	
 	public function delete_instance($inst_id) {
-		$sql_values = 'DELETE
-				FROM omp_values 
-				WHERE inst_id = "' . $inst_id . '"';
-		$this->conn->executeQuery($sql_values);
-		//$ret_values = mysql_query($sql_values);
-
-		$sql_inst_child = 'DELETE
-				FROM omp_relation_instances 
-				WHERE child_inst_id = "' . $inst_id . '"';
-		$this->conn->executeQuery($sql_inst_child);
-		//$ret_inst_child = mysql_query($sql_inst_child);
-
-		$sql_inst_parent = 'DELETE
-				FROM omp_relation_instances 
-				WHERE parent_inst_id = "' . $inst_id . '"';
-		$this->conn->executeQuery($sql_inst_parent);
-		//$ret_inst_parent = mysql_query($sql_inst_parent);
-
-		$sql_inst = 'DELETE 
-				FROM omp_instances 
-				WHERE id = "' . $inst_id . '"';
-		$this->conn->executeQuery($sql_inst);
-		//$ret_inst = mysql_query($sql_inst);
-
-		$sql_inst = 'DELETE 
-				FROM omp_niceurl 
-				WHERE inst_id = "' . $inst_id . '"';
-		$this->conn->executeQuery($sql_inst);
-		//$ret_inst = mysql_query($sql_inst);
-
-		$sql_inst = 'DELETE 
-				FROM omp_instances_cache 
-				WHERE inst_id = "' . $inst_id . '"';
-		$this->conn->executeQuery($sql_inst);
-		//$ret_inst = mysql_query($sql_inst);
-
-		return true;
+		return deleteInstance($inst_id);
 	}
 
 	public function deleteInstance($inst_id) {

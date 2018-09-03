@@ -282,6 +282,17 @@ vendor/bin/phpunit ./tests/Omatech/Editora/Extractor/ExtractorTest
 ### deleteInstance ($inst_id)
 - inst_id * (instance to delete)
 
+### deleteInstancesWithExternalID ($external_id, $class_id)
+
+### deleteRelationInstancesWithExternalID($external_id, $rel_id)
+
+### delete_instance($inst_id)
+
+### deleteInstancesInBatch($batch_id)
+
+### deleteRelationInstancesInBatch($batch_id)
+
+### deleteRelationInstance($id)
 
 # Commands
 
