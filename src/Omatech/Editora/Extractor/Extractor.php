@@ -658,7 +658,6 @@ class Extractor extends DBInterfaceBase {
           $preview_filter
 					$ids_filter
 					$search_filter
-					group by i.id
           $order_filter
           ";
 					$total = $this->conn->fetchColumn($sql);
