@@ -641,7 +641,7 @@ class Extractor extends DBInterfaceBase {
 		return $values;
 	}
 
-	private function setPagination($num, $class_filter, $preview_filter, $order_filter, $ids_filter = "", $search_filter = "") {
+	private function setPagination($num, $class_filter, $preview_filter, $order_filter="", $ids_filter = "", $search_filter = "") {
 		if ($num != null && $this->paginator == null) {
 			if (stripos($num, '/')) {
 				$pagination_array = explode("/", $num);
