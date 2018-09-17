@@ -447,7 +447,7 @@ class DBInterfaceBase {
 		$class_tag = $this->conn->quote($class_tag);
 		$value = $this->conn->quote($value);
 
-		$atri_info = $this->get_attr_info($atri);
+		$atri_info = $this->getAttrInfo($atri);
 		$atri_id = $atri_info['id'];
 
 		$sql = "SELECT i.id
@@ -474,7 +474,7 @@ class DBInterfaceBase {
 		$class_tag = $this->conn->quote($class_tag);
 		//$value = $this->conn->quote($value);
 
-		$atri_info = $this->get_attr_info($atri);
+		$atri_info = $this->getAttrInfo($atri);
 		$atri_id = $atri_info['id'];
 
 		$sql = "SELECT i.id
