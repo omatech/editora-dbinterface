@@ -129,7 +129,7 @@ class Loader extends DBInterfaceBase {
 	}
 	
 	public function delete_instance($inst_id) {
-		return deleteInstance($inst_id);
+		return $this->deleteInstance($inst_id);
 	}
 
 	public function deleteInstance($inst_id) {
