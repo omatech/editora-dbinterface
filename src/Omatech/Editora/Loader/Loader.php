@@ -118,7 +118,17 @@ class Loader extends DBInterfaceBase {
 		}
 	}
 
-	
+	public function deleteRelationInstancesWithParameters($rel_id, $parent_inst_id, $child_inst_id, $external_id){
+        $sql = "delete from omp_relation_instances where rel_id=:rel_id and parent_inst_id=:parent_inst_id and child_inst_id=:child_inst_id and external_id=:external_id";
+        $statement = $this->conn->prepare($sql);
+        $statement->bindValue('rel_id', $rel_id);
+        $statement->bindValue('parent_inst_id', $parent_inst_id);
+        $statement->bindValue('child_inst_id', $child_inst_id);
+        $statement->bindValue('external_id', $external_id);
+        $statement->execute();
+        echo $statement->rowCount() . " relation instances deleted\n";
+    }
+
 	public function deleteRelationInstancesWithExternalID($external_id, $rel_id) {
 		$sql = "delete from omp_relation_instances where external_id=:external_id and rel_id=:rel_id";
 		$statement = $this->conn->prepare($sql);
