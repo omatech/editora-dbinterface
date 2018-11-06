@@ -35,7 +35,7 @@ class Loader extends DBInterfaceBase {
 
 	public function bulkImportTable($table_name, $rows, $rows_to_process = 1000, $delete_first = false) {
 		if ($delete_first) {
-			$conn->executeQuery("delete from $table_name");
+			$this->conn->executeQuery("delete from $table_name");
 		}
 
 		$fields_array = array();
