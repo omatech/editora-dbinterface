@@ -658,7 +658,6 @@ class Extractor extends DBInterfaceBase {
           $preview_filter
 					$ids_filter
 					$search_filter
-          group by i.id
           ";
 					$total = $this->conn->fetchColumn($sql);
 					$pagination_info['lastPage'] = (int) ceil($total / $pagination_array[0]);
