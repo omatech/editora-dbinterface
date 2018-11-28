@@ -45,6 +45,7 @@ class Editora {
 				return $prepare->fetchAll();
 		}
 
+		/* Moved to DBInterfaceBase
 		static function get_url_data($language, $nice_url) {
 				if (!isset($language)) {
 						return ['type' => 'Home', 'class_tag' => 'Home'];
@@ -101,7 +102,8 @@ class Editora {
 						}
 				}
 		}
-
+*/
+		
 		static function control_objecte($obj, $lg) {
 				$inst_id_from_url = self::get_inst_id_from_url($obj, $lg);
 

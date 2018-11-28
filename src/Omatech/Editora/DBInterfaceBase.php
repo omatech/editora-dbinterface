@@ -279,6 +279,7 @@ class DBInterfaceBase {
 								and n.niceurl = :nice_url
 								and i.id=n.inst_id
 								and i.class_id=c.id
+								" . $this->getPreviewFilter() . "								
 								";
 
 				$prepare = $this->conn->prepare($sql);
