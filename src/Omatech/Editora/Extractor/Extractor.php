@@ -9,9 +9,7 @@ class Extractor extends DBInterfaceBase {
 	protected $lang = 'ALL';
 	protected $default_limit = 10000;
 	protected $metadata = false;
-	protected $preview = false;
 	protected $extract_values = true;
-	protected $preview_date = 'NOW()';
 	protected $paginator = null;
 	
 	public function getPaginator($prefix='', $postfix='') 

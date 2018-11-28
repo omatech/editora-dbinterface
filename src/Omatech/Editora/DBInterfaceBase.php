@@ -10,6 +10,8 @@ class DBInterfaceBase {
 	protected $cache_expiration = 3600;
 	protected $type_of_cache = null;
 	protected $mc = null;
+	protected $preview = false;
+	protected $preview_date = 'NOW()';
 	protected $debug = false;
 	protected $avoid_cache = false;
 	protected $show_inmediate_debug = false;
