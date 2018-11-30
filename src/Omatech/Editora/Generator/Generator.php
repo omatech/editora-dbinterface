@@ -519,6 +519,16 @@ class Generator extends DBInterfaceBase {
 			}
 		}
 
+        foreach ($attributes_color as $key => $val) {
+            if (is_array($val)) {
+                $tag = $val[0];
+                array_shift($val);
+                $this->create_attribute($key, $tag, 'O', 0, 'ALL', 0, $val);
+            } else {
+                $this->create_attribute($key, $val, 'O');
+            }
+        }
+
 		foreach ($attributes_image as $key => $val) {
 			if (is_array($val)) {
 				$tag = $val[0];
@@ -1007,6 +1017,7 @@ class Generator extends DBInterfaceBase {
 			'attributes_order_date' => array(),
 			'attributes_order_string' => array(),
 			'attributes_string' => array(),
+			'attributes_color' => array(),
 			'attributes_textarea' => array(),
 			'attributes_text' => array(),
 			'attributes_date' => array(),
@@ -1023,6 +1034,7 @@ class Generator extends DBInterfaceBase {
 			'attributes_multi_lang_textarea' => array(),
 			'attributes_multi_lang_file' => array(),
 			'attributes_multi_lang_image' => array(),
+			'attributes_multi_lang_video' => array(),
 			'lookups' => array(),
 			'relations' => array(),
 			'relation_names' => array(),
