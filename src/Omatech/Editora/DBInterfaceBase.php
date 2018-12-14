@@ -291,13 +291,33 @@ class DBInterfaceBase {
 				$row = $prepare->fetch();
 
 				if ($row) {
-					return ['type' => 'Instance'
+					$result = ['type' => 'Instance'
 						, 'id' => $row['inst_id']
 						, 'class_tag' => ucfirst($row['tag'])
 						, 'class_id' => $row['class_id']
 						, 'nom_intern' => $row['nom_intern']
 						, 'language' => $language
 					];
+
+					// Get multilang urls
+					$sql = "select n.niceurl, n.language
+								from omp_niceurl n
+								, omp_instances i
+								, omp_classes c
+								where n.niceurl = :nice_url
+								and i.id=n.inst_id
+								and i.class_id=c.id
+								" . $this->getPreviewFilter() . "								
+								";
+
+					$prepare = $this->conn->prepare($sql);
+					$prepare->bindValue('nice_url', $nice_url);
+					$prepare->execute();
+					$rows = $prepare->fetchAll();
+					foreach ($rows as $multilang_url_row) {
+						$result['multilang_urls'][$multilang_url_row['language']] = $multilang_url_row['niceurl'];
+					}
+					return $result;
 				} else {
 					return ['type' => 'Error', 'language' => $language];
 				}
