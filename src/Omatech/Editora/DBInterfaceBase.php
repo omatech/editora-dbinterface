@@ -298,7 +298,7 @@ class DBInterfaceBase {
 						, 'nom_intern' => $row['nom_intern']
 						, 'language' => $language
 					]; 
-/*
+
 					// Get multilang urls
 					$sql = "select n.niceurl, n.language
 								from omp_niceurl n
@@ -317,7 +317,7 @@ class DBInterfaceBase {
 					foreach ($rows as $multilang_url_row) {
 						$result['multilang_urls'][$multilang_url_row['language']] = $multilang_url_row['niceurl'];
 					}
- */
+ 
 					return $result;
 				} else {
 					return ['type' => 'Error', 'language' => $language];
