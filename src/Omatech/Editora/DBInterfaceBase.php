@@ -297,7 +297,7 @@ class DBInterfaceBase {
 						, 'class_id' => $row['class_id']
 						, 'nom_intern' => $row['nom_intern']
 						, 'language' => $language
-					];
+					]; 
 /*
 					// Get multilang urls
 					$sql = "select n.niceurl, n.language
