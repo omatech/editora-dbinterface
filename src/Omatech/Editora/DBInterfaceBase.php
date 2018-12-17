@@ -318,6 +318,7 @@ class DBInterfaceBase {
 						$result['multilang_urls'][$multilang_url_row['language']] = $multilang_url_row['niceurl'];
 					}
 */
+					
 					return $result;
 				} else {
 					return ['type' => 'Error', 'language' => $language];
