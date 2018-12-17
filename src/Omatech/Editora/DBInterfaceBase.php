@@ -320,6 +320,7 @@ class DBInterfaceBase {
 */
 					
 					
+					
 					return $result;
 				} else {
 					return ['type' => 'Error', 'language' => $language];
