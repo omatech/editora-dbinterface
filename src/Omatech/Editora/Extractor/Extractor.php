@@ -44,7 +44,34 @@ class Extractor extends DBInterfaceBase {
 
 	public function findInstanceById($inst_id, $params = null, callable $callback = null) {
 		$this->debug("Extractor::findInstanceById inst_id=$inst_id\n");
+		$insert_in_cache = false;		
+		if (isset($params['cache_key']))
+		{
 
+			$cache_key=$params['cache_key'];
+	
+			$memcache_key = $this->conn->getDatabase() . "_extractor_cache:$cache_key:$this->lang";
+			$this->debug("MEMCACHE:: using key $memcache_key extraction\n");
+			if (!$this->avoid_cache) {
+				$this->debug("CACHE:: avoid_cache desactivado\n");
+				if (!$this->preview) {// si no estem fent preview, mirem si esta activada la memcache i si existeix la key
+					$this->debug("CACHE:: preview desactivado\n");
+					if ($this->setupCache()) {
+						$this->debug("CACHE:: setupCache OK\n");
+						$row = $this->mc->get($memcache_key);
+						if ($row)
+						{
+							return $this->prepareInstanceResultStructure($row, $params, $callback);
+						}
+						else
+						{
+							$insert_in_cache=true;
+						}
+					}
+				}
+			}
+		}
+		
 		$sql = $this->sql_select_instances . "  
 					from omp_instances i 
 					, omp_classes c
@@ -61,6 +88,19 @@ class Extractor extends DBInterfaceBase {
 		$row = $this->conn->fetchAssoc($sql);
 		if (!$row)
 			return array();
+		
+		if ($insert_in_cache) {
+			$this->debug($this->type_of_cache . ":: insertamos el objeto $memcache_key \n");
+			$this->debug($row);
+			if (isset($params['cache_expiration']))
+			{
+				$this->setCache($memcache_key, $row, $params['cache_expiration']);
+			}
+			else
+			{
+				$this->setCache($memcache_key, $row);
+			}
+		}
 
 		return $this->prepareInstanceResultStructure($row, $params, $callback);
 	}

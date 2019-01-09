@@ -343,11 +343,17 @@ class DBInterfaceBase {
 		return $prepare->fetchAll();
 	}
 
-	function setCache($memcache_key, $memcache_value) {
+	function setCache($memcache_key, $memcache_value, $expiration=null) {
+		
+		if ($expiration==null)
+		{
+			$expiration=$this->cache_expiration;
+		}
+		
 		if ($this->type_of_cache == 'memcached') {
-			$this->mc->set($memcache_key, $memcache_value, $this->cache_expiration);
+			$this->mc->set($memcache_key, $memcache_value, $expiration);
 		} else {// memcache standard
-			$this->mc->set($memcache_key, $memcache_value, MEMCACHE_COMPRESSED, $this->cache_expiration);
+			$this->mc->set($memcache_key, $memcache_value, MEMCACHE_COMPRESSED, $expiration);
 		}
 	}
 
