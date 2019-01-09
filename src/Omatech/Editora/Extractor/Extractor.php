@@ -45,10 +45,10 @@ class Extractor extends DBInterfaceBase {
 	public function findInstanceById($inst_id, $params = null, callable $callback = null) {
 		$this->debug("Extractor::findInstanceById inst_id=$inst_id\n");
 		$insert_in_cache = false;		
-		if (isset($params['cache_key']))
+		if (isset($params['extraction_cache_key']))
 		{
 
-			$cache_key=$params['cache_key'];
+			$cache_key=$params['extraction_cache_key'];
 	
 			$memcache_key = $this->conn->getDatabase() . "_extractor_cache:$cache_key:$this->lang";
 			$this->debug("MEMCACHE:: using key $memcache_key extraction\n");
@@ -92,9 +92,9 @@ class Extractor extends DBInterfaceBase {
 		if ($insert_in_cache) {
 			$this->debug($this->type_of_cache . ":: insertamos el objeto $memcache_key \n");
 			$this->debug($row);
-			if (isset($params['cache_expiration']))
+			if (isset($params['extraction_cache_expiration']))
 			{
-				$this->setCache($memcache_key, $row, $params['cache_expiration']);
+				$this->setCache($memcache_key, $row, $params['extraction_cache_expiration']);
 			}
 			else
 			{
