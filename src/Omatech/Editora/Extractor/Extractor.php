@@ -394,6 +394,18 @@ class Extractor extends DBInterfaceBase {
 			$metadata = array();
 			$metadata['id'] = $inst_id;
 			$metadata['nom_intern'] = $row['nom_intern'];
+
+            if (isset($row['external_id'])){
+                $metadata['external_id'] = $row['external_id'];
+            }else{
+                $metadata['external_id'] = null;
+            }
+            if (isset($row['batch_id'])){
+                $metadata['batch_id'] = $row['batch_id'];
+            }else{
+                $metadata['batch_id'] = null;
+            }
+
 			if (isset($row['publishing_begins']))
 				$metadata['publishing_begins'] = $row['publishing_begins'];
 			if (isset($row['publishing_ends']))

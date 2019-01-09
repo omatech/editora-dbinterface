@@ -539,6 +539,16 @@ class Generator extends DBInterfaceBase {
 			}
 		}
 
+        foreach ($attributes_grid_image as $key => $val) {
+            if (is_array($val)) {
+                $tag = $val[0];
+                array_shift($val);
+                $this->create_attribute($key, $tag, 'H', 0, 'ALL', 0, $val);
+            } else {
+                $this->create_attribute($key, $val, 'H');
+            }
+        }
+
 		foreach ($attributes_geolocation as $key => $val) {
 			if (is_array($val)) {
 				$tag = $val[0];
@@ -1029,6 +1039,7 @@ class Generator extends DBInterfaceBase {
 			'attributes_video' => array(),
 			'attributes_lookup' => array(),
 			'attributes_image' => array(),
+			'attributes_grid_image' => array(),
 			'images_sizes' => array(),
 			'attributes_multi_lang_string' => array(),
 			'attributes_multi_lang_textarea' => array(),
