@@ -56,7 +56,7 @@ class Extractor extends DBInterfaceBase {
 						if ($result) {
 							$this->debug("CACHE:: HIT! VALUE=\n");
 							$this->debug($result);
-							$this->debug("CACHE:: END VALUE=\n");
+							$this->debug("\nCACHE:: END VALUE=\n");
 							return $result;
 						} else {
 							$insert_in_cache = true;
