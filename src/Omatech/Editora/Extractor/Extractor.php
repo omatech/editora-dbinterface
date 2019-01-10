@@ -11,9 +11,8 @@ class Extractor extends DBInterfaceBase {
 	protected $metadata = false;
 	protected $extract_values = true;
 	protected $paginator = null;
-	
-	public function getPaginator($prefix='', $postfix='') 
-	{
+
+	public function getPaginator($prefix = '', $postfix = '') {
 		//lastPage
 		//firstPage
 		//hasMorePages
@@ -21,21 +20,17 @@ class Extractor extends DBInterfaceBase {
 		//previousPage
 		//onFirstPage
 		//currentPage
-		
 		// generate elements if not exists
-		
-		if ($this->paginator)
-		{
-			if (!isset($this->paginator['elements']))
-			{
-				for ($i=$this->paginator['firstPage'];$i<=$this->paginator['lastPage'];$i++)
-				{
-					$element=array();
-					$element['url']=$prefix.$i.$postfix;
-					$element['isFirst']=$i==$this->paginator['firstPage'];
-					$element['isLast']=$i==$this->paginator['lastPage'];
-					$element['isCurrent']=$i==$this->paginator['currentPage'];
-					$this->paginator['elements'][$i]=$element;
+
+		if ($this->paginator) {
+			if (!isset($this->paginator['elements'])) {
+				for ($i = $this->paginator['firstPage']; $i <= $this->paginator['lastPage']; $i++) {
+					$element = array();
+					$element['url'] = $prefix . $i . $postfix;
+					$element['isFirst'] = $i == $this->paginator['firstPage'];
+					$element['isLast'] = $i == $this->paginator['lastPage'];
+					$element['isCurrent'] = $i == $this->paginator['currentPage'];
+					$this->paginator['elements'][$i] = $element;
 				}
 			}
 		}
@@ -44,12 +39,11 @@ class Extractor extends DBInterfaceBase {
 
 	public function findInstanceById($inst_id, $params = null, callable $callback = null) {
 		$this->debug("Extractor::findInstanceById inst_id=$inst_id\n");
-		$insert_in_cache = false;		
-		if (isset($params['extraction_cache_key']))
-		{
+		$insert_in_cache = false;
+		if (isset($params['extraction_cache_key'])) {
 
-			$cache_key=$params['extraction_cache_key'];
-	
+			$cache_key = $params['extraction_cache_key'];
+
 			$memcache_key = $this->conn->getDatabase() . "_extractor_cache:$cache_key:$this->lang";
 			$this->debug("MEMCACHE:: using key $memcache_key extraction\n");
 			if (!$this->avoid_cache) {
@@ -59,19 +53,16 @@ class Extractor extends DBInterfaceBase {
 					if ($this->setupCache()) {
 						$this->debug("CACHE:: setupCache OK\n");
 						$row = $this->mc->get($memcache_key);
-						if ($row)
-						{
+						if ($row) {
 							return $this->prepareInstanceResultStructure($row, $params, $callback);
-						}
-						else
-						{
-							$insert_in_cache=true;
+						} else {
+							$insert_in_cache = true;
 						}
 					}
 				}
 			}
 		}
-		
+
 		$sql = $this->sql_select_instances . "  
 					from omp_instances i 
 					, omp_classes c
@@ -88,24 +79,20 @@ class Extractor extends DBInterfaceBase {
 		$row = $this->conn->fetchAssoc($sql);
 		if (!$row)
 			return array();
-		
+
 		if ($insert_in_cache) {
 			$this->debug($this->type_of_cache . ":: insertamos el objeto $memcache_key \n");
-			$this->debug($row);
-			if (isset($params['extraction_cache_expiration']))
-			{
-				$this->setCache($memcache_key, $row, $params['extraction_cache_expiration']);
-			}
-			else
-			{
-				$this->setCache($memcache_key, $row);
+			$result = $this->prepareInstanceResultStructure($row, $params, $callback);
+			$this->debug($result);
+			if (isset($params['extraction_cache_expiration'])) {
+				$this->setCache($memcache_key, $result, $params['extraction_cache_expiration']);
+			} else {
+				$this->setCache($memcache_key, $result);
 			}
 		}
 
-		return $this->prepareInstanceResultStructure($row, $params, $callback);
+		return $result;
 	}
-
-
 
 	public function findInstancesInClass($class, $num = null, $params = null, callable $callback = null) {
 		// $params['order'] = order class instances by order criteria, update_date|publishing_begins|inst_id|key_fields|order_date|order_string default publishing_begins
@@ -147,7 +134,7 @@ class Extractor extends DBInterfaceBase {
 		return $result;
 	}
 
-	public function findInstancesInList($inst_ids, $num=null, $class = null, $params = null, callable $callback = null) {
+	public function findInstancesInList($inst_ids, $num = null, $class = null, $params = null, callable $callback = null) {
 		$start = microtime(true);
 
 		$this->debug("Extractor::getInstanceList class=$class inst_ids=$inst_ids\n");
@@ -395,16 +382,16 @@ class Extractor extends DBInterfaceBase {
 			$metadata['id'] = $inst_id;
 			$metadata['nom_intern'] = $row['nom_intern'];
 
-            if (isset($row['external_id'])){
-                $metadata['external_id'] = $row['external_id'];
-            }else{
-                $metadata['external_id'] = null;
-            }
-            if (isset($row['batch_id'])){
-                $metadata['batch_id'] = $row['batch_id'];
-            }else{
-                $metadata['batch_id'] = null;
-            }
+			if (isset($row['external_id'])) {
+				$metadata['external_id'] = $row['external_id'];
+			} else {
+				$metadata['external_id'] = null;
+			}
+			if (isset($row['batch_id'])) {
+				$metadata['batch_id'] = $row['batch_id'];
+			} else {
+				$metadata['batch_id'] = null;
+			}
 
 			if (isset($row['publishing_begins']))
 				$metadata['publishing_begins'] = $row['publishing_begins'];
@@ -691,7 +678,7 @@ class Extractor extends DBInterfaceBase {
 		return $values;
 	}
 
-	private function setPagination($num, $class_filter, $preview_filter, $order_filter="", $ids_filter = "", $search_filter = "") {
+	private function setPagination($num, $class_filter, $preview_filter, $order_filter = "", $ids_filter = "", $search_filter = "") {
 		if ($num != null && $this->paginator == null) {
 			if (stripos($num, '/')) {
 				$pagination_array = explode("/", $num);
