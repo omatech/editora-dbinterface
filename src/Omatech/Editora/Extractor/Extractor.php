@@ -82,10 +82,10 @@ class Extractor extends DBInterfaceBase {
 		$row = $this->conn->fetchAssoc($sql);
 		if (!$row)
 			return array();
-
+		
+		$result = $this->prepareInstanceResultStructure($row, $params, $callback);
 		if ($insert_in_cache) {
 			$this->debug("CACHE:: ".$this->type_of_cache . ":: insertamos el objeto $memcache_key \n");
-			$result = $this->prepareInstanceResultStructure($row, $params, $callback);
 			$this->debug("CACHE:: VALUE inserted:\n");
 			$this->debug($result);
 			$this->debug("\nCACHE:: END VALUE inserted:\n");			
