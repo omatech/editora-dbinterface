@@ -81,9 +81,11 @@ class Extractor extends DBInterfaceBase {
 			return array();
 
 		if ($insert_in_cache) {
-			$this->debug($this->type_of_cache . ":: insertamos el objeto $memcache_key \n");
+			$this->debug("CACHE:: ".$this->type_of_cache . ":: insertamos el objeto $memcache_key \n");
 			$result = $this->prepareInstanceResultStructure($row, $params, $callback);
+			$this->debug("CACHE:: VALUE inserted:\n");
 			$this->debug($result);
+			$this->debug("\nCACHE:: END VALUE inserted:\n");			
 			if (isset($params['extraction_cache_expiration'])) {
 				$this->setCache($memcache_key, $result, $params['extraction_cache_expiration']);
 			} else {
