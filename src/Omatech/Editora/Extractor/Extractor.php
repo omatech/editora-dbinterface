@@ -12,36 +12,12 @@ class Extractor extends DBInterfaceBase {
 	protected $extract_values = true;
 	protected $paginator = null;
 
-	public function getPaginator($prefix = '', $postfix = '') {
-		//lastPage
-		//firstPage
-		//hasMorePages
-		//nextPage
-		//previousPage
-		//onFirstPage
-		//currentPage
-		// generate elements if not exists
+	///
+	/// MAIN FUNCTIONS
+	///
 
-		if ($this->paginator) {
-			if (!isset($this->paginator['elements'])) {
-				for ($i = $this->paginator['firstPage']; $i <= $this->paginator['lastPage']; $i++) {
-					$element = array();
-					$element['url'] = $prefix . $i . $postfix;
-					$element['isFirst'] = $i == $this->paginator['firstPage'];
-					$element['isLast'] = $i == $this->paginator['lastPage'];
-					$element['isCurrent'] = $i == $this->paginator['currentPage'];
-					$this->paginator['elements'][$i] = $element;
-				}
-			}
-		}
-		return $this->paginator;
-	}
-
-	public function findInstanceById($inst_id, $params = null, callable $callback = null) {
-		$this->debug("Extractor::findInstanceById inst_id=$inst_id\n");
-		$insert_in_cache = false;
+	private function getExtractionFromCache($params) {// returns the object if found or false otherwise
 		if (isset($params['extraction_cache_key'])) {
-
 			$cache_key = $params['extraction_cache_key'];
 
 			$memcache_key = $this->conn->getDatabase() . "_extractor_cache:$cache_key:$this->lang";
@@ -59,12 +35,50 @@ class Extractor extends DBInterfaceBase {
 							$this->debug("\nCACHE:: END VALUE=\n");
 							return $result;
 						} else {
-							$insert_in_cache = true;
+							return false;
 						}
 					}
 				}
 			}
 		}
+	}
+
+	private function putInExtractionCache($result, $params) {
+		if (isset($params['extraction_cache_key'])) {
+			$cache_key = $params['extraction_cache_key'];
+
+			$memcache_key = $this->conn->getDatabase() . "_extractor_cache:$cache_key:$this->lang";
+			$this->debug("MEMCACHE:: using key $memcache_key extraction\n");
+			if (!$this->avoid_cache) {
+				$this->debug("CACHE:: avoid_cache desactivado\n");
+				if (!$this->preview) {// si no estem fent preview, mirem si esta activada la memcache i si existeix la key
+					$this->debug("CACHE:: preview desactivado\n");
+					if ($this->setupCache()) {
+
+						$this->debug("CACHE:: " . $this->type_of_cache . ":: insertamos el objeto $memcache_key \n");
+
+						$this->debug("CACHE:: VALUE inserted:\n");
+						$this->debug($result);
+						$this->debug("\nCACHE:: END VALUE inserted:\n");
+						if (isset($params['extraction_cache_expiration'])) {
+							$this->setCache($memcache_key, $result, $params['extraction_cache_expiration']);
+						} else {
+							$this->setCache($memcache_key, $result);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public function findInstanceById($inst_id, $params = null, callable $callback = null) {
+		$this->debug("Extractor::findInstanceById inst_id=$inst_id\n");
+
+		$insert_in_cache = false;
+		$result = $this->getExtractionFromCache($params);
+		
+		// if we get the info from cache let's return
+		if ($result) return $result;
 
 		$sql = $this->sql_select_instances . "  
 					from omp_instances i 
@@ -78,30 +92,21 @@ class Extractor extends DBInterfaceBase {
 
 		$this->debug("SQL a findInstanceById\n");
 		$this->debug($sql);
-		//$row=Model::get_one($sql);
 		$row = $this->conn->fetchAssoc($sql);
 		if (!$row)
 			return array();
-		
+
 		$result = $this->prepareInstanceResultStructure($row, $params, $callback);
-		if ($insert_in_cache) {
-			$this->debug("CACHE:: ".$this->type_of_cache . ":: insertamos el objeto $memcache_key \n");
-			$this->debug("CACHE:: VALUE inserted:\n");
-			$this->debug($result);
-			$this->debug("\nCACHE:: END VALUE inserted:\n");			
-			if (isset($params['extraction_cache_expiration'])) {
-				$this->setCache($memcache_key, $result, $params['extraction_cache_expiration']);
-			} else {
-				$this->setCache($memcache_key, $result);
-			}
-		}
+
+		// put info into the cache before returning
+		$this->putInExtractionCache($result, $params);
 
 		return $result;
 	}
 
 	public function findInstancesInClass($class, $num = null, $params = null, callable $callback = null) {
-		// $params['order'] = order class instances by order criteria, update_date|publishing_begins|inst_id|key_fields|order_date|order_string default publishing_begins
-		// $params['order_direction'] = direction of the order by clause, desc|asc defaults to asc
+// $params['order'] = order class instances by order criteria, update_date|publishing_begins|inst_id|key_fields|order_date|order_string default publishing_begins
+// $params['order_direction'] = direction of the order by clause, desc|asc defaults to asc
 
 		$start = microtime(true);
 
@@ -130,7 +135,7 @@ class Extractor extends DBInterfaceBase {
 
 		$this->debug("SQL a findInstancesInClass\n");
 		$this->debug($sql);
-		//$row=Model::get_one($sql);
+//$row=Model::get_one($sql);
 		$rows = $this->conn->fetchAll($sql);
 		$result = array();
 		foreach ($rows as $row) {
@@ -164,7 +169,7 @@ class Extractor extends DBInterfaceBase {
 
 		$this->debug("SQL a findInstancesInList\n");
 		$this->debug($sql);
-		//$row=Model::get_one($sql);
+//$row=Model::get_one($sql);
 		$rows = $this->conn->fetchAll($sql);
 		$result = array();
 		foreach ($rows as $row) {
@@ -199,13 +204,42 @@ class Extractor extends DBInterfaceBase {
 
 		$this->debug("SQL a findInstancesBySearch\n");
 		$this->debug($sql);
-		//$row=Model::get_one($sql);
+//$row=Model::get_one($sql);
 		$rows = $this->conn->fetchAll($sql);
 		$result = array();
 		foreach ($rows as $row) {
 			$result[] = $this->prepareInstanceResultStructure($row, $params, $callback);
 		}
 		return $result;
+	}
+
+/// 
+/// ACCESSORI FUNCTIONS
+///
+
+	public function getPaginator($prefix = '', $postfix = '') {
+//lastPage
+//firstPage
+//hasMorePages
+//nextPage
+//previousPage
+//onFirstPage
+//currentPage
+// generate elements if not exists
+
+		if ($this->paginator) {
+			if (!isset($this->paginator['elements'])) {
+				for ($i = $this->paginator['firstPage']; $i <= $this->paginator['lastPage']; $i++) {
+					$element = array();
+					$element['url'] = $prefix . $i . $postfix;
+					$element['isFirst'] = $i == $this->paginator['firstPage'];
+					$element['isLast'] = $i == $this->paginator['lastPage'];
+					$element['isCurrent'] = $i == $this->paginator['currentPage'];
+					$this->paginator['elements'][$i] = $element;
+				}
+			}
+		}
+		return $this->paginator;
 	}
 
 	public function findRelatedInstances($inst_id, $relation, $num = null, $params = null, callable $callback = null) {
@@ -263,7 +297,7 @@ class Extractor extends DBInterfaceBase {
 
 		$rows = $this->conn->fetchAll($sql);
 
-		//print_r($rows);die;
+//print_r($rows);die;
 		$result = array();
 
 		foreach ($rows as $row) {
@@ -313,9 +347,9 @@ class Extractor extends DBInterfaceBase {
 
 		$this->debug("SQL a findParentInstances\n");
 		$this->debug($sql);
-		//$row=Model::get_one($sql);
+//$row=Model::get_one($sql);
 		$rows = $this->conn->fetchAll($sql);
-		//print_r($rows);die;
+//print_r($rows);die;
 		$result = array();
 
 		foreach ($rows as $row) {
@@ -375,7 +409,7 @@ class Extractor extends DBInterfaceBase {
 		if (isset($row['inst_id'])) {
 			$inst_id = $row['inst_id'];
 		} else {
-			//print_r($row);
+//print_r($row);
 			$inst_id = $row['id'];
 		}
 		$instance['id'] = $inst_id;
@@ -416,13 +450,13 @@ class Extractor extends DBInterfaceBase {
 
 			foreach ($values as $attrs_array_key => $full_value) {
 				if (!is_array($full_value)) {
-					// TBD propagar les dades de cache a metadata
+// TBD propagar les dades de cache a metadata
 					$this->debug("Actualizamos metadata de la instancia $attrs_array_key amb valor $full_value\n");
 					if ($this->metadata)
 						$instance['metadata'][$attrs_array_key] = $full_value;
 				} else {
-					//$this->debug("prepareInstanceResultStructure loop values array element:");
-					//$this->debug($full_value);
+//$this->debug("prepareInstanceResultStructure loop values array element:");
+//$this->debug($full_value);
 					if (isset($full_value['tag'])) {
 						$key = $full_value['tag'];
 						$value = null;
@@ -438,8 +472,8 @@ class Extractor extends DBInterfaceBase {
 				}
 			}
 		}
-		//echo "CALLBACK\n";
-		//var_dump($callback);die;
+//echo "CALLBACK\n";
+//var_dump($callback);die;
 
 		if ($callback != null) {
 			$this->debug("Voy a hacer el callback con inst_id=$inst_id\n");
@@ -460,14 +494,14 @@ class Extractor extends DBInterfaceBase {
 	}
 
 	function getInstanceValues($inst_id, $update_timestamp, $params) {
-		//// $inst_id 
-		// $lang = ALL | es | ca | en ...
-		// $filter = detail | resume | only-X | except-Y  | fields:fieldname1|fieldname2
-		// where 
-		// "detail" are values of attributes marked as detail='Y' in this particular class
-		// "resume"  are values of attributes marked as detail='N' in this particular class
-		// "only-X" are values only of the attribute_type=X
-		// "except-Y"  are values excluding attribute_type=Y
+//// $inst_id 
+// $lang = ALL | es | ca | en ...
+// $filter = detail | resume | only-X | except-Y  | fields:fieldname1|fieldname2
+// where 
+// "detail" are values of attributes marked as detail='Y' in this particular class
+// "resume"  are values of attributes marked as detail='N' in this particular class
+// "only-X" are values only of the attribute_type=X
+// "except-Y"  are values excluding attribute_type=Y
 		$this->debug("Extractor::getInstanceValues id=$inst_id update_timestamp=$update_timestamp\n");
 
 		$insert_in_cache = false;
@@ -489,7 +523,7 @@ class Extractor extends DBInterfaceBase {
 						$this->debug("CACHE:: existe el value\n");
 						$this->debug($this->type_of_cache . ":: instance last updated at $update_timestamp !!!!\n");
 						$this->debug($this->type_of_cache . ":: value for key $memcache_key\n");
-						//$this->debug(print_r($memcache_value, true));
+//$this->debug(print_r($memcache_value, true));
 						if (isset($memcache_value['cache_timestamp'])) {// tenim el timestamp a l'objecte
 							if ($update_timestamp < $memcache_value['cache_timestamp']) {// l'objecte es fresc, el retornem
 								$memcache_value['cache_timestamp'] = time();
@@ -518,7 +552,7 @@ class Extractor extends DBInterfaceBase {
 
 
 
-		//echo $filter;die;
+//echo $filter;die;
 		$add_sql = '';
 		if ($filter == 'detail') {
 			$add_sql = "
@@ -563,7 +597,7 @@ class Extractor extends DBInterfaceBase {
 				$add_sql
 				order by if(a.language='ALL',1,0), atri_id
 				";
-		//$this->debug($sql);
+//$this->debug($sql);
 
 		$tags_with_value = [];
 
@@ -571,15 +605,15 @@ class Extractor extends DBInterfaceBase {
 		foreach ($attrs as $attr_key => $attr_val) {
 			if (is_array($attr_val)) {
 				$value_row_or_null_array = $this->getValueRowOrNullArray($attrs[$attr_key]['inst_id'], $attrs[$attr_key]['atri_id'], $attrs[$attr_key]['atri_type']);
-				//echo '!!! atri_id='.$attrs[$attr_key]['atri_id'].' amb tag '.$attrs[$attr_key]['atri_tag'].' amb valor '.$value_row_or_null_array['text_val']."\n";				
+//echo '!!! atri_id='.$attrs[$attr_key]['atri_id'].' amb tag '.$attrs[$attr_key]['atri_tag'].' amb valor '.$value_row_or_null_array['text_val']."\n";				
 //				if (!isset($attrs[$attr_key]['tag']) || (isset($attrs[$attr_key]['tag'])) && $attrs[$attr_key]['tag']==null)
 				if (!in_array($attrs[$attr_key]['atri_tag'], $tags_with_value)) {// caso en que no tenemos el tag del atributo previamente del idioma ALL o lo tenemos a null
 					if ($value_row_or_null_array['id'] != null) {
 						$tags_with_value[] = $attrs[$attr_key]['atri_tag'];
 					}
-					//echo "Hasta ahora tenemos:\n";
-					//print_r($tags_with_value);
-					//echo "\n";
+//echo "Hasta ahora tenemos:\n";
+//print_r($tags_with_value);
+//echo "\n";
 
 					$attrs[$attr_key]['id'] = $value_row_or_null_array['id'];
 					$attrs[$attr_key]['text_val'] = $value_row_or_null_array['text_val'];
@@ -589,7 +623,7 @@ class Extractor extends DBInterfaceBase {
 					$attrs[$attr_key]['tag'] = $attrs[$attr_key]['atri_tag'];
 
 					foreach ($attr_val as $subkey => $subval) {// apliquem la transformació per canviar nls a brs
-						//echo "key=$attr_key subkey=$subkey val=$subval\n";
+//echo "key=$attr_key subkey=$subkey val=$subval\n";
 						if ($subkey == 'atri_type') {// casos especials depenent del atri_type
 							if ($subval == 'A') {
 								$attrs[$attr_key]['text_val'] = str_replace(array("\r\n", "\r", "\n"), "<br />", $attrs[$attr_key]['text_val']);
@@ -608,8 +642,8 @@ class Extractor extends DBInterfaceBase {
 				}
 			}
 
-			//echo "El array de resultado tiene:\n";
-			//print_r($attrs);
+//echo "El array de resultado tiene:\n";
+//print_r($attrs);
 		}
 
 		foreach ($attrs as $key => $attr) {// Eliminamos los elementos que no han conseguido tener tag
@@ -618,8 +652,8 @@ class Extractor extends DBInterfaceBase {
 			}
 		}
 
-		//echo "El array de resultado tiene:\n";
-		//print_r($attrs);
+//echo "El array de resultado tiene:\n";
+//print_r($attrs);
 
 
 		if ($insert_in_cache) {
@@ -654,7 +688,7 @@ class Extractor extends DBInterfaceBase {
 			and atri_id=$atri_id
 			limit 1
 			";
-		//$this->debug($sql);
+//$this->debug($sql);
 		$values = $this->conn->fetchAssoc($sql);
 		if (!$values) {
 			$values['id'] = null;
@@ -674,7 +708,7 @@ class Extractor extends DBInterfaceBase {
 				order by lv.ordre
 				limit 1
 				";
-				//$this->debug($sql);
+//$this->debug($sql);
 				$lookup_id = $this->conn->fetchColumn($sql);
 				$values['id'] = -1;
 				$values['num_val'] = $lookup_id;
