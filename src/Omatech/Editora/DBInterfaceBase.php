@@ -342,6 +342,11 @@ class DBInterfaceBase {
 		$prepare->execute();
 		return $prepare->fetchAll();
 	}
+	
+	function deleteCache($memcache_key) 
+	{
+		$this->mc->delete($memcache_key);
+	}
 
 	function setCache($memcache_key, $memcache_value, $expiration=null) {
 		

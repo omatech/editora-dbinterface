@@ -15,70 +15,16 @@ class Extractor extends DBInterfaceBase {
 	///
 	/// MAIN FUNCTIONS
 	///
+	
 
-	private function getExtractionFromCache($params) {// returns the object if found or false otherwise
-		if (isset($params['extraction_cache_key'])) {
-			$cache_key = $params['extraction_cache_key'];
-
-			$memcache_key = $this->conn->getDatabase() . "_extractor_cache:$cache_key:$this->lang";
-			$this->debug("MEMCACHE:: using key $memcache_key extraction\n");
-			if (!$this->avoid_cache) {
-				$this->debug("CACHE:: avoid_cache desactivado\n");
-				if (!$this->preview) {// si no estem fent preview, mirem si esta activada la memcache i si existeix la key
-					$this->debug("CACHE:: preview desactivado\n");
-					if ($this->setupCache()) {
-						$this->debug("CACHE:: setupCache OK\n");
-						$result = $this->mc->get($memcache_key);
-						if ($result) {
-							$this->debug("CACHE:: HIT! VALUE=\n");
-							$this->debug($result);
-							$this->debug("\nCACHE:: END VALUE=\n");
-							return $result;
-						} else {
-							return false;
-						}
-					}
-				}
-			}
-		}
-	}
-
-	private function putInExtractionCache($result, $params) {
-		if (isset($params['extraction_cache_key'])) {
-			$cache_key = $params['extraction_cache_key'];
-
-			$memcache_key = $this->conn->getDatabase() . "_extractor_cache:$cache_key:$this->lang";
-			$this->debug("MEMCACHE:: using key $memcache_key extraction\n");
-			if (!$this->avoid_cache) {
-				$this->debug("CACHE:: avoid_cache desactivado\n");
-				if (!$this->preview) {// si no estem fent preview, mirem si esta activada la memcache i si existeix la key
-					$this->debug("CACHE:: preview desactivado\n");
-					if ($this->setupCache()) {
-
-						$this->debug("CACHE:: " . $this->type_of_cache . ":: insertamos el objeto $memcache_key \n");
-
-						$this->debug("CACHE:: VALUE inserted:\n");
-						$this->debug($result);
-						$this->debug("\nCACHE:: END VALUE inserted:\n");
-						if (isset($params['extraction_cache_expiration'])) {
-							$this->setCache($memcache_key, $result, $params['extraction_cache_expiration']);
-						} else {
-							$this->setCache($memcache_key, $result);
-						}
-					}
-				}
-			}
-		}
-	}
 
 	public function findInstanceById($inst_id, $params = null, callable $callback = null) {
 		$this->debug("Extractor::findInstanceById inst_id=$inst_id\n");
 
-		$insert_in_cache = false;
 		$result = $this->getExtractionFromCache($params);
-		
 		// if we get the info from cache let's return
-		if ($result) return $result;
+		if ($result)
+			return $result;
 
 		$sql = $this->sql_select_instances . "  
 					from omp_instances i 
@@ -107,10 +53,14 @@ class Extractor extends DBInterfaceBase {
 	public function findInstancesInClass($class, $num = null, $params = null, callable $callback = null) {
 // $params['order'] = order class instances by order criteria, update_date|publishing_begins|inst_id|key_fields|order_date|order_string default publishing_begins
 // $params['order_direction'] = direction of the order by clause, desc|asc defaults to asc
-
 		$start = microtime(true);
-
 		$this->debug("Extractor::findInstancesInClass class=$class num=$num\n");
+		
+		$result = $this->getExtractionFromCache($params);
+		// if we get the info from cache let's return
+		if ($result)
+			return $result;
+		
 		$class_filter = $this->getClassFilter($class);
 		if (isset($params['order'])) {
 			$order_filter = $this->getOrderFilter($params['order'], $params['order_direction']);
@@ -141,13 +91,21 @@ class Extractor extends DBInterfaceBase {
 		foreach ($rows as $row) {
 			$result[] = $this->prepareInstanceResultStructure($row, $params, $callback);
 		}
+		
+		// put info into the cache before returning
+		$this->putInExtractionCache($result, $params);		
 		return $result;
 	}
 
 	public function findInstancesInList($inst_ids, $num = null, $class = null, $params = null, callable $callback = null) {
 		$start = microtime(true);
-
 		$this->debug("Extractor::getInstanceList class=$class inst_ids=$inst_ids\n");
+		
+		$result = $this->getExtractionFromCache($params);
+		// if we get the info from cache let's return
+		if ($result)
+			return $result;
+		
 		$class_filter = $this->getClassFilter($class);
 		$order_filter = " order by FIELD(i.id, " . $inst_ids . ") ";
 
@@ -175,13 +133,21 @@ class Extractor extends DBInterfaceBase {
 		foreach ($rows as $row) {
 			$result[] = $this->prepareInstanceResultStructure($row, $params, $callback);
 		}
+		
+		// put info into the cache before returning
+		$this->putInExtractionCache($result, $params);		
 		return $result;
 	}
 
 	public function findInstancesBySearch($query, $num = null, $class = null, $params = null, callable $callback = null) {
 		$start = microtime(true);
-
 		$this->debug("Extractor::getInstanceList class=$class inst_ids=$inst_ids\n");
+		
+		$result = $this->getExtractionFromCache($params);
+		// if we get the info from cache let's return
+		if ($result)
+			return $result;
+		
 		$class_filter = $this->getClassFilter($class);
 		$order_filter = " order by relevance ";
 		$search_filter = $this->getSearchFilter($query);
@@ -210,41 +176,13 @@ class Extractor extends DBInterfaceBase {
 		foreach ($rows as $row) {
 			$result[] = $this->prepareInstanceResultStructure($row, $params, $callback);
 		}
+		// put info into the cache before returning
+		$this->putInExtractionCache($result, $params);		
 		return $result;
 	}
 
-/// 
-/// ACCESSORI FUNCTIONS
-///
-
-	public function getPaginator($prefix = '', $postfix = '') {
-//lastPage
-//firstPage
-//hasMorePages
-//nextPage
-//previousPage
-//onFirstPage
-//currentPage
-// generate elements if not exists
-
-		if ($this->paginator) {
-			if (!isset($this->paginator['elements'])) {
-				for ($i = $this->paginator['firstPage']; $i <= $this->paginator['lastPage']; $i++) {
-					$element = array();
-					$element['url'] = $prefix . $i . $postfix;
-					$element['isFirst'] = $i == $this->paginator['firstPage'];
-					$element['isLast'] = $i == $this->paginator['lastPage'];
-					$element['isCurrent'] = $i == $this->paginator['currentPage'];
-					$this->paginator['elements'][$i] = $element;
-				}
-			}
-		}
-		return $this->paginator;
-	}
-
 	public function findRelatedInstances($inst_id, $relation, $num = null, $params = null, callable $callback = null) {
-
-		$this->debug("Extractor::findRelatedInstances inst_id=$inst_id relation=$relation\n");
+		$this->debug("Extractor::findRelatedInstances inst_id=$inst_id relation=$relation\n");	
 
 		if (isset($params['direction'])) {
 			$direction = $params['direction'];
@@ -368,6 +306,96 @@ class Extractor extends DBInterfaceBase {
 		}
 
 		return $result;
+	}
+
+/// 
+/// ACCESSORI FUNCTIONS
+///
+
+	private function clearExtractionCache($key)
+	{
+		$memcache_key = $this->conn->getDatabase() . ":extractor_cache:$cache_key:$this->lang";
+		$this->deleteCache($memcache_key);
+	}
+
+	private function getExtractionFromCache($params) {// returns the object if found or false otherwise
+		if (isset($params['extraction_cache_key'])) {
+			$cache_key = $params['extraction_cache_key'];
+
+			$memcache_key = $this->conn->getDatabase() . ":extractor_cache:$cache_key:$this->lang";
+			$this->debug("MEMCACHE:: using key $memcache_key extraction\n");
+			if (!$this->avoid_cache) {
+				$this->debug("CACHE:: avoid_cache desactivado\n");
+				if (!$this->preview) {// si no estem fent preview, mirem si esta activada la memcache i si existeix la key
+					$this->debug("CACHE:: preview desactivado\n");
+					if ($this->setupCache()) {
+						$this->debug("CACHE:: setupCache OK\n");
+						$result = $this->mc->get($memcache_key);
+						if ($result) {
+							$this->debug("CACHE:: HIT! VALUE=\n");
+							$this->debug($result);
+							$this->debug("\nCACHE:: END VALUE=\n");
+							return $result;
+						} else {
+							return false;
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private function putInExtractionCache($result, $params) {
+		if (isset($params['extraction_cache_key'])) {
+			$cache_key = $params['extraction_cache_key'];
+
+			$memcache_key = $this->conn->getDatabase() . "_extractor_cache:$cache_key:$this->lang";
+			$this->debug("MEMCACHE:: using key $memcache_key extraction\n");
+			if (!$this->avoid_cache) {
+				$this->debug("CACHE:: avoid_cache desactivado\n");
+				if (!$this->preview) {// si no estem fent preview, mirem si esta activada la memcache i si existeix la key
+					$this->debug("CACHE:: preview desactivado\n");
+					if ($this->setupCache()) {
+
+						$this->debug("CACHE:: " . $this->type_of_cache . ":: insertamos el objeto $memcache_key \n");
+
+						$this->debug("CACHE:: VALUE inserted:\n");
+						$this->debug($result);
+						$this->debug("\nCACHE:: END VALUE inserted:\n");
+						if (isset($params['extraction_cache_expiration'])) {
+							$this->setCache($memcache_key, $result, $params['extraction_cache_expiration']);
+						} else {
+							$this->setCache($memcache_key, $result);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public function getPaginator($prefix = '', $postfix = '') {
+//lastPage
+//firstPage
+//hasMorePages
+//nextPage
+//previousPage
+//onFirstPage
+//currentPage
+// generate elements if not exists
+
+		if ($this->paginator) {
+			if (!isset($this->paginator['elements'])) {
+				for ($i = $this->paginator['firstPage']; $i <= $this->paginator['lastPage']; $i++) {
+					$element = array();
+					$element['url'] = $prefix . $i . $postfix;
+					$element['isFirst'] = $i == $this->paginator['firstPage'];
+					$element['isLast'] = $i == $this->paginator['lastPage'];
+					$element['isCurrent'] = $i == $this->paginator['currentPage'];
+					$this->paginator['elements'][$i] = $element;
+				}
+			}
+		}
+		return $this->paginator;
 	}
 
 	private function getRelationDirection($inst_id, $relation) {
@@ -510,7 +538,7 @@ class Extractor extends DBInterfaceBase {
 		if (isset($params['filter']))
 			$filter = $params['filter'];
 
-		$memcache_key = $this->conn->getDatabase() . "dbinterface:$this->lang:$inst_id:$filter";
+		$memcache_key = $this->conn->getDatabase() . ":dbinterface:$this->lang:$inst_id:$filter";
 		$this->debug("MEMCACHE:: using key $memcache_key instance update_timestamp=$update_timestamp\n");
 		if (!$this->avoid_cache) {
 			$this->debug("CACHE:: avoid_cache desactivado\n");

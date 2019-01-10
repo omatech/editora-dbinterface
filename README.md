@@ -109,6 +109,8 @@ The instance params affect the behaviour of the extraction of the instance itsel
 - relation * (tag or id of the relation)
 - inst_id * (instance to start looking at children relations)
 
+### clearExtractionCache($extraction_cache_key);
+
 ## Global Params
 
 The format of the params is a key value par in an array, for example:
@@ -134,6 +136,26 @@ The global params can be:
 - extract_values (boolean) (default true) Extracts values of the instance (even null)
 - sql_select_instances (mysql select string) (default: select i.*, c.name class_name, c.tag class_tag, c.id class_id, i.key_fields nom_intern, i.update_date, ifnull(unix_timestamp(i.update_date),0) update_timestamp)
 - timings (boolean) default false show start and end and total milliseconds for each extraction, only make sense if metadata is true
+- extraction_cache_key key of the extraction, for example 'menu' or 'footer' or 'countries'
+- extraction_cache_expiration optional, sets the time of expiration for the extraction cache, if not set cache_expiration is used
+
+## How Cache works?
+
+By default all the instances that get extracted from the CMS are cached in memcache, to avoid that behaviour you must set the avoid_cache param.
+
+The instance itself is saved in memcache with the following key: DATABASE_NAME:dbinterface:LANGUAGE:INST_ID:FILTER
+
+The instance cache has an expiration time of 3600 seconds by default but can be changed using the cache_expiration param.
+
+If the instance cached is modified in the CMS the cache is automatically expired, the column update_date is the reference to expire the cache of the instance
+
+If you need to use a cache at an extraction level you can use the built in extraction caching system.
+
+The extraction gets cached until the extraction_cache_expiration seconds are reached, so you must be responsible to clear the cache if you need to or to setup a time brief enough to not get stale content from the CMS
+
+The extraction is saved in memcache with the following key DATABASE_NAME::extractor_cache:EXTRACTION_CACHE_KEY:LANGUAGE
+
+Use the function $e->clearExtractionCache(extraction_cache_key) to clear a particular key (the same that you use extraction_cache_key
 
 ## Pagination
 
