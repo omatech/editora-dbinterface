@@ -628,6 +628,7 @@ class Extractor extends DBInterfaceBase {
 //$this->debug($sql);
 
 		$tags_with_value = [];
+		$images_ids=[];
 
 		$attrs = $this->conn->fetchAll($sql);
 		foreach ($attrs as $attr_key => $attr_val) {
@@ -666,7 +667,8 @@ class Extractor extends DBInterfaceBase {
 								$attrs[$attr_key]['text_val'] = '/' . $attrs[$attr_key]['text_val'];
 							}
 							if ($subval == 'I') {
-								$attrs[$attr_key.'_imgid']['text_val'] = '/' . $attrs[$attr_key]['id'];
+								$attrs[$attr_key.'_imgid']['tag'] = $attr_key.'_imgid';
+								$attrs[$attr_key.'_imgid']['text_val'] = $attrs[$attr_key]['id'];
 							}
 							
 						}
