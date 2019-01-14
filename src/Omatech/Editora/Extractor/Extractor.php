@@ -665,6 +665,10 @@ class Extractor extends DBInterfaceBase {
 							if (($subval == 'F' || $subval == 'I') && substr($attrs[$attr_key]['text_val'], 0, 8) == 'uploads/') {// Backwards compatibility with editoras that save uploads/ instead of /uploads/
 								$attrs[$attr_key]['text_val'] = '/' . $attrs[$attr_key]['text_val'];
 							}
+							if ($subval == 'I') {
+								$attrs[$attr_key.'_imgid']['text_val'] = '/' . $attrs[$attr_key]['id'];
+							}
+							
 						}
 					}
 				}
