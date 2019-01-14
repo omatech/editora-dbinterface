@@ -667,8 +667,9 @@ class Extractor extends DBInterfaceBase {
 								$attrs[$attr_key]['text_val'] = '/' . $attrs[$attr_key]['text_val'];
 							}
 							if ($subval == 'I') {
-								$attrs[$attr_key.'_imgid']['tag'] = $attr_key.'_imgid';
-								$attrs[$attr_key.'_imgid']['text_val'] = $attrs[$attr_key]['id'];
+								$tag=$attrs[$attr_key]['tag'];
+								$attrs[$tag.'_imgid']['tag'] = $tag.'_imgid';
+								$attrs[$tag.'_imgid']['text_val'] = $attrs[$attr_key]['id'];
 							}
 							
 						}
