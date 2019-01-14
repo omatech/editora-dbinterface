@@ -663,10 +663,10 @@ class Extractor extends DBInterfaceBase {
 							if ($subval == 'D') {
 								$attrs[$attr_key]['text_val'] = $attrs[$attr_key]['date_val'];
 							}
-							if (($subval == 'F' || $subval == 'I') && substr($attrs[$attr_key]['text_val'], 0, 8) == 'uploads/') {// Backwards compatibility with editoras that save uploads/ instead of /uploads/
+							if (($subval == 'F' || $subval == 'I' || $subval == 'H') && substr($attrs[$attr_key]['text_val'], 0, 8) == 'uploads/') {// Backwards compatibility with editoras that save uploads/ instead of /uploads/
 								$attrs[$attr_key]['text_val'] = '/' . $attrs[$attr_key]['text_val'];
 							}
-							if ($subval == 'I') {
+							if ($subval == 'I' || $subval == 'H') {
 								$tag=$attrs[$attr_key]['tag'];
 								$attrs[$tag.'_imgid']['tag'] = $tag.'_imgid';
 								$attrs[$tag.'_imgid']['text_val'] = $attrs[$attr_key]['id'];
