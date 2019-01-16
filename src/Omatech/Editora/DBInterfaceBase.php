@@ -16,6 +16,7 @@ class DBInterfaceBase {
 	protected $avoid_cache = false;
 	protected $show_inmediate_debug = false;
 	protected $timings = false;
+	protected $default_language_to_remove_from_url=null;
 	protected $sql_select_instances = 'select i.*, c.name class_name, c.tag class_tag, c.id class_id, i.key_fields nom_intern, i.update_date, ifnull(unix_timestamp(i.update_date),0) update_timestamp';
 
 	public function getParams() {
@@ -246,6 +247,11 @@ class DBInterfaceBase {
 			} else {
 				$link = '/' . $this->lang . '/' . $inst_id;
 			}
+		}
+		
+		if ($this->default_language_to_remove_from_url && strlen($this->default_language_to_remove_from_url)==2)
+		{
+			$link=str_replace('/es/', '', $link);
 		}
 
 		return $link;
