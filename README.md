@@ -140,6 +140,7 @@ The global params can be:
 - timings (boolean) default false show start and end and total milliseconds for each extraction, only make sense if metadata is true
 - extraction_cache_key key of the extraction, for example 'menu' or 'footer' or 'countries'
 - extraction_cache_expiration optional, sets the time of expiration for the extraction cache, if not set cache_expiration is used
+- default_language_to_remove_from_url, sets a language that is removed from the link of each instance, for example if default_language_to_remove_from_url='es' then a usual link generated from extractor '/es/nice-url-in-spanish-instance' is replaced by '/nice-url-in-spanish-instance' only works if is set to a language two character code, for example 'es' or 'en'
 
 ## How Cache works?
 

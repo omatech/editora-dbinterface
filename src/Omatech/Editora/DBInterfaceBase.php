@@ -251,7 +251,7 @@ class DBInterfaceBase {
 		
 		if ($this->default_language_to_remove_from_url && strlen($this->default_language_to_remove_from_url)==2)
 		{
-			$link=str_replace('/es/', '', $link);
+			$link=str_replace('/es/', '/', $link);
 		}
 
 		return $link;
