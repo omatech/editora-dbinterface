@@ -59,31 +59,32 @@ class FakeContent extends DBInterfaceBase
 
                         switch ($attribute['type']) {
 
-                            case 'Z':
-                                $niceurl = $attribute['name'] . '_' . $inst_id;
-                                $attributes_values[$attribute['name']] = $niceurl;
-                                $loader->insertUrlNice($niceurl, $inst_id, $attribute['language']);
+                            case 'A': /* Text Area WYSIWYG */
+                                $attributes_values[$attribute['name']] = $faker->sentence(rand(50, 300), true);
                                 break;
 
-                            case 'S':
-                                //$attributes_values[$attribute['name']] = $attribute['name'];
-                                $attributes_values[$attribute['name']] = $faker->sentence(rand(1, 3), true);
+                            case 'B': /* String d'una linea ordenable a l'extracció */
+                                //$attributes_values[$attribute['name']] = $faker->sentence(rand(1, 3), true);
                                 break;
 
-                            case 'A':
-                            case 'T':
-                                $attributes_values[$attribute['name']] = $faker->sentence(rand(100, 500), true);
+                            case "C": /* Text Area Code */
                                 break;
 
-                            case 'K':
-                                $attributes_values[$attribute['name']] = '<b>' . $faker->sentence(rand(1, 15), true) . '</b>' . $faker->sentence(rand(50, 300), true);
+                            case "D": /* Date */
                                 break;
 
-                            case 'U':
-                                $attributes_values[$attribute['name']] = 'http://www.omatech.com';
+                            case "E": /* Date ordenable a l'extracció */
                                 break;
 
-                            case 'I':
+                            case 'F': /* File */
+                                //Change function as in image I for download.
+                                $attributes_values[$attribute['name']] = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+                                break;
+
+                            case "G": /* Flash File */
+                                break;
+
+                            case 'H': /* Grid Imatge */
                                 if (empty($attribute['img_width']) && empty($attribute['img_height'])) {
                                     $width = '600';
                                     $height = '600';
@@ -104,13 +105,73 @@ class FakeContent extends DBInterfaceBase
                                 //$attributes_values[$attribute['name']] = $faker->imageUrl($width, $height, $this->pictures_theme, true, 'Omatech');
                                 break;
 
-                            case 'Y':
+                            case 'I': /* Imatge */
+                                if (empty($attribute['img_width']) && empty($attribute['img_height'])) {
+                                    $width = '600';
+                                    $height = '600';
+                                } else {
+                                    if (empty($attribute['img_width'])) {
+                                        $width = $attribute['img_height'];
+                                        $height = $attribute['img_height'];
+                                    } elseif (empty($attribute['img_height'])) {
+                                        $width = $attribute['img_width'];
+                                        $height = $attribute['img_width'];
+                                    } else {
+                                        $width = $attribute['img_width'];
+                                        $height = $attribute['img_height'];
+                                    }
+                                }
+                                //$attributes_values[$attribute['name']] = 'http://lorempixel.com/'.$width.'/'.$height.'/nature/';
+                                $attributes_values[$attribute['name']] = 'https://www.dummyimage.com/'.$width.'x'.$height.'/000/00ffd5.png';
+                                //$attributes_values[$attribute['name']] = $faker->imageUrl($width, $height, $this->pictures_theme, true, 'Omatech');
+                                break;
+
+                            case 'K': /* Text Area CKEDITOR */
+                                $attributes_values[$attribute['name']] = '<b>' . $faker->sentence(rand(1, 15), true) . '</b>' . $faker->sentence(rand(50, 300), true);
+                                break;
+
+                            //case "L": /* Lookup */
+                                //break;
+
+                            case "M": /* Geoposicionament amb google Maps */
+                                break;
+
+                            case "N": /* Numeric */
+                                break;
+
+                            case "O":/* Selector color */
+                                break;
+
+                            //case "R": /* Relation */
+                                //break;
+
+                            case 'S': /* String d'una linea */
+                                //$attributes_values[$attribute['name']] = $attribute['name'];
+                                $attributes_values[$attribute['name']] = $faker->sentence(rand(1, 3), true);
+                                break;
+
+                            case 'T': /* Text Area HTML */
+                                $attributes_values[$attribute['name']] = $faker->sentence(rand(100, 500), true);
+                                break;
+
+                            case 'U':  /* URL */
+                                $attributes_values[$attribute['name']] = 'http://www.omatech.com';
+                                break;
+
+                            case "W": /* Type APP */
+                                break;
+
+                            case "X": /* XML */
+                                break;
+
+                            case 'Y': /* Video Youtube - Vimeo */
                                 $attributes_values[$attribute['name']] = 'youtube:GnSmcHet1eM';
                                 break;
 
-                            case 'F':
-                                //Change function as in image I for download.
-                                $attributes_values[$attribute['name']] = 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+                            case 'Z': /* niceurl */
+                                $niceurl = $attribute['name'] . '_' . $inst_id;
+                                $attributes_values[$attribute['name']] = $niceurl;
+                                $loader->insertUrlNice($niceurl, $inst_id, $attribute['language']);
                                 break;
 
                             //Dates

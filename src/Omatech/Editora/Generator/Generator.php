@@ -132,6 +132,22 @@ class Generator extends DBInterfaceBase {
 			$changes++;
 		}
 
+
+        $sql = "show columns from omp_search";
+        $rows = $this->conn->fetchAll($sql);
+
+        $title_found = false;
+        foreach ($rows as $row) {
+            if ($row['Field'] == 'title')
+                $title_found = true;
+        }
+        if (!$title_found) {
+            $sql = "alter table omp_search add column title varchar(250) default null\n";
+            $this->conn->executeQuery($sql);
+            $changes++;
+        }
+
+
 		$changes += $this->tryToCreateIndex('omp_attributes', 1, ['tag']);
 
 		$changes += $this->tryToCreateIndex('omp_class_attributes', 1, ['class_id']);

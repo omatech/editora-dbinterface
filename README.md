@@ -372,22 +372,28 @@ Use migrator.php to extract editora4 information and get it into editora5 format
 
 # Attributes types:
  
-* A -> text_val (Text Area)
-* B -> text_val (Short string used to order instances)
-* C -> text_val (HTML Code textarea)
-* E -> date_val (Date used to order instances)
-* D -> date_val (Date)
-* F -> text_val (File URL)
-* I -> text_val (Image URL)
-* K -> text_val (Text Area with CKEditor)
-* L -> num_val (Lookup)
-* M -> text_val (Google maps) 
-* N -> num_val (Number)
-* S -> text_val (Short string)
-* U -> text_val (URL)
-* X -> text_val (XML)
-* Y -> text_val (Video youtube or vimeo)
-* Z -> text_val (url nice)
+* A: Text Area WYSIWYG
+* B: Short string used to order instances
+* C: Text Area Code
+* D: Date
+* E: Date used to order instances
+* F: File
+* G: Flash File
+* H: Grid Image
+* I: Image
+* K: Text Area CKEDITOR
+* L: Lookup
+* M: Geolocation (Google Maps)
+* N: Number
+* O: Color Selector
+* R: Relation
+* S: Short string
+* T: Text Area HTML
+* U: URL
+* W: Type APP
+* X: XML
+* Y: Video (Youtube or Vimeo)
+* Z: url nice
 
 
 # Authors
