@@ -673,6 +673,10 @@ class Extractor extends DBInterfaceBase {
 								
                                 $attrs[$tag.'_imghash']['tag'] = $tag.'_imghash';
                                 $attrs[$tag.'_imghash']['text_val'] = md5($attrs[$attr_key]['text_val']).'_'.$attrs[$attr_key]['id'];
+
+                                $file_info = explode('.', $attrs[$attr_key]['text_val']);
+                                $attrs[$tag.'_imgextension']['tag'] = $tag.'_imgextension';
+                                $attrs[$tag.'_imgextension']['text_val'] = end($file_info);
 							}
 							
 						}
