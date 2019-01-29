@@ -201,6 +201,7 @@ $data = array(
 	),
 	'roles' => array(
 	//array('id' => 3, 'name' => 'testrole', 'classes' => '10,20,30'),
-	)
+	),
+    //'bloqued_class' => [45]
 );
 
