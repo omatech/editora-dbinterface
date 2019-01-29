@@ -12,10 +12,10 @@ class FakeContent extends DBInterfaceBase
     public $file_base = '';
     public $url_base = '';
     public $geocoder;
-		public $num_instances=4;
-		public $include_classes='';
-		public $exclude_classes='';
-		public $pictures_theme='cats';
+    public $num_instances=4;
+    public $include_classes='';
+    public $exclude_classes='';
+    public $pictures_theme='cats';
 
     public function __construct($conn, $params=array(), $geocoder = null) {
 
@@ -33,9 +33,9 @@ class FakeContent extends DBInterfaceBase
         $loader=new Loader($conn, array('download_images'=>false));
         $external_id = -1;
         $batch_id = time();
-				$attribute_count=0;
-				$relation_instance_count=0;
-				$instance_count=0;
+        $attribute_count=0;
+        $relation_instance_count=0;
+        $instance_count=0;
 
         $classes = DBInterfaceBase::getAllClasses($this->include_classes, $this->exclude_classes);
         $faker = Faker::create();
@@ -64,16 +64,18 @@ class FakeContent extends DBInterfaceBase
                                 break;
 
                             case 'B': /* String d'una linea ordenable a l'extracció */
-                                //$attributes_values[$attribute['name']] = $faker->sentence(rand(1, 3), true);
+                                $attributes_values[$attribute['name']] = $faker->sentence(rand(1, 3), true);
                                 break;
 
                             case "C": /* Text Area Code */
                                 break;
 
                             case "D": /* Date */
+                                $attributes_values[$attribute['name']] = $faker->date('Y-m-d H:i:s');
                                 break;
 
                             case "E": /* Date ordenable a l'extracció */
+                                $attributes_values[$attribute['name']] = $faker->date('Y-m-d H:i:s');
                                 break;
 
                             case 'F': /* File */
@@ -131,19 +133,21 @@ class FakeContent extends DBInterfaceBase
                                 break;
 
                             //case "L": /* Lookup */
-                                //break;
+                            //break;
 
                             case "M": /* Geoposicionament amb google Maps */
                                 break;
 
                             case "N": /* Numeric */
+                                $attributes_values[$attribute['name']] = $faker->numberBetween(1, 999);
                                 break;
 
                             case "O":/* Selector color */
+                                $attributes_values[$attribute['name']] = $faker->hexColor();
                                 break;
 
                             //case "R": /* Relation */
-                                //break;
+                            //break;
 
                             case 'S': /* String d'una linea */
                                 //$attributes_values[$attribute['name']] = $attribute['name'];
@@ -173,17 +177,14 @@ class FakeContent extends DBInterfaceBase
                                 $attributes_values[$attribute['name']] = $niceurl;
                                 $loader->insertUrlNice($niceurl, $inst_id, $attribute['language']);
                                 break;
-
-                            //Dates
-                            //Map latitude(min,max), longitude(min,max)
                         }
-												
+
                     }
 
                     $attributes_values['nom_intern'] = $nom_intern . '_' . $inst_id;
                     $loader->updateInstance($inst_id, $attributes_values['nom_intern'], $attributes_values);
-										$attribute_count+=count($attributes_values);
-										$instance_count++;
+                    $attribute_count+=count($attributes_values);
+                    $instance_count++;
                     echo('i');
                 }
             }
@@ -216,7 +217,7 @@ class FakeContent extends DBInterfaceBase
 
                             foreach ($instances_rel as $instance_rel) {
                                 $result = $loader->insertRelationInstance($relation['id'], $instance_class['id'], $instance_rel['id'], -1, $batch_id);
-																$relation_instance_count++;
+                                $relation_instance_count++;
                             }
                             echo('r');
                         }
@@ -224,7 +225,7 @@ class FakeContent extends DBInterfaceBase
                 }
             }
         }
-				echo "\nContent created: $instance_count instances $attribute_count attributes and $relation_instance_count relation instances created with batch_id=$batch_id\n";
+        echo "\nContent created: $instance_count instances $attribute_count attributes and $relation_instance_count relation instances created with batch_id=$batch_id\n";
     }
 
 
