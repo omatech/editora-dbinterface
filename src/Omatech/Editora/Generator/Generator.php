@@ -147,6 +147,21 @@ class Generator extends DBInterfaceBase {
             $changes++;
         }
 
+        $sql = "show columns from omp_attributes";
+        $rows = $this->conn->fetchAll($sql);
+
+        $params_found = false;
+        foreach ($rows as $row) {
+            if ($row['Field'] == 'params')
+                $params_found = true;
+        }
+        if (!$params_found) {
+            $sql = "alter table omp_attributes add column params text default null\n";
+            $this->conn->executeQuery($sql);
+            $changes++;
+        }
+
+        
 
         $changes += $this->tryToCreateIndex('omp_attributes', 1, ['tag']);
 
