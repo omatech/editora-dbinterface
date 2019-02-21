@@ -21,7 +21,7 @@ set_time_limit(0);
 $options_array = getopt(null, ['from::', 'to::'
 	, 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:', 'sourcelanguage:', 'destinationlanguage:'
 	, 'inputformat:', 'fromfilename:', 'offsetlang:', 'debug'
-	, 'help']);
+	, 'help', 'avoiddbbackup']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
 	echo 'Import strings from an excel, json file or input to editora database
@@ -43,6 +43,7 @@ Others:
 --help this help!
 --offsetlang (default 10000)
 --debug (if not present false)
+--avoiddbbackup (if present don\'t execute db backup)
 
 example: 
 	
@@ -118,6 +119,11 @@ if ($options_array['from'] == 'input') {
 	die('Unknown from parameter, aborting!\n');
 }
 
+if (!isset($options_array['sourcelanguage']) || !isset($options_array['destinationlanguage']))
+{
+	die("Source and destination languages should be specified\n");
+}
+
 if ($options_array['inputformat'] == 'json') {
 	$result = json_decode($input, true);
 } elseif ($options_array['inputformat'] == 'excel') {
@@ -161,12 +167,16 @@ if (isset($result['metadata'])) {
 
 if ($options_array['to'] == 'db4' || $options_array['to'] == 'db5') {// let's backup the database first
 	$backup_date = date('Ymd_His');
-	$cmd = "mysqldump --user=" . $options_array['dbuser'] . " --password=" . $options_array['dbpass'] . " --host=" . $options_array['dbhost'] . " " . $options_array['dbname'] . " omp_values > " . sys_get_temp_dir() . "/backup_ompvalues_preimport_" . $options_array['dbname'] . "_$backup_date.sql";
-	echo "Performing database backup $backup_date\n";
-	echo "$cmd\n";
-	exec($cmd);
-	echo "Finishing database backup!\n";
-
+	
+	if (!isset($options_array['avoiddbbackup'])) 
+	{
+		$cmd = "mysqldump --user=" . $options_array['dbuser'] . " --password=" . $options_array['dbpass'] . " --host=" . $options_array['dbhost'] . " " . $options_array['dbname'] . " omp_values > " . sys_get_temp_dir() . "/backup_ompvalues_preimport_" . $options_array['dbname'] . "_$backup_date.sql";
+		echo "Performing database backup $backup_date\n";
+		echo "$cmd\n";
+		exec($cmd);
+		echo "Finishing database backup!\n";
+	}
+	
 	$connection_params = array(
 		'dbname' => $options_array['dbname'],
 		'user' => $options_array['dbuser'],
