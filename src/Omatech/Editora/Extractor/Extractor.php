@@ -443,6 +443,7 @@ class Extractor extends DBInterfaceBase {
 		$instance['id'] = $inst_id;
 		$instance['inst_id'] = $inst_id;
 		$instance['link'] = $this->getInstanceLink($inst_id);
+        $instance['has_urlnice'] = $this->getHasUrlnice($inst_id);
 
 		if ($this->metadata) {
 			$metadata = array();

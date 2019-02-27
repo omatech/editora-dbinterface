@@ -257,7 +257,23 @@ class DBInterfaceBase {
 		return $link;
 	}
 
-	public function getUrlData($language, $nice_url) {
+    public function getHasUrlnice($inst_id) {
+        $sql = "select niceurl
+				from omp_niceurl
+				where inst_id=$inst_id
+				and language='" . $this->lang . "'";
+
+        $niceurl_row = $this->conn->fetchAssoc($sql);
+        if ($niceurl_row) {
+            return true;
+        } else {
+            return false;
+        }
+
+    }
+
+
+    public function getUrlData($language, $nice_url) {
 		if (!isset($language)) {
 			return ['type' => 'Home', 'class_tag' => 'Home'];
 		} else {// tenim idioma
