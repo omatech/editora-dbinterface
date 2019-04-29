@@ -270,6 +270,13 @@ class Extractor extends DBInterfaceBase {
 			$tag = $relation_row['tag'];
 		}
 
+        if (isset($params['order'])) {
+            $order_filter = $this->getOrderFilter($params['order'], $params['order_direction']);
+        } else {// si no tenemos order ordenamos por los publicados recientemente
+            $order_filter = 'order by weight';
+        }
+
+
 		$sql = $this->sql_select_instances . "  , ri.weight relation_instance_weight
 				from omp_relation_instances ri
 				, omp_instances i
@@ -279,7 +286,7 @@ class Extractor extends DBInterfaceBase {
 			  and ri.parent_inst_id=i.id
 				" . $this->getPreviewFilter() . "
 				and i.class_id=c.id
-				order by weight
+				".$order_filter."
 				" . $this->getLimitFilter($num) . "
 				";
 
