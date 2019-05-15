@@ -224,6 +224,7 @@ class TranslatorModel extends AppModel {
 		
 		$imported_sql_add="";
 		$exclude_classes_sql_add="";
+		$only_classes_sql_add="";
 		if ($this->excludeimporteddata) $imported_sql_add=" and i.external_id is not null ";
 		if ($this->excludeclasses) $exclude_classes_sql_add=" and i.class_id not in (".$this->excludeclasses.") ";
 		if ($this->onlyclasses) $only_classes_sql_add=" and i.class_id in (".$this->onlyclasses.") ";
