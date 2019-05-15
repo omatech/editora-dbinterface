@@ -229,6 +229,7 @@ class TranslatorModel extends AppModel {
 		if ($this->excludeclasses) $exclude_classes_sql_add=" and i.class_id not in (".$this->excludeclasses.") ";
 		if ($this->onlyclasses) $only_classes_sql_add=" and i.class_id in (".$this->onlyclasses.") ";
 		
+		
 		if ($this->from_version == 4) {
 			$sql_values = "select v.inst_id, v.atri_id, v.text_val value 
 			from omp_attributes a

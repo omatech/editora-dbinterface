@@ -77,7 +77,7 @@ php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=
 php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=output --outputformat=json --destinationlanguage=es --what=missing 
 
 4) Export all texts in english from a editora version 4 to an excel file, avoiding classes 1 and 2
-php export-translation.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=file --outputformat=excel --tofilename=../translatable_texts.xlsx --destinationlanguage=es --what=all --excludingclasses=1,2 
+php export-translation.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=file --outputformat=excel --tofilename=../translatable_texts.xlsx --destinationlanguage=es --what=all --excludeclasses=1,2 
 
 
 ';
