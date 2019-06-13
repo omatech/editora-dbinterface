@@ -69,19 +69,34 @@ class Extractor extends DBInterfaceBase {
 		}
 		$preview_filter = $this->getPreviewFilter();
 
-		$this->setPagination($num, $class_filter, $preview_filter, $order_filter);
-		$sql = $this->sql_select_instances . "  
-					from omp_instances i 
-					, omp_classes c
-					where 1=1
-					$class_filter
-					and c.id=i.class_id
-					$preview_filter
-				  $order_filter
-					" . $this->getLimitFilter($num) . "
-					";
-
-
+		if(isset($params['niceurl_in_language']) && $params['niceurl_in_language']==true){
+			$this->setPagination($num, $class_filter, $preview_filter, $order_filter, "", "", $params['niceurl_in_language']);
+			$sql = $this->sql_select_instances . "  
+				from omp_instances i 
+				, omp_classes c
+				, omp_niceurl u
+				where 1=1
+				$class_filter
+				and c.id=i.class_id
+				and i.id = u.inst_id 
+				and u.language = '".$this->lang."'
+				$preview_filter
+				$order_filter
+				" . $this->getLimitFilter($num) . "
+			";
+		}else{
+			$this->setPagination($num, $class_filter, $preview_filter, $order_filter);
+			$sql = $this->sql_select_instances . "  
+				from omp_instances i 
+				, omp_classes c
+				where 1=1
+				$class_filter
+				and c.id=i.class_id
+				$preview_filter
+				$order_filter
+				" . $this->getLimitFilter($num) . "
+			";
+		}
 
 		$this->debug("SQL a findInstancesInClass\n");
 		$this->debug($sql);
@@ -767,7 +782,7 @@ class Extractor extends DBInterfaceBase {
 		return $values;
 	}
 
-	private function setPagination($num, $class_filter, $preview_filter, $order_filter = "", $ids_filter = "", $search_filter = "") {
+	private function setPagination($num, $class_filter, $preview_filter, $order_filter = "", $ids_filter = "", $search_filter = "", $niceurl_in_language=false) {
 		if ($num != null && $this->paginator == null) {
 			if (stripos($num, '/')) {
 				$pagination_array = explode("/", $num);
@@ -775,16 +790,33 @@ class Extractor extends DBInterfaceBase {
 
 					$limit = $pagination_array[0];
 					$offset = ($pagination_array[1] - 1) * $limit;
-					$sql = "select count(*) num 
-          from omp_instances i 
-          , omp_classes c
-          where 1=1
-          $class_filter
-          and c.id=i.class_id
-          $preview_filter
-					$ids_filter
-					$search_filter
-          ";
+					
+					if($niceurl_in_language){
+						$sql = "select count(*) num 
+							from omp_instances i 
+							, omp_classes c
+							, omp_niceurl u
+							where 1=1
+							$class_filter
+							and c.id=i.class_id
+							and i.id = u.inst_id 
+							and u.language = '".$this->lang."'
+							$preview_filter
+							$ids_filter
+							$search_filter
+						";
+					}else{
+						$sql = "select count(*) num 
+							from omp_instances i 
+							, omp_classes c
+							where 1=1
+							$class_filter
+							and c.id=i.class_id
+							$preview_filter
+							$ids_filter
+							$search_filter
+						";
+					}
 					$total = $this->conn->fetchColumn($sql);
 					$pagination_info['lastPage'] = (int) ceil($total / $pagination_array[0]);
 					$pagination_info['firstPage'] = 1;
