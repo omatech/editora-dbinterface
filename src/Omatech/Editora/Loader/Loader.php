@@ -777,4 +777,17 @@ class Loader extends DBInterfaceBase {
 		$this->conn->executeQuery($sql);
 	}
 
+    public function getLanguagesFromAttributes(){
+        $sql = 'select language
+				from omp_attributes
+				group by language';
+
+        $row = $this->conn->fetchAll($sql);
+        if (!$row)
+            return null;
+        return $row;
+
+        return $this->conn->executeQuery($sql);
+    }
+
 }
