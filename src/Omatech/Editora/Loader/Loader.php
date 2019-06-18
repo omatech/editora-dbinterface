@@ -604,8 +604,15 @@ class Loader extends DBInterfaceBase {
 	}
 
 	public function insertUpdateGeoposVal($inst_id, $atri_id, $value) {
-		$geoinfo = $this->$geocoder->geocode($value);
-		//print_r($geoinfo);die;
+
+        if (strpos($value, '@') == true && strpos($value, ':') == true) {
+            $value = $this->conn->quote($value);
+        }else{
+            $geoinfo = $this->$geocoder->geocode($value);
+            $value = $this->conn->quote($geoinfo['lat'] . ':' . $geoinfo['lng'] . '@' . $value);
+        }
+
+        //print_r($geoinfo);die;
 		$value = $this->conn->quote($geoinfo['lat'] . ':' . $geoinfo['lng'] . '@' . $value);
 		if ($this->existValue($inst_id, $atri_id)) {// update
 			$sql = "update omp_values v
