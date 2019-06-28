@@ -109,9 +109,26 @@ if (!isset($options_array['lang'])) {
 
 if ($conn_to) {
     $res = array();
-    $params['lang']=$lang;
+	$params['lang']=$lang;
+	$params['metadata']=true;
     $extractor = new Extractor($conn_to, $params);
-	$res=$extractor->findInstancesInClass($class_id);
+	$res=$extractor->findInstancesInClass($class_id, $params, 
+		function ($i) use ($extractor)
+		{
+			$blocks = $extractor->findChildrenInstances($i, "blocks", null, null);
+			return $blocks;
+		}	
+);
+
+	$result = $extractor->findInstanceById($id, $params, function ($i) use ($extractor){
+		$blocks = $extractor->findChildrenInstances($i, "blocks", null, null, function ($i) use ($extractor){
+			$boxes = $extractor->findChildrenInstances($i, "boxes", null, null, null);
+			return array_merge($boxes);
+		});
+		return array_merge($blocks);
+	});
+
+
 	
 	if ($options_array['outputformat'] == 'json') {
 		$output = json_encode($res, JSON_PRETTY_PRINT);

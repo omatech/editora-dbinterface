@@ -143,6 +143,18 @@ The global params can be:
 - extraction_cache_expiration optional, sets the time of expiration for the extraction cache, if not set cache_expiration is used
 - default_language_to_remove_from_url, sets a language that is removed from the link of each instance, for example if default_language_to_remove_from_url='es' then a usual link generated from extractor '/es/nice-url-in-spanish-instance' is replaced by '/nice-url-in-spanish-instance' only works if is set to a language two character code, for example 'es' or 'en'
 
+
+## Combine extractions with the callable parameter
+
+        $result = $extractor->findInstanceById($id, $params, function ($i) use ($extractor){
+            $blocks = $extractor->findChildrenInstances($i, "blocks", null, null, function ($i) use ($extractor){
+                $boxes = $extractor->findChildrenInstances($i, "boxes", null, null, null);
+                return array_merge($boxes);
+            });
+            return array_merge($blocks);
+        });
+
+
 ## How Cache works?
 
 By default all the instances that get extracted from the CMS are cached in memcache, to avoid that behaviour you must set the avoid_cache param.
