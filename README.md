@@ -2,7 +2,7 @@
 
 Extract info from omatech Editora using closure Eloquent like functions
 
-## First make a new instance
+## First make a new instance  
 
 ```
 // Create a new database connection
