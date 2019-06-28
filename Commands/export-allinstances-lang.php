@@ -111,6 +111,9 @@ if ($conn_to) {
     $res = array();
 	$params['lang']=$lang;
 	$params['metadata']=true;
+	$params['debug']=true;
+	$params['showinmediatedebug']=true;
+
     $extractor = new Extractor($conn_to, $params);
 	$res=$extractor->findInstancesInClass($class_id, null, null, 
 		function ($i) use ($extractor)
