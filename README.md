@@ -26,7 +26,7 @@ $params = [
 // Instantiate the extractor using the connection and params			
 $e=new Extractor($conn, $params);
 ```
-
+ 
 
 ## Extract information using the extractor
 
