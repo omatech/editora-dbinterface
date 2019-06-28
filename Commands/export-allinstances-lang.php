@@ -112,7 +112,7 @@ if ($conn_to) {
 	$params['lang']=$lang;
 	$params['metadata']=true;
     $extractor = new Extractor($conn_to, $params);
-	$res=$extractor->findInstancesInClass($class_id, $params, 
+	$res=$extractor->findInstancesInClass($class_id, null, null, 
 		function ($i) use ($extractor)
 		{
 			$blocks = $extractor->findChildrenInstances($i, "blocks", null, null);
