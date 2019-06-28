@@ -2,3 +2,4 @@
 conf/config.php
 /vendor/
 composer.lock
+.history
