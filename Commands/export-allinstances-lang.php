@@ -124,15 +124,6 @@ if ($conn_to) {
 		}	
 );
 
-	$result = $extractor->findInstanceById($id, $params, function ($i) use ($extractor){
-		$blocks = $extractor->findChildrenInstances($i, "blocks", null, null, function ($i) use ($extractor){
-			$boxes = $extractor->findChildrenInstances($i, "boxes", null, null, null);
-			return array_merge($boxes);
-		});
-		return array_merge($blocks);
-	});
-
-
 	
 	if ($options_array['outputformat'] == 'json') {
 		$output = json_encode($res, JSON_PRETTY_PRINT);
