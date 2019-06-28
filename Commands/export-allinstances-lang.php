@@ -21,7 +21,7 @@ set_time_limit(0);
 $options_array = getopt(null, ['from::', 'to::'
 	, 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:'
 	, 'outputformat:', 'outputfile:'
-	, 'include_classes:', 'exclude_classes:'
+	, 'class_id:', 'lang:'
 	, 'help', 'debug']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
@@ -39,14 +39,13 @@ Parameters:
 
 Others:
 --help this help!
---include_classes generate only this class_ids, comma separated
---exclude_classes generate all but this class_ids, comma separated
+--class_id generate only this class_id
 --debug show all sqls (if not present false)
 
 example: 
 	
 1) Export all content of an editora in json format
-php export-classes.php --from=db4 --dbhost=localhost --dbuser=root --dbpass= --dbname=editora_test --to=file --outputformat=json --outputfile=../data/sample-contents.json
+php export-allinstances-lang.php --class_id=8 --lang=es --from=db4 --dbhost=localhost --dbuser=root --dbpass= --dbname=editora_test --to=file --outputformat=json --outputfile=../data/sample-contents.json
 
 ';
 	die;
@@ -96,29 +95,24 @@ if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 
 $params = array();
 
-if (isset($options_array['include_classes'])) {
-	$params['include_classes'] = $options_array['include_classes'];
+if (!isset($options_array['class_id'])) {
+	die("You must set up a class_id!\n");
 } else {
-	$params['include_classes'] = null;
+	$class_id=$options_array['class_id'];
 }
 
-if (isset($options_array['exclude_classes'])) {
-	$params['exclude_classes'] = $options_array['exclude_classes'];
+if (!isset($options_array['lang'])) {
+	die("You must set up a lang!\n");
 } else {
-	$params['exclude_classes'] = null;
+	$lang=$options_array['lang'];
 }
-
 
 if ($conn_to) {
     $res = array();
-    $params['lang']='es';
+    $params['lang']=$lang;
     $extractor = new Extractor($conn_to, $params);
-    $res=$extractor->findInstancesInClass(8);
-/*	$res['omp_instances'] = $extractor->getBulkInstances($params['include_classes'], $params['exclude_classes']);
-	$res['omp_relation_instances'] = $extractor->getBulkRelationInstances();
-	$res['omp_static_text'] = $extractor->getBulkStaticTexts();
-	$res['omp_values'] = $extractor->getBulkValues();
-*/
+	$res=$extractor->findInstancesInClass($class_id);
+	
 	if ($options_array['outputformat'] == 'json') {
 		$output = json_encode($res, JSON_PRETTY_PRINT);
 	} elseif ($options_array['outputformat'] == 'serialized_array') {
