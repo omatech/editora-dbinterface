@@ -111,7 +111,7 @@ if (isset($options_array['exclude_classes'])) {
 
 if ($conn_to) {
     $res = array();
-    $params['language']='es';
+    $params['lang']='es';
     $extractor = new Extractor($conn_to, $params);
     $res=$extractor->findInstancesInClass(8);
 /*	$res['omp_instances'] = $extractor->getBulkInstances($params['include_classes'], $params['exclude_classes']);
