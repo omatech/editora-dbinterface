@@ -118,6 +118,7 @@ if ($conn_to) {
 	$res=$extractor->findInstancesInClass($class_id, null, $params, 
 		function ($i) use ($extractor)
 		{
+			echo "$i\n";
 			$blocks = $extractor->findChildrenInstances($i, "bloc", null, null);
 			return $blocks;
 		}	
