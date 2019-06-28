@@ -27,6 +27,7 @@ $params = [
 $e=new Extractor($conn, $params);
 ```
 
+
 ## Extract information using the extractor
 
 ### findInstanceById($inst_id, $params, callable $callback = null);
