@@ -115,7 +115,7 @@ if ($conn_to) {
 	$params['showinmediatedebug']=true;
 
     $extractor = new Extractor($conn_to, $params);
-	$res=$extractor->findInstancesInClass($class_id, null, null, 
+	$res=$extractor->findInstancesInClass($class_id, null, $params, 
 		function ($i) use ($extractor)
 		{
 			$blocks = $extractor->findChildrenInstances($i, "blocks", null, null);
