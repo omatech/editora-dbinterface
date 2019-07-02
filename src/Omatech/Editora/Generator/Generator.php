@@ -335,13 +335,17 @@ class Generator extends DBInterfaceBase {
             foreach ($classes as $group_key => $group_val) {
                 foreach ($group_val as $key => $val) {
                     if (is_array($val)) {
-                        $caption = isset($val[1]) ? $val[1] : $val[0];
-                        $val = $val[0];
+                        $caption = null;
+                        $caption_ca = $this->key_to_title(isset($val[1]) ? $val[1] : $val[0]);
+                        $caption_es = $this->key_to_title(isset($val[2]) ? $val[2] : $val[0]);
+                        $caption_en = $this->key_to_title(isset($val[3]) ? $val[3] : $val[0]);
+                        $val = $this->key_to_title($val[0]);
+                        $this->create_class($key, $val, $groups[$group_key], $i++, $caption, $caption_ca, $caption_es, $caption_en);
                     } else {
                         $caption = $val;
+                        $this->create_class($key, $val, $groups[$group_key], $i++, $caption);
                     }
 
-                    $this->create_class($key, $val, $groups[$group_key], $i++, $caption);
                     $this->create_class_attribute($key, $nomintern_id, 0, 1, 1, 1, true, true);
                     $need_url_nice = $groups[$group_key]; //TODO ????
                 }
@@ -878,7 +882,7 @@ class Generator extends DBInterfaceBase {
         array_push($this->queries, "insert into omp_class_groups (id, caption, caption_ca, caption_es, caption_en, ordering) values ($id, '$group', '$group', '$group', '$group', $id);");
     }
 
-    function create_class($id, $key, $grp_id, $grp_order, $caption = null) {
+    function create_class($id, $key, $grp_id, $grp_order, $caption = null, $caption_ca = null, $caption_es = null, $caption_en = null) {
         $name = $this->key_to_title($key);
         if ($caption == null) {
             $caption = $name;
@@ -894,8 +898,10 @@ class Generator extends DBInterfaceBase {
                 }
             }
         }
-
-        array_push($this->queries, "insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values ($id, '$key', '$key', $grp_id, $grp_order, '$caption', '$caption', '$caption', 'N');");
+        if($caption_ca==null){$caption_ca=$caption;}
+        if($caption_es==null){$caption_es=$caption;}
+        if($caption_en==null){$caption_en=$caption;}
+        array_push($this->queries, "insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values ($id, '$key', '$key', $grp_id, $grp_order, '$caption_ca', '$caption_es', '$caption_en', 'N');");
         array_push($this->queries, "insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values ($id, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');");
         array_push($this->queries, "insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values ($id, 2, 'Y', '$editableclass', 'Y', '$editableclass', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');");
 
