@@ -15,7 +15,133 @@ class Extractor extends DBInterfaceBase {
 	///
 	/// MAIN FUNCTIONS
 	///
-	
+
+
+    public function findInstanceByIdAllElements($inst_id, $params = null, $num = null, $level = 1, callable $callback = null){
+        $this->debug("Extractor::findInstanceByIdAllElements inst_id=$inst_id\n");
+
+        $result = $this->getExtractionFromCache($params);
+        // if we get the info from cache let's return
+
+        if ($result)
+            return $result;
+
+        $sql = $this->sql_select_instances . "  
+					from omp_instances i 
+					, omp_classes c
+					where 1=1
+					and i.id=$inst_id
+					and c.id=i.class_id
+					" . $this->getPreviewFilter() . "
+					limit 1
+					";
+        $this->debug("SQL a findInstanceByIdAllElements\n");
+        $this->debug($sql);
+        $row = $this->conn->fetchAssoc($sql);
+        if (!$row)
+            return array();
+
+        $result = $this->prepareInstanceResultStructure($row, $params, $callback);
+
+        //All relations
+        $all_relations = $this->findChildrenInstancesAll($inst_id, $num, $params, $level);
+        if(isset($all_relations) && !empty($all_relations)){
+            $result['relations'] = $all_relations;
+        }
+
+        // put info into the cache before returning
+        $this->putInExtractionCache($result, $params);
+        return $result;
+    }
+
+    //Recursive function, find all relations from instance id, number level is the number for bucles
+    public function findChildrenInstancesAll($inst_id, $num = null, $params = null, $level = 1, callable $callback = null) {
+
+        $start = microtime(true);
+        $this->debug("Extractor::findChildrenInstancesAll\n");
+        $this->debug("relation=all inst_id=$inst_id\n");
+
+        $class_id = $this->findClassIDFromInstID($inst_id);
+        $relation_row = $this->findChildRelationAll($inst_id);
+
+        $result = array();
+        if(isset($relation_row) && !empty($relation_row)){
+
+            foreach($relation_row as $key=>$rel_row){
+
+                $rel_id = $rel_row['id'];
+                if (!$rel_id)
+                    return array();
+
+                $tag = $rel_row['tag'];
+
+                $sql = $this->sql_select_instances . " , ri.weight relation_instance_weight
+                        from omp_relation_instances ri
+                        , omp_instances i
+                        , omp_classes c
+                        where ri.rel_id=$rel_id
+                        and ri.parent_inst_id=$inst_id
+                      and ri.child_inst_id=i.id
+                        " . $this->getPreviewFilter() . "
+                        and i.class_id=c.id
+                        order by weight
+                        " . $this->getLimitFilter($num) . "
+                        ";
+                $this->debug("SQL a findChildrenInstancesAll\n");
+                $this->debug($sql);
+
+                $rows = $this->conn->fetchAll($sql);
+
+                foreach ($rows as $row) {
+                    $result[$tag]['instances'][] = $this->prepareInstanceResultStructure($row, $params, $callback);
+                }
+                if ($this->metadata) {
+                    $result[$tag]['metadata'] = $rel_row;
+                    $result[$tag]['metadata']['direction'] = 'child';
+                    if ($this->timings) {
+                        $end = microtime(true);
+                        $result[$tag]['metadata']['start'] = $start;
+                        $result[$tag]['metadata']['end'] = $end;
+                        $result[$tag]['metadata']['seconds'] = $end - $start;
+                    }
+                }
+
+                //relacion recursiva
+                if ($level > 0) {
+                    if(isset($result[$tag]['instances']) && !empty($result[$tag]['instances']) ) {
+                        foreach ($result[$tag]['instances'] as $key=>$instance) {
+                            $relation_result = $this->findChildrenInstancesAll($instance['id'], null, null, $level - 1);
+                            if (isset($relation_result) && !empty($relation_result)) {
+                                $result[$tag]['instances'][$key]['relations'] = $relation_result;
+                            }
+                        }
+                    }
+                }
+
+
+            }
+        }
+        return $result;
+    }
+
+    //Extract all relations from instance id
+    public function findChildRelationAll($inst_id) {
+        $this->debug("Extractor::findChildRelationAll relation=all inst_id=$inst_id\n");
+
+        $class_id = $this->findClassIDFromInstID($inst_id);
+        $sql = "select r.id, r.tag, r.parent_class_id, r.child_class_id, r.multiple_child_class_id
+				from omp_relations r
+				where 1=1
+				and r.parent_class_id = $class_id";
+
+        $this->debug("SQL a findChildRelationAll\n");
+        $this->debug($sql);
+        $rows = $this->conn->fetchAll($sql);
+
+        if (!$rows)
+            return null;
+        return $rows;
+    }
 
 
 	public function findInstanceById($inst_id, $params = null, callable $callback = null) {

@@ -30,6 +30,12 @@ $e=new Extractor($conn, $params);
 
 ## Extract information using the extractor
 
+### findInstanceByIdAllElements($inst_id, $params = null, $num = null, $level = 1, callable $callback = null)
+- inst_id * (id of the instance to be extracted)
+- params (particular params for this extraction, see "Extraction Params" and "Instance Params" for more info)
+- level number of relations to extract
+- callback (closure function)
+
 ### findInstanceById($inst_id, $params, callable $callback = null);
 - inst_id * (id of the instance to be extracted)
 - params (particular params for this extraction, see "Extraction Params" and "Instance Params" for more info)
