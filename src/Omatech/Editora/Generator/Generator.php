@@ -731,7 +731,19 @@ class Generator extends DBInterfaceBase {
             if (isset($arr_sizes[1]) && !empty($arr_sizes[1])) {
                 array_push($this->queries, "update omp_attributes set img_height=" . $arr_sizes[1] . " where id=$key_size;");
             }
+
+            foreach ($languages as $key_lang => $val_lang) {
+                $key_lang_size = $key_size + $key_lang;
+                if (isset($arr_sizes[0]) && !empty($arr_sizes[0])) {
+                    array_push($this->queries, "update omp_attributes set img_width=" . $arr_sizes[0] . " where id=$key_lang_size;");
+                }
+    
+                if (isset($arr_sizes[1]) && !empty($arr_sizes[1])) {
+                    array_push($this->queries, "update omp_attributes set img_height=" . $arr_sizes[1] . " where id=$key_lang_size;");
+                }
+            }
         }
+
 
         //Clear generic tables
         $Clear = new Clear($this->conn, array());
