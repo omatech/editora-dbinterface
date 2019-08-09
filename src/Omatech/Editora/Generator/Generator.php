@@ -328,7 +328,19 @@ class Generator extends DBInterfaceBase {
             array_push($this->queries, "delete from omp_class_groups;");
             $i = 1;
             foreach ($groups as $key => $val) {
-                $this->create_class_group($key, $i++);
+                if (is_array($val)) {
+                    $caption = null;
+                    
+                    $caption_ca = $this->key_to_title(isset($val[1]) ? $val[1] : $key);
+                    $caption_es = $this->key_to_title(isset($val[2]) ? $val[2] : $key);
+                    $caption_en = $this->key_to_title(isset($val[3]) ? $val[3] : $key);
+                    $val = $this->key_to_title($val[0]);
+                    
+                    $this->create_class_group($key, $i++, $caption_ca, $caption_es, $caption_en);
+                } else {
+                    $this->create_class_group($key, $i++);
+                }
+                
             }
 
             $i = 1;
@@ -340,6 +352,7 @@ class Generator extends DBInterfaceBase {
                         $caption_es = $this->key_to_title(isset($val[2]) ? $val[2] : $val[0]);
                         $caption_en = $this->key_to_title(isset($val[3]) ? $val[3] : $val[0]);
                         $val = $this->key_to_title($val[0]);
+                        
                         $this->create_class($key, $val, $groups[$group_key], $i++, $caption, $caption_ca, $caption_es, $caption_en);
                     } else {
                         $caption = $val;
@@ -890,8 +903,12 @@ class Generator extends DBInterfaceBase {
         return $name;
     }
 
-    function create_class_group($group, $id) {
-        array_push($this->queries, "insert into omp_class_groups (id, caption, caption_ca, caption_es, caption_en, ordering) values ($id, '$group', '$group', '$group', '$group', $id);");
+    function create_class_group($group, $id, $caption_ca = null, $caption_es = null, $caption_en = null) {
+        if($caption_ca == null){ $caption_ca = $group; }
+        if($caption_es == null){ $caption_es = $group; }
+        if($caption_en == null){ $caption_en = $group; }
+        
+        array_push($this->queries, "insert into omp_class_groups (id, caption, caption_ca, caption_es, caption_en, ordering) values ($id, '$group', '$caption_ca', '$caption_es', '$caption_en', $id);");
     }
 
     function create_class($id, $key, $grp_id, $grp_order, $caption = null, $caption_ca = null, $caption_es = null, $caption_en = null) {
@@ -901,6 +918,9 @@ class Generator extends DBInterfaceBase {
         }
         $key = $this->title_to_key($key);
 
+        if (is_array($grp_id)) {
+            $grp_id = $grp_id[0];
+        }
 
         $editableclass='Y';
         if (isset($this->data['bloqued_class']) && !empty($this->data['bloqued_class'])) {
