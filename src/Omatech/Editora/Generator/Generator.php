@@ -852,9 +852,11 @@ class Generator extends DBInterfaceBase {
         $children = trim($children);
         if (is_array($name)) {
             $nice_name = $name[0];
+            $nice_name_ca = isset($name[2]) ? $name[2] : $name[0];
+            $nice_name_es = isset($name[3]) ? $name[3] : $name[0];
             $name_tag = $name[1];
         } else {
-            $nice_name = $this->key_to_title($name);
+            $nice_name = $nice_name_ca = $nice_name_es = $this->key_to_title($name);
             $name_tag = $name;
         }
 
@@ -867,7 +869,7 @@ class Generator extends DBInterfaceBase {
         }
 
         array_push($this->queries, "insert into omp_relations (id, name, caption, language, tag, parent_class_id, child_class_id, multiple_child_class_id, order_type, join_icon, create_icon, join_massive, caption_ca, caption_es, caption_en, autocomplete) 
-			values($id, '$name_tag', '$nice_name', 'ALL', '$name_tag', $parent, $single_child, '$multiple_children', 'M', 'Y', 'Y', 'N', '$nice_name', '$nice_name', '$nice_name', 'Y');");
+			values($id, '$name_tag', '$nice_name', 'ALL', '$name_tag', $parent, $single_child, '$multiple_children', 'M', 'Y', 'Y', 'N', '$nice_name_ca', '$nice_name_es', '$nice_name', 'Y');");
     }
 
     function get_relation_name($rel_id, $parent_id, $childs_array) {
@@ -880,6 +882,14 @@ class Generator extends DBInterfaceBase {
             if (is_array($relation_names[$rel_id])) {
                 $name[0] = $relation_names[$rel_id][0];
                 $name[1] = $relation_names[$rel_id][1];
+
+                if( isset($relation_names[$rel_id][2]) ){
+                    $name[2] = $relation_names[$rel_id][2];
+                }
+                if( isset($relation_names[$rel_id][3]) ){
+                    $name[3] = $relation_names[$rel_id][3];
+                }
+
             } else {
                 $name = $relation_names[$rel_id];
             }
