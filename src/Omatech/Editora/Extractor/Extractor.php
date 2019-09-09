@@ -240,7 +240,7 @@ class Extractor extends DBInterfaceBase {
 
 	public function findInstancesInList($inst_ids, $num = null, $class = null, $params = null, callable $callback = null) {
 		$start = microtime(true);
-		$this->debug("Extractor::getInstanceList class=$class inst_ids=$inst_ids\n");
+		$this->debug("Extractor::findInstancesInList class=$class inst_ids=$inst_ids\n");
 		
 		$result = $this->getExtractionFromCache($params);
 		// if we get the info from cache let's return
@@ -282,7 +282,7 @@ class Extractor extends DBInterfaceBase {
 
 	public function findInstancesBySearch($query, $num = null, $class = null, $params = null, callable $callback = null) {
 		$start = microtime(true);
-		$this->debug("Extractor::getInstanceList class=$class inst_ids=$inst_ids\n");
+		$this->debug("Extractor::findInstancesBySearch class=$class query=$query\n");
 		
 		$result = $this->getExtractionFromCache($params);
 		// if we get the info from cache let's return
@@ -294,7 +294,7 @@ class Extractor extends DBInterfaceBase {
 		$search_filter = $this->getSearchFilter($query);
 
 		$preview_filter = $this->getPreviewFilter();
-		$ids_filter = $this->getIDsListFilter($inst_ids);
+		//$ids_filter = $this->getIDsListFilter($inst_ids);
 		$this->setPagination($num, $class_filter, $preview_filter, $order_filter, null, $search_filter);
 
 		$sql = $this->sql_select_instances . " , MATCH (s.text) AGAINST ('" . $query . "') relevance
@@ -460,7 +460,7 @@ class Extractor extends DBInterfaceBase {
 /// ACCESSORI FUNCTIONS
 ///
 
-	private function clearExtractionCache($key)
+	private function clearExtractionCache($cache_key)
 	{
 		$memcache_key = $this->conn->getDatabase() . ":extractor_cache:$cache_key:$this->lang";
 		$this->deleteCache($memcache_key);
