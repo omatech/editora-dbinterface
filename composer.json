@@ -3,7 +3,7 @@
     "description": "Extract or Load information from Editora in powerful and misterious ways using closures with Eloquant like syntax",
 		"minimum-stability":"dev",
     "require": {
-      "doctrine/orm": "2.5.x-dev",
+      "doctrine/orm": "^2.6",
 			"phpoffice/phpspreadsheet": "1.6.0"
     },
     "require-dev": {
