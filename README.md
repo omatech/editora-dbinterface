@@ -246,6 +246,11 @@ $paginator=[
 ];
 ```
 
+### Get last updated timestamp from a given extraction
+$extractor->last_updated_timestamp;
+Returns the last updated unix timestamp of all the elements extracted
+
+
 ## Test the Extractor
 
 1) Create a database if not exists with utf8_mb4 and collate utf8_mb4_general_ci in this example assume editora_test in localhost, we'll assume user root and without password
