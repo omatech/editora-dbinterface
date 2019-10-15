@@ -11,6 +11,7 @@ class Extractor extends DBInterfaceBase {
 	protected $metadata = false;
 	protected $extract_values = true;
 	protected $paginator = null;
+	public $last_updated_timestamp=0;
 
 	///
 	/// MAIN FUNCTIONS
@@ -591,7 +592,11 @@ class Extractor extends DBInterfaceBase {
 		$instance['id'] = $inst_id;
 		$instance['inst_id'] = $inst_id;
 		$instance['link'] = $this->getInstanceLink($inst_id);
-        $instance['has_urlnice'] = $this->getHasUrlnice($inst_id);
+		$instance['has_urlnice'] = $this->getHasUrlnice($inst_id);
+		if ($row['update_timestamp']>$this->last_updated_timestamp)
+		{
+			$this->last_updated_timestamp=$row['update_timestamp'];
+		}
 
 		if ($this->metadata) {
 			$metadata = array();
