@@ -797,4 +797,19 @@ class Loader extends DBInterfaceBase {
         return $this->conn->executeQuery($sql);
     }
 
+	public function updateStatus($inst_id, $status = 'O') {
+		if (!$this->existInstance($inst_id))
+			return false;
+
+		$status = $this->conn->quote($status);
+
+		
+		$sql = "update omp_instances
+				set status=$status
+				, update_date=now()
+				where id=$inst_id";
+		$this->conn->executeQuery($sql);
+
+		return $inst_id;
+	}
 }
