@@ -161,7 +161,21 @@ class Generator extends DBInterfaceBase {
             $changes++;
         }
 
-        
+        /* Column json_val in omp_values */
+        $sql = "show columns from omp_values";
+        $rows = $this->conn->fetchAll($sql);
+
+        $json_val_found = false;
+        foreach ($rows as $row) {
+            if ($row['Field'] == 'json_val')
+                $json_val_found = true;
+        }
+        if (!$json_val_found) {
+            $sql = "alter table omp_values add column json_val TEXT default null\n";
+            $this->conn->executeQuery($sql);
+            $changes++;
+            echo "Create column json_val in omp_values table\n";
+        }
 
         $changes += $this->tryToCreateIndex('omp_attributes', 1, ['tag']);
 

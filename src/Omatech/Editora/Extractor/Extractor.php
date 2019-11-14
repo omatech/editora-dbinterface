@@ -18,6 +18,7 @@ class Extractor extends DBInterfaceBase {
 	///
 
 
+
     public function findInstanceByIdAllElements($inst_id, $params = null, $num = null, $level = 1, callable $callback = null){
         $this->debug("Extractor::findInstanceByIdAllElements inst_id=$inst_id\n");
 
@@ -803,6 +804,9 @@ class Extractor extends DBInterfaceBase {
 					$attrs[$attr_key]['num_val'] = $value_row_or_null_array['num_val'];
 					$attrs[$attr_key]['date_val'] = $value_row_or_null_array['date_val'];
 					$attrs[$attr_key]['img_info'] = $value_row_or_null_array['img_info'];
+                    if(isset($value_row_or_null_array['json_val'])){
+                        $attrs[$attr_key]['json_val'] = $value_row_or_null_array['json_val'];
+                    }
 					$attrs[$attr_key]['tag'] = $attrs[$attr_key]['atri_tag'];
 
 					foreach ($attr_val as $subkey => $subval) {// apliquem la transformació per canviar nls a brs
@@ -832,7 +836,12 @@ class Extractor extends DBInterfaceBase {
                                 $attrs[$tag.'_imgextension']['tag'] = $tag.'_imgextension';
                                 $attrs[$tag.'_imgextension']['text_val'] = end($file_info);
 							}
-							
+                            if($subval == 'Y' && isset($attrs[$attr_key]['json_val']) ){
+                                $tag=$attrs[$attr_key]['tag'];
+
+                                $attrs[$tag.'_json_val']['tag'] = $tag.'_json_val';
+                                $attrs[$tag.'_json_val']['text_val'] = $attrs[$attr_key]['json_val'];
+                            }
 						}
 					}
 				}
@@ -892,7 +901,8 @@ class Extractor extends DBInterfaceBase {
 			$values['date_val'] = null;
 			$values['num_val'] = null;
 			$values['img_info'] = null;
-			if ($type == 'L') {
+            $values['json_val'] = null;
+            if ($type == 'L') {
 				$sql = "SELECT lv.id 
 				FROM omp_lookups_values lv
 				, omp_lookups l
