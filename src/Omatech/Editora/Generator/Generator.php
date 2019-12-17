@@ -540,6 +540,21 @@ class Generator extends DBInterfaceBase {
             }
         }
 
+        foreach ($attributes_multi_lang_text as $key => $val) {
+            if (is_array($val)) {
+                // take the first element that is tag and remove the first element, pass the rest of the array as captions
+                $tag = $val[0];
+                array_shift($val);
+                foreach ($languages as $key_lang => $val_lang) {
+                    $this->create_attribute($key, $tag, 'T', $key_lang, $val_lang, 0, $val);
+                }
+            } else {
+                foreach ($languages as $key_lang => $val_lang) {
+                    $this->create_attribute($key, $val, 'T', $key_lang, $val_lang);
+                }
+            }
+        }
+
         foreach ($attributes_file as $key => $val) {
             if (is_array($val)) {
                 $tag = $val[0];
@@ -1153,6 +1168,7 @@ class Generator extends DBInterfaceBase {
             'attributes_color' => array(),
             'attributes_textarea' => array(),
             'attributes_text' => array(),
+            'attributes_multi_lang_text' => array(),
             'attributes_date' => array(),
             'attributes_num' => array(),
             'attributes_geolocation' => array(),
