@@ -201,6 +201,13 @@ $data = array(
 	),
 	'roles' => array(
 	//array('id' => 3, 'name' => 'testrole', 'classes' => '10,20,30'),
+    /*array('id' => 4, 'name' => 'testrolearray',
+        'classes' => [
+            '10' => ["browseable" => 'N', "status1" => 'N', "status2" => 'N'],
+            '20' => [],
+            '30' => ["editable" => 'N', "status3" => 'N'],
+        ]
+    ),*/
 	),
     //'bloqued_class' => [45]
 );
