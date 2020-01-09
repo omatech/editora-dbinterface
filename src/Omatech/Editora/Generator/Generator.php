@@ -540,6 +540,21 @@ class Generator extends DBInterfaceBase {
             }
         }
 
+        foreach ($attributes_multi_lang_text as $key => $val) {
+            if (is_array($val)) {
+                // take the first element that is tag and remove the first element, pass the rest of the array as captions
+                $tag = $val[0];
+                array_shift($val);
+                foreach ($languages as $key_lang => $val_lang) {
+                    $this->create_attribute($key, $tag, 'T', $key_lang, $val_lang, 0, $val);
+                }
+            } else {
+                foreach ($languages as $key_lang => $val_lang) {
+                    $this->create_attribute($key, $val, 'T', $key_lang, $val_lang);
+                }
+            }
+        }
+
         foreach ($attributes_file as $key => $val) {
             if (is_array($val)) {
                 $tag = $val[0];
@@ -976,11 +991,31 @@ class Generator extends DBInterfaceBase {
                     array_push($this->queries, "insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values ($id, $currentRoleId, 'Y', '$editableclass', 'Y', '$editableclass', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');");
                 } else {
 
-                    $roleClassesId = explode(',', $aRole['classes']);
+                    if (is_array($aRole['classes'])) {
+                        foreach ($aRole['classes'] as $role_key => $role_class){
+                            if($id == $role_key){
+                                $browseableField = isset($role_class['browseable']) ? $role_class['browseable'] : 'Y';
+                                $insertableField = isset($role_class['insertable']) ? $role_class['insertable'] : $editableclass;
+                                $editableField = isset($role_class['editable']) ? $role_class['editable'] : 'Y';
+                                $deleteableField = isset($role_class['deleteable']) ? $role_class['deleteable'] : $editableclass;
+                                $permisosField = isset($role_class['permisos']) ? $role_class['permisos'] : 'Y';
+                                $status1Field = isset($role_class['status1']) ? $role_class['status1'] : 'Y';
+                                $status2Field = isset($role_class['status2']) ? $role_class['status2'] : 'Y';
+                                $status3Field = isset($role_class['status3']) ? $role_class['status3'] : 'Y';
+                                $status4Field = isset($role_class['status4']) ? $role_class['status4'] : 'Y';
+                                $status5Field = isset($role_class['status5']) ? $role_class['status5'] : 'Y';
 
-                    if (in_array($id, $roleClassesId)) {
-                        array_push($this->queries, "insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values ($id, $currentRoleId, 'Y', '$editableclass', 'Y', '$editableclass', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');");
+                                array_push($this->queries, "insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values ($id, $currentRoleId, '$browseableField', '$insertableField', '$editableField', '$deleteableField', '$permisosField', '$status1Field', '$status2Field', '$status3Field', '$status4Field', '$status5Field');");
+                            }
+                        }
+                    } else {
+                        $roleClassesId = explode(',', $aRole['classes']);
+
+                        if (in_array($id, $roleClassesId)) {
+                            array_push($this->queries, "insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values ($id, $currentRoleId, 'Y', '$editableclass', 'Y', '$editableclass', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');");
+                        }
                     }
+
                 }
             }
         }
@@ -1133,6 +1168,7 @@ class Generator extends DBInterfaceBase {
             'attributes_color' => array(),
             'attributes_textarea' => array(),
             'attributes_text' => array(),
+            'attributes_multi_lang_text' => array(),
             'attributes_date' => array(),
             'attributes_num' => array(),
             'attributes_geolocation' => array(),
