@@ -349,9 +349,11 @@ class Extractor extends DBInterfaceBase {
 		$this->debug("relation=$relation inst_id=$inst_id\n");
 
 		$relation_row = $this->findChildRelation($relation, $inst_id);
+		if (!$relation_row) return array();
+		if (!isset($relation_row['id'])) return array();
+
 		$rel_id = $relation_row['id'];
-		if (!$rel_id)
-			return array();
+		if (!$rel_id) return array();
 
 		if (isset($params['alias'])) {
 			$tag = $params['alias'];
