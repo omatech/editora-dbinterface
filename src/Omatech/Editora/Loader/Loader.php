@@ -257,12 +257,12 @@ class Loader extends DBInterfaceBase {
 
 		$current_inst = $this->getInstanceRowAndExistingValues($inst_id);
 		if ($status != $current_inst['status']) {
-			$difference = -1;
+			$difference = -2;
 			return true;
 		}
 
 		if ($nom_intern != $current_inst['key_fields']) {
-			$difference = -2;
+			$difference = -3;
 			return true;
 		}
 
