@@ -611,6 +611,21 @@ class DBInterfaceBase {
 		return $num > 0;
 	}
 
+	public function getHasUrlniceLanguage($inst_id, $lang) {
+        $sql = "select niceurl
+				from omp_niceurl
+				where inst_id=$inst_id
+				and language='" . $lang . "'";
+
+        $niceurl_row = $this->conn->fetchAssoc($sql);
+        if ($niceurl_row) {
+            return true;
+        } else {
+            return false;
+        }
+
+	}
+	
 	function getLookupValueID($lookup_id, $value) {
 		$value = $this->conn->quote($value);
 
