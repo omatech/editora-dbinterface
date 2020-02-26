@@ -47,6 +47,24 @@ class DBInterfaceBase {
 		$this->conn = $conn;
 	}
 
+	function getAllInstances ($limit=1000000000)
+	{
+		$sql="select i.*, c.name class_name, c.tag class_tag, c.id class_id, i.key_fields nom_intern, i.update_date, ifnull(unix_timestamp(i.update_date),0) update_timestamp
+		from omp_instances i 
+		, omp_classes c
+		where 1=1
+		and c.id=i.class_id
+		limit $limit";
+
+		$rows=$this->conn->fetchAll($sql);
+		$res=array();
+		foreach ($rows as $row)
+		{
+			$res[$row['id']]=$row;
+		}
+		return $res;
+	}
+
 	function getBulkInstances($include = '', $exclude = '') {
 
 		$sql_add = $this->getIncludeExcludeClassesFilter($include, $exclude);
@@ -216,6 +234,43 @@ class DBInterfaceBase {
 			return null;
 		return $row;
 	}
+
+
+	public function getAllClassAttributes()
+	{
+		$sql="select class_id, a.language, a.tag, a.id 
+		from omp_class_attributes ca
+		, omp_attributes a
+		where ca.atri_id=a.id
+		order by ca.class_id, a.tag";
+		$rows = $this->conn->fetchAll($sql);
+		$res=array();
+		foreach ($rows as $row)
+		{
+			$res[$row['class_id']][$row['language']][]=['id'=>$row['id'], 'tag'=>$row['tag']];
+		}
+		return $res;
+	}
+
+
+	public function getAllValues()
+	{
+		$sql="select *
+		from omp_values
+		";
+		$rows = $this->conn->fetchAll($sql);
+		$res=array();
+		foreach ($rows as $row)
+		{
+			if (isset($row['date_val'])) $value = $row['date_val'];
+			if (isset($row['num_val'])) $value = $row['num_val'];
+			if (isset($row['text_val'])) $value = $row['text_val'];
+			$res[$row['inst_id']][$row['atri_id']][]=$value;
+		}
+		return $res;
+	}
+
+
 
 	public function getInstanceRandomClassID($class_id) {
 		$sql = "select id from omp_instances where class_id = '.$class_id.' ORDER BY rand()";

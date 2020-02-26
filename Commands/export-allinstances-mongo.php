@@ -20,7 +20,7 @@ set_time_limit(0);
 $options_array = getopt(null, ['from::', 'to::'
 	, 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:'
 	, 'outputformat:', 'outputfile:'
-	, 'class_id:', 'lang:'
+	, 'class_id:', 'lang:', 'limit:'
 	, 'help', 'debug']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
@@ -35,6 +35,7 @@ Parameters:
 --to=file|output
 --outputfile=path of the file to export
 --outputformat= serialized_array|json 
+--limit= (number of instances to extract, default 100000000000)
 
 Others:
 --help this help!
@@ -79,6 +80,12 @@ if (isset($options_array['debug'])) {
 	$params['debug'] = true;
 }
 
+$limit=100000000000;
+if (isset($options_array['limit']))
+{
+	$limit=$options_array['limit'];
+}
+
 $conn_to = null;
 if ($options_array['from'] == 'db4' || $options_array['from'] == 'db5') {
 	$connection_params = array(
@@ -99,20 +106,35 @@ if ($conn_to) {
     $res = array();
 	$params['lang']='es';
 	$params['metadata']=true;
-	$params['debug']=true;
+	//$params['debug']=true;
 	//$params['showinmediatedebug']=true;
 
     $extractor = new Extractor($conn_to, $params);
 
-    $sql="select id from omp_instances limit 10";
-    $rows=$conn_to->fetchAll($sql);
-    
+    $sql="select id from omp_instances limit $limit";
+	$rows=$conn_to->fetchAll($sql);
+	
+	echo "Caching Class Attributes\n";
+	$class_attributes=$extractor->getAllClassAttributes();
+	echo "DONE!\n";
+
+	echo "Caching Instances\n";
+	$instances=$extractor->getAllInstances($limit);
+	echo "DONE!\n";
+
+	echo "Caching Values\n";
+	$values=$extractor->getAllValues();
+	echo "DONE!\n";
+	//print_r($class_attributes);die;
+	
+	echo "Generating output\n";	
     foreach ($rows as $row)
     {
-        $res[]=$extractor->findInstanceByIdMongo($row['id'], $params);
+        $res[]=$extractor->findInstanceByIdMongo($row['id'], $params, $instances, $class_attributes, $values);
         echo '.';
     }
-    echo "\n";
+    echo "DONE\n";
+
 
 
 	if ($options_array['outputformat'] == 'json') {
