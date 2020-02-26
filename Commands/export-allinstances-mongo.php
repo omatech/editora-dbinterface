@@ -12,7 +12,6 @@ require_once __DIR__ . $autoload_location;
 
 //require_once __DIR__.'/conf/config.php';
 
-use \Doctrine\DBAL\Configuration;
 use \Omatech\Editora\Extractor\Extractor;
 
 ini_set("memory_limit", "5000M");
@@ -68,10 +67,11 @@ if ($options_array['from'] != 'db4') {
 }
 
 $to = 'file';
-if ($options_array['to'] != 'file') {
-	echo "Only --to=file supported by now, use --help for help!\n";
+if ($options_array['to'] != 'file' && $options_array['to'] != 'output' ) {
+	echo "Only --to=file and --to=output supported by now, use --help for help!\n";
 	die;
 }
+$to=$options_array['to'];
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
 if (isset($options_array['debug'])) {
@@ -99,17 +99,21 @@ if ($conn_to) {
     $res = array();
 	$params['lang']='es';
 	$params['metadata']=true;
-	//$params['debug']=true;
+	$params['debug']=true;
 	//$params['showinmediatedebug']=true;
 
     $extractor = new Extractor($conn_to, $params);
 
-    $sql="select id from omp_instances";
-    $rows=$extractor->conn->fetchAssoc($sql);
+    $sql="select id from omp_instances limit 10";
+    $rows=$conn_to->fetchAll($sql);
+    
     foreach ($rows as $row)
     {
-        $res[]=$extractor->findInstanceByIdAllElements($class_id, null, $params);
+        $res[]=$extractor->findInstanceByIdMongo($row['id'], $params);
+        echo '.';
     }
+    echo "\n";
+
 
 	if ($options_array['outputformat'] == 'json') {
 		$output = json_encode($res, JSON_PRETTY_PRINT);
@@ -131,7 +135,11 @@ if ($conn_to) {
 		die('Unknown to parameter, aborting!\n');
 	}
 
-	echo "\n\nFinish!\n";
+    echo "\n\nFinish!\n";
+    
+
+    echo $extractor->debug_messages;
+
 } else {
 	die("DB to connection not set, see help for more info\n");
 }

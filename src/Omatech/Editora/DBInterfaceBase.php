@@ -567,6 +567,15 @@ class DBInterfaceBase {
 		return $inst_id;
 	}
 
+	public function getAllActiveLanguages(){
+		$sql="select language 
+		from omp_attributes a
+		, omp_class_attributes ca
+		where ca.atri_id=a.id
+		group by language";
+		return $this->conn->fetchAll($sql);
+	}
+
 	public function getInstanceRowAndExistingValues($inst_id) {
 		$sql = "select * 
 				from omp_instances
@@ -808,6 +817,10 @@ class DBInterfaceBase {
 
 	public function rollback() {
 		$this->conn->executeQuery('rollback');
+	}
+
+	public function getConnection(){
+		return $this->conn;
 	}
 
 }

@@ -18,6 +18,31 @@ class Extractor extends DBInterfaceBase {
 	///
 
 
+    public function findInstanceByIdMongo ($inst_id, $params=[]){
+        $this->debug("Extractor::findInstanceByIdMongo inst_id=$inst_id\n");
+
+        $sql = $this->sql_select_instances . "  
+					from omp_instances i 
+					, omp_classes c
+					where 1=1
+					and i.id=$inst_id
+					and c.id=i.class_id
+					" . $this->getPreviewFilter() . "
+					limit 1
+					";
+        $this->debug("SQL a findInstanceByIdMongo\n");
+        $this->debug($sql);
+        $row = $this->conn->fetchAssoc($sql);
+        if (!$row)
+            return array();
+
+        $result = $this->prepareInstanceResultStructureMongo($row, $this->getAllActiveLanguages());
+
+		return $result;
+    }
+
+
+
 
     public function findInstanceByIdAllElements($inst_id, $params = null, $num = null, $level = 1, callable $callback = null){
         $this->debug("Extractor::findInstanceByIdAllElements inst_id=$inst_id\n");
@@ -581,6 +606,105 @@ class Extractor extends DBInterfaceBase {
 		}
 		return null;
 	}
+
+
+
+	private function prepareInstanceResultStructureMongo($row, $languages = null) {
+		if (!$row)
+			return null;
+
+		$instance = array();
+		if (isset($row['inst_id'])) {
+			$inst_id = $row['inst_id'];
+		} else {
+//print_r($row);
+			$inst_id = $row['id'];
+		}
+		$instance['id'] = $inst_id;
+		$instance['inst_id'] = $inst_id;
+		$instance['link'] = $this->getInstanceLink($inst_id);
+		$instance['has_urlnice'] = $this->getHasUrlnice($inst_id);
+		if ($row['update_timestamp']>$this->last_updated_timestamp)
+		{
+			$this->last_updated_timestamp=$row['update_timestamp'];
+		}
+
+		if ($this->metadata) {
+			$metadata = array();
+			$metadata['id'] = $inst_id;
+			$metadata['nom_intern'] = $row['nom_intern'];
+
+			if (isset($row['external_id'])) {
+				$metadata['external_id'] = $row['external_id'];
+			} else {
+				$metadata['external_id'] = null;
+			}
+			if (isset($row['batch_id'])) {
+				$metadata['batch_id'] = $row['batch_id'];
+			} else {
+				$metadata['batch_id'] = null;
+			}
+
+			if (isset($row['publishing_begins']))
+				$metadata['publishing_begins'] = $row['publishing_begins'];
+			if (isset($row['publishing_ends']))
+				$metadata['publishing_ends'] = $row['publishing_ends'];
+			$metadata['class_id'] = $row['class_id'];
+			$metadata['class_tag'] = $row['class_tag'];
+			$metadata['class_name'] = $row['class_name'];
+			$metadata['update_timestamp'] = $row['update_timestamp'];
+			if (isset($row['relation_instance_weight']))
+				$metadata['relation_instance_weight'] = $row['relation_instance_weight'];
+			$instance['metadata'] = $metadata;
+		}
+
+		//print_r($languages);die;
+
+		if ($this->extract_values) {
+
+			foreach ($languages as $langitem)
+			{
+				$lang=$langitem['language'];
+				$this->lang=$lang;
+				$values = $this->getInstanceValues($inst_id, $row['update_timestamp'], []);
+				$lang_values=array();
+				foreach ($values as $attrs_array_key => $full_value) 
+				{
+					if (!is_array($full_value)) {
+						$this->debug("Actualizamos metadata de la instancia $attrs_array_key amb valor $full_value\n");
+						if ($this->metadata)
+							$instance['metadata'][$attrs_array_key] = $full_value;
+					} else {
+						if (isset($full_value['tag'])) {
+							$key = $full_value['tag'];
+							$value = null;
+							if (isset($full_value['date_val']))
+								$value = $full_value['date_val'];
+							if (isset($full_value['num_val']))
+								$value = $full_value['num_val'];
+							if (isset($full_value['text_val']))
+								$value = $full_value['text_val'];
+
+							$lang_values[$key] = $value;
+						}
+					}
+				}
+
+				$instance['values'][$lang]=$lang_values;
+
+			}
+		}
+
+		if ($this->metadata && $this->timings) {
+			$end = microtime(true);
+			$instance['metadata']['start'] = $start;
+			$instance['metadata']['end'] = $end;
+			$instance['metadata']['microseconds'] = $end - $start;
+		}
+
+		return $instance;
+	}
+
 
 	private function prepareInstanceResultStructure($row, $params = null, callable $callback = null, $start = null) {
 		if (!$start)
