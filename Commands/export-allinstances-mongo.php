@@ -125,12 +125,20 @@ if ($conn_to) {
 	echo "Caching Values\n";
 	$values=$extractor->getAllValues();
 	echo "DONE!\n";
-	//print_r($class_attributes);die;
+	
+	
+	echo "Caching Relation Instances\n";
+	$relation_instances=$extractor->getAllRelationInstances();
+	echo "DONE!\n";
+
+	echo "Caching Relations\n";
+	$relations=$extractor->getAllRelations();
+	echo "DONE!\n";
 	
 	echo "Generating output\n";	
     foreach ($rows as $row)
     {
-        $res[]=$extractor->findInstanceByIdMongo($row['id'], $params, $instances, $class_attributes, $values);
+        $res[]=$extractor->findInstanceByIdMongo($row['id'], $params, $instances, $class_attributes, $values, $relations, $relation_instances);
         echo '.';
     }
     echo "DONE\n";

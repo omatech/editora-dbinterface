@@ -18,21 +18,21 @@ class Extractor extends DBInterfaceBase {
 	///
 
 
-    public function findInstanceByIdMongo ($inst_id, $params=[], $instances, $class_attributes=[], $values=[]){
+    public function findInstanceByIdMongo ($inst_id, $params=[], $instances=[], $class_attributes=[], $values=[], $relations=[], $relation_instances=[]){
         $this->debug("Extractor::findInstanceByIdMongo inst_id=$inst_id\n");
 
         $row = $instances[$inst_id];
         if (!$row)
             return array();
 
-        $result = $this->prepareInstanceResultStructureMongo($row, $class_attributes, $values);
+        $result = $this->prepareInstanceResultStructureMongo($row, $class_attributes, $values, $relations, $relation_instances);
 
 		return $result;
     }
 
 
 
-	private function prepareInstanceResultStructureMongo($row, $class_attributes, $values) {
+	private function prepareInstanceResultStructureMongo($row, $class_attributes, $values, $relations, $relation_instances) {
 		if (!$row)
 			return null;
 
@@ -103,6 +103,30 @@ class Extractor extends DBInterfaceBase {
 				}
 			}
 		}
+
+
+		if (isset($relations[$class_id]))
+		{
+			$relations_in_class=$relations[$class_id];
+			foreach ($relations_in_class as $relation)
+			{
+				//print_r($relation);die;
+				$tag=$relation['tag'];
+
+				if (isset($relation_instances[$inst_id][$relation['id']]))
+				{
+					foreach ($relation_instances[$inst_id][$relation['id']] as $relation_instance)
+					{
+						//print_r($relation_instance);die;
+						$related_instance=$relation_instance['child_inst_id'];
+						$instance['relations'][$tag][]=$related_instance;
+					}	
+				}
+			}
+		}
+
+
+
 
 		if ($this->metadata && $this->timings) {
 			$end = microtime(true);

@@ -65,6 +65,35 @@ class DBInterfaceBase {
 		return $res;
 	}
 
+
+	function getAllRelationInstances ()
+	{
+		$sql="select * from omp_relation_instances order by parent_inst_id, weight";
+
+		$rows=$this->conn->fetchAll($sql);
+		$res=array();
+		foreach ($rows as $row)
+		{
+			$res[$row['parent_inst_id']][$row['rel_id']][]=$row;
+		}
+		return $res;
+	}
+
+	
+	function getAllRelations ()
+	{
+		$sql="select * from omp_relations";
+
+		$rows=$this->conn->fetchAll($sql);
+		$res=array();
+		foreach ($rows as $row)
+		{
+			$res[$row['parent_class_id']][]=$row;
+		}
+		//print_r($res);die;
+		return $res;
+	}
+
 	function getBulkInstances($include = '', $exclude = '') {
 
 		$sql_add = $this->getIncludeExcludeClassesFilter($include, $exclude);
