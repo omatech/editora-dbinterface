@@ -294,7 +294,7 @@ class DBInterfaceBase {
 			if (isset($row['date_val'])) $value = $row['date_val'];
 			if (isset($row['num_val'])) $value = $row['num_val'];
 			if (isset($row['text_val'])) $value = $row['text_val'];
-			$res[$row['inst_id']][$row['atri_id']][]=$value;
+			$res[$row['inst_id']][$row['atri_id']]=$value;
 		}
 		return $res;
 	}

@@ -392,6 +392,8 @@ Use Google translate API to automatically translate content
 ### migrator.php
 Use migrator.php to extract editora4 information and get it into editora5 format, transfer directly to a db5 database or generate 3 different file formats (full, minimal, generator)
 
+### export-allinstances-mongo
+Export all instances to the output or a file in json format. 
 
 
 # Attributes types:
