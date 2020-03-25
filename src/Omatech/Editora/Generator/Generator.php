@@ -311,7 +311,8 @@ class Generator extends DBInterfaceBase {
         array_push($this->queries, $editora_structure);
 
         // Creem l'atribut nom_intern
-        $this->create_attribute($nomintern_id, $nomintern_name, 'S');
+        //$this->create_attribute($nomintern_id, $nomintern_name, 'S');
+        $this->create_attribute($nomintern_id, $nomintern_name, 'S', 0, 'ALL', 0, $nomintern_caption);
 
         if (isset($tabs) && is_array($tabs)) {
             foreach ($tabs as $key => $tab) {
@@ -827,6 +828,10 @@ class Generator extends DBInterfaceBase {
         return 'nom_intern';
     }
 
+    public function editoraDefaultNomInternCaption() {
+        return ['Nom intern', 'Nombre interno', 'Internal name'];
+    }
+
     public function editoraDefaultRoles() {
         return array(
             array('id' => 1, 'name' => 'admin'),
@@ -1156,6 +1161,7 @@ class Generator extends DBInterfaceBase {
         return array(
             'nomintern_id' => $this->editoraDefaultNomInternId(),
             'nomintern_name' => $this->editoraDefaultNomInternName(),
+            'nomintern_caption' => $this->editoraDefaultNomInternCaption(),
             'niceurl_id' => 2,
             'niceurl_name' => 'niceurl',
             'users' => array(),
