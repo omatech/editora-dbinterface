@@ -19,9 +19,10 @@ CREATE TABLE IF NOT EXISTS `omp_attributes` (
   `caption_ca` varchar(100) DEFAULT NULL,
   `caption_es` varchar(100) DEFAULT NULL,
   `caption_en` varchar(100) DEFAULT NULL,
+  `params` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `omp_attributes_u1` (`name`) USING BTREE,
-	KEY `omp_attributes_n1` (`tag`) USING BTREE
+  	KEY `omp_attributes_n1` (`tag`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- ----------------------------
@@ -275,6 +276,7 @@ CREATE TABLE IF NOT EXISTS `omp_search` (
   `class_id` int NOT NULL,
   `atri_id` int NOT NULL,
   `language` varchar(10) NOT NULL,
+  `title` varchar(250) DEFAULT NULL,
   PRIMARY KEY (`id`),
   FULLTEXT KEY `omp_search_f1` (`text`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;
@@ -346,6 +348,7 @@ CREATE TABLE IF NOT EXISTS `omp_values` (
   `date_val` datetime DEFAULT NULL,
   `num_val` double DEFAULT NULL,
   `img_info` varchar(20) DEFAULT NULL,
+  `json_val` text DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `omp_values_n1` (`inst_id`,`atri_id`) USING BTREE,
   KEY `omp_values_n2` (`date_val`) USING BTREE,
