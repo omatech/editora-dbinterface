@@ -1,214 +1,186 @@
 <?php
 
-$data = array(
+$data = [
+    'attributes_params' => true,//if true use new editora generator
 	'truncate_users'=>false,
-	'users' => array(
+	'users' => [
 		// name, type, default lang, rol_id, O|U (Omatech-super-admin or normal user)
-		array('omatech', 'Omatech super-admin', 'ca', 1, 'O'),
-		array('test', 'Administrator', 'ca', 2, 'U')
-	),
-	'languages' => array(
+		['omatech', 'Omatech', 'ca', 1, 'O'],
+		['test', 'Administrator', 'ca', 2, 'U']
+    ],
+    'roles' => [
+        //['id' => 3, 'name' => 'testrole', 'classes' => '10,20,30'],
+    ],
+
+    'languages' => [
 		10000 => 'ca',
 		20000 => 'es',
-		30000 => 'en'
-	),
-	'groups' => array(
-		'Principal' => 1,
-		'Secundaris' => 2,
-		'Noticies' => 3,
-		'Ofertes' => 4,
-		'Blocs' => 5
-	),
-	'classes' => array(
-		'Principal' => [
-			1 => ['Global', 'Global'],
-			10 => ['Home', 'Home'],
-		],
-		'Secundaris' => [
-			25 => ['Page', 'Pàgina'],
-			23 => ['SectionApplications', 'Secció Aplicacions'],
-			20 => ['Applications', 'Aplicacions'],
-			24 => ['SectionSpaces', 'Secció Espais'],
-			21 => ['Spaces', 'Espais'],
-			22 => ['Doc_link', 'Docs links'],
-			26 => ['Shortcut', 'Access directe']
-		],
-		'Noticies' => [
-			30 => ['News', 'Notícies'],
-			31 => ['NewsCategory', 'Categoria notícies'],
-			32 => ['Redactor', 'Redactor'],
-			33 => ['SectionNews', 'Secció notícies']
-		],
-		'Ofertes' => [
-			40 => ['Offers', 'Ofertes'],
-			41 => ['OffersCategory', 'Categoria ofertes'],
-			42 => ['SectionOffers', 'Secció ofertes']
-		],
-		'Blocs' => [
-			50 => ['BlockApplications', 'Bloc aplicacions'],
-			51 => ['BlockSpaces', 'Bloc espais'],
-			52 => ['BlockOffers', 'Bloc ofertes'],
-			53 => ['BlockPage', 'Bloc pàgina']
-		]
-	),
-	'attributes_order_string' => array(
-		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
-		101 => array('apellidos', 'Cognoms', 'Apellidos', 'Surname')
-	),
-	'attributes_order_date' => array(
-		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
-		102 => array('fecha_noticia', 'Data noticia', 'Fecha noticia', 'News Date')
-	),	
-	'attributes_string' => array(
-		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
-		100 => array('nom', 'Nom', 'Nombre', 'Name')
-	),
-	'attributes_multi_lang_string' => array(
-		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
-		200 => ['titol', 'Títol', 'Título', 'Title'],
-		201 => ['subtitol', 'Subtítol', 'Subtítulo', 'Subtitle'],
-		202 => ['text_link', 'Text de l\'enllaç', "Texto del enlace", "Text link"],
-		203 => ['text_adjunts', 'Text Adjunts aaa']
-	),
-	'attributes_textarea' => array(
-	//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
-	),
-	'attributes_text' => array(
-		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag		
-	),
-	'attributes_date' => array(
-		710 => 'data_noticia'
-	),
-	'attributes_num' => array(),
-	'attributes_geolocation' => array(),
-	'attributes_url' => array(
-		740 => 'link_extern'
-	),
-	'attributes_file' => array(),
-	'attributes_video' => array(
-		760 => 'video'
-	),
-	'attributes_image' => array(
-		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
-		600 => ['imatge_pagina', 'Imatge pàgina', 'Imágen Página', 'Page Image'],
-		601 => 'imatge_graella',
-		602 => 'imatge_bloc'
-	),
-	'images_sizes' => array(
-		600 => '780x',
-		601 => '300x200',
-		602 => '780x'
-	),
-	'attributes_lookup' => array(
-		770 => ['icon,70', 'Icona', 'Icono', 'Icon']
-	),
-	'lookups' => array(
-		'70,icon' => [
-			7001 => ['mdi-phone-log', 'Telèfon', 'Teléfono', 'Phone'],
-			7002 => ['mdi-brush', 'Pincell', 'Pincel', 'Brush'],
-			7003 => ['mdi-math-compass', 'Compas', 'Compas', 'Compass'],
-			7004 => ['mdi-cellphone-android', 'Smartphone', 'Smartphone', 'Smartphone'],
-		]
-	),
+		30000 => 'en',
+	],
+	'groups' => [
+        1 => [
+                'Principal',
+                'caption'=>['Principal', 'Principal', 'Principal'],
+                'classes' => [
+                    1 => [
+                        'Global',
+                        'caption'=>['Global'],
+                        'attributes'=>['2,200'],
+                        'relations' => [
+                            1001  => ['main_menu', 'childs'=>'20,21,22', 'caption' =>['Menú principal ca', 'Menú principal', 'Main menu']],
+                        ],
+                        'editable'=>false
+                    ],
+                    10 => [
+                        'Home',
+                        'caption'=>['Home'],
+                        'attributes'=>['2,101,102,100,200,201,249,250,251,252,253,254,255,256,257,258,259,260,261,601,602,770'],
+                        'relations' => [
+                            10001 => ['home_blocks', 'childs'=>'30', 'caption' =>['Blocs destacats', 'Bloques destacados', 'Home blocks']],
+                            10002 => ['shortcuts', 'childs'=>'20', 'caption' =>['Accessos directes', 'Accesos directos', 'Shortcuts']],
+                            10003 => ['news_highlights', 'childs'=>'21', 'caption' =>['Notícies destacades', 'Notícias destacadas', 'News']],
+                        ],
+                        'editable'=>true
+                    ],
+                ],
+            ],
+		2 => [
+                'Secundaris',
+                'caption'=>['Secundaris', 'Secundarios', 'Secondary'],
+                'classes' => [
+                    20 => [
+                        'Pages',
+                        'caption'=>['Pàgines', 'Páginas', 'Pages'],
+                        'attributes'=>['2,200,201,600'],
+                        'relations' => [
+                            20001 => ['blocks', 'childs'=>'30', 'caption' =>['Bloques', 'Bloques', 'Blocks']],
+                        ],
+                    ],
+                    21 => [
+                        'News',
+                        'caption'=>['Noticies', 'Noticias', 'News'],
+                        'attributes'=>['2,200'],
+                        'relations' => [
+                            21001 => ['blocks', 'childs'=>'30', 'caption' =>['Bloques', 'Bloques', 'Blocks']],
+                            21002 => ['people', 'childs'=>'22', 'caption' =>['Bloques', 'Bloques', 'Blocks']],
+                        ],
+                    ],
+                    22 => [
+                        'People',
+                        'caption'=>['Persones', 'Personas', 'People'],
+                        'attributes'=>['2,200'],
+                        'relations' => [
+                            22001 => ['blocks', 'childs'=>'30', 'caption' =>['Bloques', 'Bloques', 'Blocks']],
+                        ],
+                    ]
+                ],
+            ],
+		3 => [
+                'Elements',
+                'caption'=>['Elements', 'Elementos', 'Elements'],
+                'classes' => [
+                    30 => [
+                        'Blocks',
+                        'caption'=>['Blocs', 'Bloques', 'Blocks'],
+                        'attributes'=>['201'],
+                        'relations' => [
+                            30001 => ['links', 'childs'=>'31', 'caption' =>['Bloques', 'Bloques', 'Blocks']],
+                            30002 => ['documents', 'childs'=>'32', 'caption' =>['Bloques', 'Bloques', 'Blocks']],
+                            30003 => ['people', 'childs'=>'22', 'caption' =>['Bloques', 'Bloques', 'Blocks']],
+                        ],
+                    ],
+                    31 => [
+                        'Links',
+                        'caption'=>['Links'],
+                        'attributes'=>['201'],
+                        'relations' => [
+                            31001 => ['internal_link', 'childs'=>'1,20,21,22', 'caption' =>['Bloques', 'Bloques', 'Blocks']],
+                        ],
+                    ],
+                    32 => [
+                        'Docs',
+                        'caption'=>['Docs'],
+                        'attributes'=>['201']
+                    ]
+                ]
+            ],
+	],
+
+	'attributes_order_string' => [
+		101 => ['surname', 'caption'=>['Cognoms', 'Apellidos', 'Surname']],
+	],
+	'attributes_order_date' => [
+		102 => ['order_date', 'caption'=>['Data noticia', 'Fecha noticia', 'News Date']],
+	],
+	'attributes_string' => [
+		100 => ['nom', 'caption'=>['Nom ', 'Nombre', 'Name']],
+	],
+	'attributes_multi_lang_string' => [
+		200 => ['title', 'caption'=>['Títol', 'Título', 'Title'], 'description'=>'una prueba de descripción'],
+		201 => ['subtitle', 'caption'=>['Subtítol', 'Subtítulo', 'Subtitle']],
+	],
+	'attributes_textarea' => [
+        249 => ['textarea', 'caption'=>['textarea ca', 'textarea es', 'textarea en']],
+    ],
+    'attributes_multi_lang_textarea' => [
+		250 => ['lang_textarea', 'caption'=>['lang_textarea ca', 'lang_textarea es', 'lang_textarea en']],
+	],
+	'attributes_text' => [
+		251 => ['text', 'caption'=>['text ca', 'text es', 'text en']],
+    ],
+    'attributes_multi_lang_text' => [
+		280 => ['lang_text', 'caption'=>['lang_text ca', 'lang_text es', 'lang_text en']],
+	],
+	'attributes_date' => [
+        252 => ['date', 'caption'=>['date ca', 'date es', 'date en']],
+	],
+
+	'attributes_color' => [
+        253 => ['color', 'caption'=>['color ca', 'color es', 'color en']],
+    ],
+
+	'attributes_num' => [
+        254 => ['num', 'caption'=>['num ca', 'num es', 'num en']],
+    ],
+	'attributes_geolocation' => [
+        255=> ['geolocation', 'caption'=>['geolocation ca', 'geolocation es', 'geolocation en']],
+    ],
+	'attributes_url' => [
+        256=> ['url', 'caption'=>['url ca', 'url es', 'url en']],
+    ],
+    'attributes_multi_lang_url' => [
+        257=> ['lang_url', 'caption'=>['lang_url ca', 'lang_url es', 'lang_url en']],
+	],
+	'attributes_file' => [
+        258=> ['file', 'caption'=>['file ca', 'file es', 'file en']],
+    ],
+    'attributes_multi_lang_file' => [
+        259=> ['lang_file', 'caption'=>['lang_file ca', 'lang_file es', 'lang_file en']],
+    ],
+	'attributes_video' => [
+		260=> ['video', 'caption'=>['video ca', 'video es', 'video en']],
+	],
+    'attributes_multi_lang_video' => [
+        261=> ['lang_video', 'caption'=>['lang_video ca', 'lang_video es', 'lang_video en']],
+    ],
+    'attributes_image' => [
+        601 => ['profile_picture', 'caption' =>['Imatge perfil', 'Imágen perfil', 'Profile picture'], 'params'=>['size'=>['150x200']]],
+    ],
+    'attributes_multi_lang_image' => [
+        602 => ['lang_picture', 'caption' =>['Imatge ', 'Imágen ', 'Profile '], 'params'=>['size'=>['700x200']]],
+    ],
+    'attributes_grid_image' => [
+        603 => ['grid_image', 'caption' =>['grid_image ca', 'grid_image es', 'grid_image en'], 'params'=>['size'=>['700x200']]],
+    ],
+	'attributes_lookup' => [
+        770 => ['image_position', 'caption' =>['Posició imatge', 'Posición imágen', 'Image position'],
+                'params'=>['lookup'=>[
+                    7001 => ['left', 'Esquerra', 'Izquierda', 'Left'],
+                    7002 => ['right', 'Dreta', 'Derecha', 'Right']
+                ]]]
+	],
+
+];
 
 
-	'attributes_multi_lang_url' => array(
-		745 => 'link_extern'
-	),
-	'attributes_multi_lang_image' => array(
-		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag		
-	),
-	'attributes_multi_lang_textarea' => array(
-		//id=>array(tag, caption_ca, caption_es, caption_en OR id=>tag
-		400 => 'text'
-	),
-	'attributes_multi_lang_file' => array(
-		700 => 'fitxer'
-	),
-
-
-	'relations' => array(
-		1001 => '1,23,24,25,33,42',
-		10003 => '10,31',
-		10004 => '10,30',
-		10002 => '10,26',
-		10001 => '10,50,51,52',
-		21001 => '21,25',
-		23001 => '23,20',
-		24001 => '24,21',
-		25001 => '25,22',
-		25002 => '25,53',
-		30001 => '30,32',
-		30002 => '30,31',
-		30003 => '30,22',
-		33001 => '33,30',
-		33002 => '33,31',
-		40001 => '40,41',
-		42001 => '42,41',
-		50001 => '50,20',
-		50002 => '50,23',
-		51001 => '51,21',
-		51002 => '51,24',
-		52001 => '52,40',
-		52002 => '52,42'
-	),
-	'relation_names' => array(
-		1001 => ['Menú principal', 'main_menu'],
-		10001 => ['Blocs destacats', 'home_blocks'],
-		10002 => ['Accessos directes', 'shortcuts'],
-		10003 => ['Categories notícies destacades', 'news_categories'],
-		10004 => ['Notícies destacades', 'news_highlights'],
-		21001 => ['Pàgines', 'pages'],
-		23001 => ['Destacats', 'highlights'],
-		24001 => ['Destacats', 'highlights'],
-		25001 => ['Adjunts', 'attachments'],
-		25002 => ['Blocs', 'blocks'],
-		30001 => ['Redactor', 'redactor'],
-		30002 => ['Categories', 'categories'],
-		30003 => ['Adjunts', 'attachments'],
-		33001 => ['Notícies destacades', 'highlights_news'],
-		33002 => ['Categories destacades', 'highlights_categories'],
-		40001 => ['Categories', 'categories'],
-		42001 => ['Categories destacades', 'highlights_categories'],
-		50001 => ['Aplicacions destacades', 'highlights'],
-		50002 => ['Link veure mes', 'calltoaction'],
-		51001 => ['Espais destacats', 'highlights'],
-		51002 => ['Link veure mes', 'calltoaction'],
-		52001 => ['Ofertes destacades', 'highlights'],
-		52002 => ['Link veure mes', 'calltoaction']
-	),
-	'attributes_classes' => array(
-		1 => '2,200',
-		10 => '2,200',
-		20 => '740,200,201',
-		21 => '740,200,201',
-		22 => '200,700-745',
-		23 => '2,200',
-		24 => '2,200',
-		25 => '600,2,200,400,203',
-		26 => '770-740,200,201',
-		30 => '710,600-601,2,200,400,203',
-		31 => '200',
-		32 => '100',
-		33 => '2,200',
-		40 => '601-740,200-745',
-		41 => '200',
-		42 => '2,200',
-		50 => '200,202',
-		51 => '200,202',
-		52 => '200,202',
-		53 => '602-760,400,'
-	),
-	'roles' => array(
-	//array('id' => 3, 'name' => 'testrole', 'classes' => '10,20,30'),
-    /*array('id' => 4, 'name' => 'testrolearray',
-        'classes' => [
-            '10' => ["browseable" => 'N', "status1" => 'N', "status2" => 'N'],
-            '20' => [],
-            '30' => ["editable" => 'N', "status3" => 'N'],
-        ]
-    ),*/
-	),
-    //'bloqued_class' => [45]
-);
 
