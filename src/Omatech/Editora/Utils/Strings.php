@@ -175,111 +175,7 @@ static function array2string($data){
 		}
 
 
-		static function hyperlink($text)
-		{// $1 : protocolo, $2 : [www] + dominio, $3 : resto url
-			if (strpos($text, '<img src="http://')===false && strpos($text, '<a href="http://')===false)
-			{ 
-				$text = preg_replace("/([a-zA-Z]+:\/\/)([a-z][a-z0-9\.\_\-]*[a-z]{2,6})([a-zA-Z0-9\/\*\-\?\&\%\=\#\_\;\,\(\)\.]*)/i", "<a href=\"$1$2$3\" target=\"_blank\" rel=\"nofollow\">$2</a> ", $text);
-			}
-			return $text;
-		} 
-
 		
-		static function neteja ($str)
-		{
-			$strret=$str;
-			$strret=str_replace('&amp;', '&', $strret);
-			$strret=str_replace('&#39;', '\'', $strret);
-			$strret=str_replace('&#40;', '(', $strret);
-			$strret=str_replace('&#41;', ')', $strret);
-			$strret=str_replace('&#45;', '-', $strret);
-
-			if (strpos($strret, 'synerquia')===false)
-			{
-				$strret=hyperlink($strret);  
-			}
-			return $strret;
-		}
-
-		
-		static function get_title_cutted($titol, $paraules=7, $caracters=47)
-		{
-			$res = "";
-			$titolx = rtrim($titol," \t.");
-
-			if( strlen($titolx) <= $caracters )
-			{
-				$res = $titolx;
-			}
-			else
-			{
-				$caracters = get_real_limit($titol, $caracters);
-				//echo $titol." - ".$caracters;
-				if (strlen($titolx)<=$caracters){// retorno directament l'string, es prou curt
-					$res=$titolx;
-				}
-				else
-				{// es massa llarg, recorrem l'array i parem quan no pugem mes
-					$arr=explode(" ",$titolx);
-					$cont=0;
-					foreach($arr as $paraula)
-					{
-						if ((strlen($res)+strlen($paraula)+1)<=$caracters)
-						{
-								if ($cont!=0) $res.=' ';
-							$res.=$paraula;
-						}
-						else
-						{
-							$res.='...';
-							break;
-						}
-						$cont++;
-					}
-				}
-			}
-
-			return $res;
-		}
-
-
-
-		
-		static function num_chars ($str, $chars)
-		{
-			$chars_arr=split(',', $chars);
-			$count=0;
-
-			foreach ($chars_arr as $char)
-			{// for each char, lets see the number of occurrences in string
-				if($char=="*") $char=",";
-				$count+=strlen($str)-strlen(str_replace($char, '', $str));
-			}
-
-			return $count; 
-		}
-
-
-
-		static function get_real_limit($str, $limit, $very_small_factor=0.7, $small_factor=0.4, $large_factor=0.4, $very_large_factor=0.6)
-		{
-			$very_small=num_chars(substr($str,0,$limit+10), '*,\',f,i,í,ì,j,l,t,(,)');
-			$small=num_chars(substr($str,0,$limit+10), 'r,s,z,J,I,Í,Ì, ');
-			$large=num_chars(substr($str,0,$limit+10), 'a,b,d,e,g,o,p,q,F,L,P,R,S,T,Y,Z');
-			$very_large=num_chars(substr($str,0,$limit+10), 'm,w,A,Á,À,B,C,D,E,G,H,K,M,N,Ñ,O,Ó,Ò,Q,U,Ú,Ú,V,W,X');
-
-			/*  echo '<br />tots els molt curts='.$very_small;
-			 echo '<br />tots els curts='.$small;
-			 echo '<br />tots els llargs='.$large;
-			 echo '<br />tots els molt llargs='.$very_large;
-			*/
-			$limit=$limit+($very_small*$very_small_factor)+($small*$small_factor);
-			$limit=$limit-($large*$large_factor)-($very_large*$very_large_factor);
-			$limit=round($limit);
-
-			return $limit;
-		}
-
 		static function check_email($email) 
 		{
 			if(preg_match("/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/", $email))
@@ -331,14 +227,6 @@ static function array2string($data){
 		}
 
 
-		static function retorna_browselang() {
-			include "lang_class.php";
-
-			$l = new detect_language;
-			$dl = $l->getLanguage();
-
-			return $dl;
-		}
 
 		//////////////////////////////////////////////////////////////////////////////////////////
 		static function default_idioma () {
