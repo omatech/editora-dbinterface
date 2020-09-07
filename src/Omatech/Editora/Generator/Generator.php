@@ -398,6 +398,16 @@ class Generator extends DBInterfaceBase {
                     $this->create_params_attribute($id, 'F', $key_lang, $val_lang, $val);
                 }
             }
+            
+            foreach ($attributes_privatefile as $id => $val) {
+                $this->create_params_attribute($id, 'P', 0, 'ALL', $val);
+            }
+
+            foreach ($attributes_multi_lang_privatefile as $id => $val) {
+                foreach ($languages as $key_lang => $val_lang) {
+                    $this->create_params_attribute($id, 'P', $key_lang, $val_lang, $val);
+                }
+            }
 
             foreach ($attributes_image as $id => $params) {
                 $this->create_params_attribute($id, 'I', 0, 'ALL', $params);
@@ -1521,6 +1531,7 @@ class Generator extends DBInterfaceBase {
             'attributes_url' => array(),
             'attributes_multi_lang_url' => array(),
             'attributes_file' => array(),
+            'attributes_privatefile' => array(),
             'attributes_video' => array(),
             'attributes_lookup' => array(),
             'attributes_image' => array(),
@@ -1529,6 +1540,7 @@ class Generator extends DBInterfaceBase {
             'attributes_multi_lang_string' => array(),
             'attributes_multi_lang_textarea' => array(),
             'attributes_multi_lang_file' => array(),
+            'attributes_multi_lang_privatefile' => array(),
             'attributes_multi_lang_image' => array(),
             'attributes_multi_lang_video' => array(),
             'lookups' => array(),

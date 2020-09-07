@@ -157,6 +157,10 @@ $data = [
     'attributes_multi_lang_file' => [
         259=> ['lang_file', 'caption'=>['lang_file ca', 'lang_file es', 'lang_file en']],
     ],
+    'attributes_privatefile' => [
+    ],
+    'attributes_multi_lang_privatefile' => [
+    ],
 	'attributes_video' => [
 		260=> ['video', 'caption'=>['video ca', 'video es', 'video en']],
 	],
