@@ -21,7 +21,7 @@ set_time_limit(0);
 $options_array = getopt(null, ['from::', 'to::'
 	, 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:'
 	, 'outputformat:', 'outputfile:'
-	, 'class_id:', 'lang:'
+	, 'class_id:', 'lang:', 'child_class_tag:'
 	, 'help', 'debug']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
@@ -40,12 +40,14 @@ Parameters:
 Others:
 --help this help!
 --class_id generate only this class_id
+--child_class_tag tag of the child class to extract
+--lang language of the extraction
 --debug show all sqls (if not present false)
 
 example: 
 	
 1) Export all content of an editora in json format
-php export-allinstances-lang.php --class_id=8 --lang=es --from=db4 --dbhost=localhost --dbuser=root --dbpass= --dbname=editora_test --to=file --outputformat=json --outputfile=../data/sample-contents.json
+php export-allinstances-lang.php --class_id=8 --child_class_tag=bloc --lang=es --from=db4 --dbhost=localhost --dbuser=root --dbpass= --dbname=editora_test --to=file --outputformat=json --outputfile=../data/sample-contents.json
 
 ';
 	die;
@@ -107,21 +109,32 @@ if (!isset($options_array['lang'])) {
 	$lang=$options_array['lang'];
 }
 
+
+
+
+
+if (!isset($options_array['child_class_tag'])) {
+	die("You must set up a child_class_tag!\n");
+} else {
+	$child_class_tag=$options_array['child_class_tag'];
+}
+
+
 if ($conn_to) {
-    $res = array();
+  $res = array();
 	$params['lang']=$lang;
 	$params['metadata']=true;
 	//$params['debug']=true;
 	//$params['showinmediatedebug']=true;
 
-    $extractor = new Extractor($conn_to, $params);
+  $extractor = new Extractor($conn_to, $params);
 	$res=$extractor->findInstancesInClass($class_id, null, $params, 
-		function ($i) use ($extractor)
-		{
-			//echo "$i\n";
-			$blocks = $extractor->findChildrenInstances($i, "bloc", null, null);
-			return $blocks;
-		}	
+	function ($i) use ($extractor, $child_class_tag)
+	{
+		//echo "$i\n";
+		$blocks = $extractor->findChildrenInstances($i, $child_class_tag, null, null);
+		return $blocks;
+	}	
 );
 
 	
