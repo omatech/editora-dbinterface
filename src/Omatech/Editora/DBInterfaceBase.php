@@ -847,8 +847,8 @@ class DBInterfaceBase {
 				  and DATE_FORMAT(i.publishing_begins,'%Y%m%d%H%i%S') <= NOW()+0
 				  and IFNULL(DATE_FORMAT(i.publishing_ends,'%Y%m%d%H%i%S'),now()+1) > NOW()+0";
 		} else {
-
-			$filter .= "
+			/** delete date filter temporaly */
+			$filter2 = "
 				  and DATE_FORMAT(i.publishing_begins,'%Y%m%d%H%i%S') <= " . $this->preview_date . "+0
 				  and IFNULL(DATE_FORMAT(i.publishing_ends,'%Y%m%d%H%i%S'),now()+1) > " . $this->preview_date . "+0";
 		}
