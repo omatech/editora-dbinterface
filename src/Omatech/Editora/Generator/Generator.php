@@ -298,7 +298,6 @@ class Generator extends DBInterfaceBase {
         $this->data = $this->editoraPrepareData($data);
 
 
-
         if (!$this->validateData($this->data)) {
             return false;
         }
@@ -398,7 +397,7 @@ class Generator extends DBInterfaceBase {
                     $this->create_params_attribute($id, 'F', $key_lang, $val_lang, $val);
                 }
             }
-            
+
             foreach ($attributes_privatefile as $id => $val) {
                 $this->create_params_attribute($id, 'P', 0, 'ALL', $val);
             }
@@ -471,8 +470,42 @@ class Generator extends DBInterfaceBase {
                         }else{
                             $editable = 'Y';
                         }
+
+
                         $this->create_class($class_id, $name, $group_id, $i++, $caption, $caption_ca, $caption_es, $caption_en, $editable);
                         $this->create_class_attribute($class_id, $nomintern_id, 0, 1, 1, 1, true, true);;
+
+
+                        if(isset($class_values['seo_options']) && $class_values['seo_options']==true && isset($data['seo_attributes'])){
+                            $seo_attributes_in_class = explode(',', $data['seo_attributes'][0]);
+                            $fila = $lang_fila = 1;
+
+                            foreach ($seo_attributes_in_class as $atri_id) {
+                                $atri_ids = explode('-', $atri_id);
+                                $atri_id = $atri_ids[0];
+
+                                if (stripos($atri_id, '*') !== false) {
+                                    $atri_id = str_replace('*', '', $atri_id);
+                                    $mandatory = true;
+                                } else {
+                                    $mandatory = false;
+                                }
+
+
+                                if (array_key_exists($atri_id, $this->data['original_localized_attributes'])) {// es un atribut localized
+                                    foreach ($languages as $key_lang => $val_lang) {
+                                        $this->create_class_attribute($class_id, $atri_id+$key_lang, 0, 100, $lang_fila, $key_lang, false, $mandatory);
+
+                                    }
+                                    $lang_fila++;
+                                } else {
+                                    $this->create_class_attribute($class_id, $atri_id, 0, 100, $fila, 1, false, $mandatory);
+                                    $fila++;
+                                }
+
+                            }
+                        }
+
 
                         if(isset($class_values['attributes'])){
                             $filas = [1 => 2];
@@ -1077,7 +1110,8 @@ class Generator extends DBInterfaceBase {
             'original_localized_attributes' => array(),
             'global_filas' => array(),
             'classes_with_url_nice' => array(),
-            'other_classes' => array()];
+            'other_classes' => array(),
+            'seo_attributes' => array()];
 
 
         foreach ($defaultData as $aDefaultDataKey => $aDefaultDataValue) {
@@ -1549,7 +1583,8 @@ class Generator extends DBInterfaceBase {
             'attributes_classes' => array(),
             'roles' => $this->editoraDefaultRoles(),
             'tabs' => array(
-                1 => 'data'
+                1 => 'data',
+                100 => 'seo' ,
             )
         );
     }
