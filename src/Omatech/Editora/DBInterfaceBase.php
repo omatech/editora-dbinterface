@@ -47,6 +47,41 @@ class DBInterfaceBase {
 		$this->conn = $conn;
 	}
 
+
+	public function getUML()
+	{
+		$sql="select '@startuml' statement
+		union
+		select concat(parent.name, ' o-- ', child.name) statement
+		from omp_relations r
+		, omp_classes parent
+		, omp_classes child
+		where r.parent_class_id=parent.id
+		and r.child_class_id=child.id
+		UNION
+		select concat ('class ', t.name,' {', char(13),char(10), REPLACE(GROUP_CONCAT(t.attrs), ',', concat(char(13), char(10))), char(13), char(10), '}') attrs
+		from (
+		select c.name
+		, concat('  ', a.caption_es, ' : '
+			, if(a.type='S', 'String', if(a.type='K', 'RichText', if(a.type='I', 'Image', if(a.type, 'Z', 'NiceURL'))))
+		) attrs
+		from omp_class_attributes ca
+		, omp_classes c
+		, omp_attributes a
+		where ca.class_id=c.id
+		and ca.atri_id=a.id
+		and a.`language` in ('ALL', '".$this->lang."')
+		order by c.name, a.id
+		) t
+		group by t.name
+		union
+		select '@enduml' statement
+		";
+
+		$rows=$this->conn->fetchAll($sql);
+		return $rows;
+	}	
+
 	function getAllInstances ($limit=1000000000)
 	{
 		$sql="select i.*, c.name class_name, c.tag class_tag, c.id class_id, i.key_fields nom_intern, i.update_date, ifnull(unix_timestamp(i.update_date),0) update_timestamp
