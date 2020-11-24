@@ -275,6 +275,49 @@ class Generator extends DBInterfaceBase {
         }
     }
 
+    public function encryptPasswords() {
+        $this->conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
+        $sm = $this->conn->getSchemaManager();
+        $columns = $sm->listTableColumns('omp_users');
+        $passwordColumn = $columns['password'];
+        $hashedPasswordColumn = $columns['hashed_password'];
+
+        $sqlAlterTable = '';
+
+        if ($passwordColumn->getLength() != 100) {
+            $sqlAlterTable .= 'ALTER TABLE omp_users MODIFY password VARCHAR (100) NOT NULL;';
+            echo "- password column has been set to 100 characters\n";
+        }
+
+        if (empty($hashedPasswordColumn)) {
+            $sqlAlterTable .= 'ALTER TABLE omp_users ADD hashed_password TINYINT (1) DEFAULT 0;';
+            echo "- hashed_password column added\n";
+        }
+
+        if ($sqlAlterTable != '') {
+            $this->conn->exec($sqlAlterTable);
+        }
+
+        $sql = "select username, password, id from omp_users where hashed_password = 0";
+        $users = $this->conn->fetchAll($sql);
+
+        foreach ($users as $user) {
+            $user_id = $user['id'];
+            //echo "User $user_id\n";
+            $hasher = new BcryptHasher();
+            $old_password = $user['password'];
+            $hashed_password = $hasher->make($user['password']);
+
+            $sql = "update omp_users
+			set password=" . $this->conn->quote($hashed_password) . "
+			, hashed_password=1
+			where id=$user_id
+			";
+            $this->conn->executeQuery($sql);
+            $this->users_passwords[$user['username']] = array($old_password, $hashed_password);
+        }
+    }
+    
     public function checkPassword($user, $hassed_password) {
         $user = $this->conn->quote($user);
         $hassed_password = $this->conn->quote($hassed_password);
