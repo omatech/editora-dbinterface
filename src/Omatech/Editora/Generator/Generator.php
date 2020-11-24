@@ -59,7 +59,7 @@ class Generator extends DBInterfaceBase {
             $this->conn->executeQuery($sql);
             echo "Created!\n";
             $changes++;
-        } catch (\Doctrine\DBAL\DBALException $e) {
+        } catch (\Exception $e) {
             echo "Already created!\n";
         }
         return $changes;
