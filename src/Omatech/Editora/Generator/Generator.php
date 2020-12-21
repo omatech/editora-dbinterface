@@ -317,7 +317,7 @@ class Generator extends DBInterfaceBase {
             $this->users_passwords[$user['username']] = array($old_password, $hashed_password);
         }
     }
-    
+
     public function checkPassword($user, $hassed_password) {
         $user = $this->conn->quote($user);
         $hassed_password = $this->conn->quote($hassed_password);
@@ -485,14 +485,16 @@ class Generator extends DBInterfaceBase {
                 }
             }
 
-
-            foreach ($attributes_json as $id => $val) {
-                $this->create_params_attribute($id, 'J', 0, 'ALL', $val);
+            if(isset($attributes_json)){
+                foreach ($attributes_json as $id => $val) {
+                    $this->create_params_attribute($id, 'J', 0, 'ALL', $val);
+                }
             }
-
-            foreach ($attributes_multi_json as $id => $val) {
-                foreach ($languages as $key_lang => $val_lang) {
-                    $this->create_params_attribute($id, 'J', $key_lang, $val_lang, $val);
+            if(isset($attributes_multi_json)){
+                foreach ($attributes_multi_json as $id => $val) {
+                    foreach ($languages as $key_lang => $val_lang) {
+                        $this->create_params_attribute($id, 'J', $key_lang, $val_lang, $val);
+                    }
                 }
             }
 
