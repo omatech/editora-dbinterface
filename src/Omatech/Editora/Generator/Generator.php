@@ -485,6 +485,18 @@ class Generator extends DBInterfaceBase {
                 }
             }
 
+
+            foreach ($attributes_json as $id => $val) {
+                $this->create_params_attribute($id, 'J', 0, 'ALL', $val);
+            }
+
+            foreach ($attributes_multi_json as $id => $val) {
+                foreach ($languages as $key_lang => $val_lang) {
+                    $this->create_params_attribute($id, 'J', $key_lang, $val_lang, $val);
+                }
+            }
+
+
             array_push($this->queries, "delete from omp_class_groups;");
             $i = 1;
             foreach ($groups as $group_id => $group_values) {
@@ -906,6 +918,17 @@ class Generator extends DBInterfaceBase {
                     $this->create_attribute($key, $tag, 'U', 0, 'ALL', 0, $val);
                 } else {
                     $this->create_attribute($key, $val, 'U');
+                }
+            }
+
+
+            foreach ($attributes_json as $key => $val) {
+                if (is_array($val)) {
+                    $tag = $val[0];
+                    array_shift($val);
+                    $this->create_attribute($key, $tag, 'J', 0, 'ALL', 0, $val);
+                } else {
+                    $this->create_attribute($key, $val, 'J');
                 }
             }
 
