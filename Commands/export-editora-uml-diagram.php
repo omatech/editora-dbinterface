@@ -1,6 +1,10 @@
 <?php
 
 $autoload_location = '/vendor/autoload.php';
+
+use function Jawira\PlantUml\encodep;
+
+
 $tries = 0;
 while (!is_file(__DIR__ . $autoload_location)) {
 	$autoload_location = '/..' . $autoload_location;
@@ -30,24 +34,24 @@ Parameters:
 --from= db4 | db5 (only db4 supported by now)
 --dbhost= database host
 --dbuser= database user
---dbpass= database password 
---dbname= database name 
---to=file|output
+--dbpass= database password
+--dbname= database name
+--to=file|output|url
 --outputfile=path of the file to export
---outputformat= plantuml|json 
+--outputformat= plantuml|json
 
 Others:
 --help this help!
 --lang language of the extraction
 --debug show all sqls (if not present false)
 
-example: 
-	
+example:
+
 1) Export all structure of an editora in plantuml format to a file
 php export-editora-uml-diagram.php --lang=es --from=db4 --dbhost=localhost --dbuser=root --dbpass= --dbname=editora_test --to=file --outputformat=plantuml --outputfile=../data/sample-contents.uml
 
 2) Export all structure of an editora in plantuml format to the output
-php export-editora-uml-diagram.php --lang=es --from=db4 --dbhost=localhost --dbuser=root --dbpass= --dbname=editora_test --to=output --outputformat=plantuml 
+php export-editora-uml-diagram.php --lang=es --from=db4 --dbhost=localhost --dbuser=root --dbpass= --dbname=editora_test --to=output --outputformat=plantuml
 ';
 	die;
 }
@@ -69,8 +73,8 @@ if ($options_array['from'] != 'db4') {
 }
 
 $to=$options_array['to'];
-if ($options_array['to'] != 'file' && $options_array['to'] != 'output') {
-	echo "Only --to=file or --to=output supported by now, use --help for help!\n";
+if ($options_array['to'] != 'file' && $options_array['to'] != 'output'  && $options_array['to'] != 'url') {
+	echo "Only --to=file or --to=output or --to=url supported by now, use --help for help!\n";
 	die;
 }
 
@@ -109,7 +113,7 @@ if ($conn_from) {
   $extractor = new Extractor($conn_from, $params);
   $res=$extractor->getUML();
   $output='';
-	
+
 	if ($options_array['outputformat'] == 'json') {
 		$output = json_encode($res, JSON_PRETTY_PRINT);
 	} elseif ($options_array['outputformat'] == 'plantuml') {
@@ -123,7 +127,12 @@ if ($conn_from) {
 
 
   if ($options_array['to'] == 'output') {
-		echo $output; die;
+      echo $output;
+      die;
+  }elseif ($options_array['to'] == 'url') {
+
+        echo "http://www.plantuml.com/plantuml/uml/".encodep($output);
+        die;
 	} elseif ($options_array['to'] == 'file') {
 		if (isset($options_array['outputfile'])) {
 			file_put_contents($options_array['outputfile'], $output);
