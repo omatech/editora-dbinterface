@@ -595,7 +595,9 @@ class Loader extends DBInterfaceBase {
 					$this->insertUpdateLookupVal($inst_id, $attr_info['id'], $attr_info['lookup_id'], $value);
 				} elseif ($attr_info['type'] == 'M') {// Maps
 					$this->insertUpdateGeoposVal($inst_id, $attr_info['id'], $value);
-				} else {
+                } elseif ($attr_info['type'] == 'J') {// Json
+					$this->insertUpdateJsonVal($inst_id, $attr_info['id'], $value);
+                } else {
 					$this->insertUpdateTextVal($inst_id, $attr_info['id'], $value);
 				}
 			}
@@ -643,6 +645,21 @@ class Loader extends DBInterfaceBase {
 		}
 		$this->conn->executeQuery($sql);
 	}
+
+    public function insertUpdateJsonVal($inst_id, $atri_id, $value) {
+		$value = $this->conn->quote($value);
+		if ($this->existValue($inst_id, $atri_id)) {// update
+			$sql = "update omp_values v
+						set v.json_val=$value
+						where v.inst_id=$inst_id
+						and v.atri_id=$atri_id
+						";
+		} else {// insert
+			$sql = "insert into omp_values (inst_id, atri_id, json_val)
+						values ($inst_id, $atri_id, $value)";
+		}
+		$this->conn->executeQuery($sql);
+    }
 
 	public function insertUpdateLookupVal($inst_id, $atri_id, $lookup_id, $value) {
 		$lv_id = -1;
