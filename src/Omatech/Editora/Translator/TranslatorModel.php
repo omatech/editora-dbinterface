@@ -220,6 +220,71 @@ class TranslatorModel extends AppModel {
 		parent::executeQuery($sql, $connection);
 	}
 
+	function get_recursive_child_instances ($parent_inst_id, $already_scanned=array(), $connection = 'conn_from')
+	{
+		//echo "entrando con ".print_r($parent_inst_id, true)."\n";
+
+		if (!in_array($parent_inst_id, $already_scanned))
+		{
+			$already_scanned[]=$parent_inst_id;
+		}
+
+		$imported_sql_add=$exclude_classes_sql_add=$only_classes_sql_add=$remove_already_scanned="";
+	
+		if ($this->excludeimporteddata) $imported_sql_add=" and i.external_id is not null ";
+		if ($this->excludeclasses) $exclude_classes_sql_add=" and i.class_id not in (".$this->excludeclasses.") ";
+		if ($this->onlyclasses) $only_classes_sql_add=" and i.class_id in (".$this->onlyclasses.") ";
+		if ($already_scanned) $remove_already_scanned="and i.id not in (".implode(',',$already_scanned).")";
+
+		$sql = "select i.id
+		from omp_relation_instances ri
+		, omp_instances i
+		where 1=1
+		and ri.parent_inst_id=$parent_inst_id
+		and i.status='O'
+		and ri.child_inst_id=i.id
+		$imported_sql_add
+		$exclude_classes_sql_add
+		$only_classes_sql_add
+		$remove_already_scanned
+		and i.update_date >= ".parent::escape($this->since)."
+		group by i.id
+		";
+		
+		//echo "$sql\n";
+		$instances_array = parent::fetchAll($sql, $connection);
+		if (!$instances_array)
+		{
+			return $already_scanned;
+		}
+		
+		//echo "These are ".count($instances_array)." sons of $parent_inst_id\n";
+
+		foreach ($instances_array as $inst)
+		{
+			$inst_id=$inst['id'];
+			if (!in_array($inst_id, $already_scanned))
+			{
+				$already_scanned[]=$inst_id;
+				//echo "[".implode(',', $already_scanned)."]\n";
+				$sons=$this->get_recursive_child_instances($inst_id, $already_scanned, $connection);
+				if ($sons)
+				{
+					foreach ($sons as $son)
+					{
+						if (!in_array($son, $already_scanned))
+						{
+							$already_scanned[]=$son;
+							//echo "[".implode(',', $already_scanned)."]\n";
+						}
+					}
+				}					
+			}
+		}
+		//echo "[".implode(',', $already_scanned)."]\n";
+		return $already_scanned;
+	}
+
 	function get_all_source_texts($connection = 'conn_from') {
 		
 		$imported_sql_add="";

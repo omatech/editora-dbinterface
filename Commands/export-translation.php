@@ -20,7 +20,7 @@ set_time_limit(0);
 
 $options_array = getopt(null, ['from::', 'to::'
 	, 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:', 'sourcelanguage:', 'destinationlanguage:'
-	, 'outputformat:', 'tofilename:', 'what:', 'since:', 'excludeclasses:', 'onlyclasses:'
+	, 'outputformat:', 'tofilename:', 'what:', 'since:', 'parent_inst_id:', 'excludeclasses:', 'onlyclasses:'
 	, 'help', 'includemetadata', 'debug', 'excludeimporteddata']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
@@ -34,6 +34,7 @@ From parameters:
 --dbname= database name 
 --sourcelanguage= Source Language (ca|es|en...)
 --since= date to extract from in mysql format
+--parent_inst_id= Parent instance to get recursively all the content (pass only one inst_id or a list of comma separated inst_ids)
 --excludeclasses= comma separated list of class_ids to avoid, for example --excludeclasses=3 or --excludeclasses=3,4
 --onlyclasses= comma separated list of class_ids to include, for example --onlyclasses=3 or --onlyclasses=3,4
 
@@ -56,29 +57,31 @@ Others:
 example: 
 	
 1) Export missing texts in spanish that exists in english from a editora version 4 to an excel file
-php export-translation.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac --sourcelanguage=en --to=file --outputformat=excel --tofilename=missing_translation_from_en_to_es_panreac.xlsx --destinationlanguage=es --what=missing
+php export-translation.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=demo --sourcelanguage=en --to=file --outputformat=excel --tofilename=missing_translation_from_en_to_es_demo.xlsx --destinationlanguage=es --what=missing
 
 2) Export missing texts in spanish that exists in english from a editora version 5 to excel file
-php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=file --outputformat=excel --tofilename=missing_translation_from_en_to_es_panreac5.xlsx --destinationlanguage=es --what=missing
+php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=demo5 --sourcelanguage=en --to=file --outputformat=excel --tofilename=missing_translation_from_en_to_es_demo5.xlsx --destinationlanguage=es --what=missing
 
 3) Export missing texts in spanish that exists in english from a editora version 5 to standard output in array format
-php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=output --outputformat=array --destinationlanguage=es --what=missing 
+php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=demo5 --sourcelanguage=en --to=output --outputformat=array --destinationlanguage=es --what=missing 
 
 4) Export missing texts in spanish that exists in english from a editora version 5 to standard output in json format
-php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=output --outputformat=json --destinationlanguage=es --what=missing 
+php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=demo5 --sourcelanguage=en --to=output --outputformat=json --destinationlanguage=es --what=missing 
 
 5) Export all texts in english from a editora version 4 to an excel file
-php export-translation.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac --sourcelanguage=en --to=file --outputformat=excel --tofilename=all_en_panreac.xlsx --destinationlanguage=es --what=all
+php export-translation.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=demo --sourcelanguage=en --to=file --outputformat=excel --tofilename=all_en_demo.xlsx --destinationlanguage=es --what=all
 
 6) Export all texts in english from a editora version 5 to an excel file
-php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=file --outputformat=excel --tofilename=all_en_panreac5.xlsx --destinationlanguage=es --what=all
+php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=demo5 --sourcelanguage=en --to=file --outputformat=excel --tofilename=all_en_demo5.xlsx --destinationlanguage=es --what=all
 
-4) Export all texts in english from a editora version 5 to the output using json
-php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=output --outputformat=json --destinationlanguage=es --what=missing 
+7) Export all texts in english from a editora version 5 to the output using json
+php export-translation.php --from=db5 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=demo5 --sourcelanguage=en --to=output --outputformat=json --destinationlanguage=es --what=missing 
 
-4) Export all texts in english from a editora version 4 to an excel file, avoiding classes 1 and 2
-php export-translation.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=panreac5 --sourcelanguage=en --to=file --outputformat=excel --tofilename=../translatable_texts.xlsx --destinationlanguage=es --what=all --excludeclasses=1,2 
+8) Export all texts in english from a editora version 4 to an excel file, avoiding classes 1 and 2
+php export-translation.php --from=db4 --dbhost=localhost --dbuser=root --dbpass=xxx --dbname=demo5 --sourcelanguage=en --to=file --outputformat=excel --tofilename=../translatable_texts.xlsx --destinationlanguage=es --what=all --excludeclasses=1,2 
 
+9) Export all texts in spanish from a editora version 4 to an excel file including only childs of inst_ids 308 and 307
+php export-translation.php --from=db4 --dbhost=localhost --dbuser=root --dbpass= --dbname=demo --sourcelanguage=es --to=file --outputformat=excel --tofilename=only_childs.xlsx --destinationlanguage=po --what=all --parent_inst_id=308,307
 
 ';
 	die;
@@ -142,6 +145,12 @@ if (isset($options_array['onlyclasses'])) {
 	$params['onlyclasses'] = $options_array['onlyclasses'];
 }
 
+if (isset($options_array['parent_inst_id'])) {
+	$parent_inst_id = $options_array['parent_inst_id'];
+} else {
+	$parent_inst_id = null;
+}
+
 $result = array();
 
 unset($options_array['dbpass']);
@@ -162,8 +171,43 @@ if ($options_array['what'] == 'missing') {
 	die("Unknow what parameter, see --help for help. Aborting\n");
 }
 
+
+if ($parent_inst_id)
+{
+	$child_instances=[];
+	//var_dump($model);
+	$arr_parent_inst_id=explode(',',$parent_inst_id);
+	foreach ($arr_parent_inst_id as $one_parent_inst_id)
+	{
+		$childs=$model->get_recursive_child_instances ($one_parent_inst_id);
+		if ($childs)
+		{
+			foreach ($childs as $child)
+			{
+				if (!in_array($child, $child_instances))
+				{
+					$child_instances[]=$child;
+				}
+			}	
+		}
+	}
+}
+
+
 foreach ($rows['values'] as $val) {
-	$result['data'][] = ['key1' => $val['inst_id'], 'key2' => $val['atri_id'], 'value' => $val['value']];
+
+	if ($parent_inst_id) 
+	{
+		if ($child_instances && in_array($val['inst_id'], $child_instances))
+		{
+			$result['data'][] = ['key1' => $val['inst_id'], 'key2' => $val['atri_id'], 'value' => $val['value']];
+		}
+	}
+	else
+	{// We're not filtering by parent
+		$result['data'][] = ['key1' => $val['inst_id'], 'key2' => $val['atri_id'], 'value' => $val['value']];
+	}
+
 }
 
 foreach ($rows['statics'] as $val) {
@@ -174,9 +218,24 @@ foreach ($rows['statics'] as $val) {
 
 foreach ($rows['niceurls'] as $val) {
 	if (!isset($options_array['onlyclasses'])) {// if we're exporting only classes don't export niceurls
-		$result['data'][] = ['key1' => 'niceurls', 'key2' => $val['inst_id'], 'value' => $val['value']];
+
+		if ($parent_inst_id) 
+		{
+			if ($child_instances && in_array($val['inst_id'], $child_instances))
+			{
+				$result['data'][] = ['key1' => 'niceurls', 'key2' => $val['inst_id'], 'value' => $val['value']];
+			}
+		}
+		else
+		{// We're not filtering by parent
+			$result['data'][] = ['key1' => 'niceurls', 'key2' => $val['inst_id'], 'value' => $val['value']];
+		}
 	}
 }
+
+
+
+
 
 ob_start('ob_gzhandler');
 if ($options_array['outputformat'] == 'array') {
