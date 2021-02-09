@@ -711,6 +711,7 @@ class Extractor extends DBInterfaceBase {
 			return null;
 
 		$instance = array();
+		$instance['lang'] = $this->lang;
 		if (isset($row['inst_id'])) {
 			$inst_id = $row['inst_id'];
 		} else {
