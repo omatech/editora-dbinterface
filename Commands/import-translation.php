@@ -27,17 +27,18 @@ if (isset($options_array['help'])) {
 	echo 'Import strings from an excel, json file or input to editora database
 
 From parameters:
---from= input, file 
---inputformat= (excel, json)
---fromfilename= name of the file to import
+--from = input, file 
+--inputformat = (excel, json)
+--fromfilename = name of the file to import
 
 To parameters:
---to= db4 | db5
---dbhost= database host
---dbuser= database user
---dbpass= database password 
---dbname= database name
---destinationlanguage= Destination Language (ca|es|en...)
+--to = db4 | db5
+--dbhost = database host
+--dbuser = database user
+--dbpass = database password 
+--dbname = database name
+--destinationlanguage = Destination Language (ca|es|en...)
+--sourcelanguage = Source Language (ca|es|en...)
 
 Others:
 --help this help!
