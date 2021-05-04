@@ -747,6 +747,8 @@ class Extractor extends DBInterfaceBase {
 				$metadata['publishing_begins'] = $row['publishing_begins'];
 			if (isset($row['publishing_ends']))
 				$metadata['publishing_ends'] = $row['publishing_ends'];
+            if (isset($row['status']))
+                $metadata['status'] = $row['status'];
 			$metadata['class_id'] = $row['class_id'];
 			$metadata['class_tag'] = $row['class_tag'];
 			$metadata['class_name'] = $row['class_name'];
