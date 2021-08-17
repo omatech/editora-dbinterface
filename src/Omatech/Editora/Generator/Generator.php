@@ -12,25 +12,29 @@ use Omatech\Editora\DBInterfaceBase;
 use Omatech\Editora\Utils\BcryptHasher;
 use Omatech\Editora\Utils\Strings;
 
-class Generator extends DBInterfaceBase {
-
+class Generator extends DBInterfaceBase
+{
     protected $data;
     protected $queries;
     protected $users_passwords;
 
-    public function __construct($conn, $params = array()) {
+    public function __construct($conn, $params = array())
+    {
         parent::__construct($conn, $params);
     }
 
-    public function getQueries() {
+    public function getQueries()
+    {
         return $this->queries;
     }
 
-    public function getFinalData() {
+    public function getFinalData()
+    {
         return $this->data;
     }
 
-    public function fromEnumToVarchar($table, $columns_array) {
+    public function fromEnumToVarchar($table, $columns_array)
+    {
         $sql = "show columns from $table";
         $rows = $this->conn->fetchAll($sql);
         $changes = 0;
@@ -46,7 +50,8 @@ class Generator extends DBInterfaceBase {
         return $changes;
     }
 
-    public function tryToCreateIndex($table, $num, $columns_array, $unique = false) {
+    public function tryToCreateIndex($table, $num, $columns_array, $unique = false)
+    {
         $changes = 0;
         $index_name = $table . '_n' . $num;
         $unique_flag = '';
@@ -65,7 +70,8 @@ class Generator extends DBInterfaceBase {
         return $changes;
     }
 
-    public function modernize() {
+    public function modernize()
+    {
         $this->conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
         $sm = $this->conn->getSchemaManager();
         $changes = 0;
@@ -100,14 +106,18 @@ class Generator extends DBInterfaceBase {
         $external_id_found = false;
         $batch_id_found = false;
         foreach ($rows as $row) {
-            if ($row['Field'] == 'order_string')
+            if ($row['Field'] == 'order_string') {
                 $order_string_found = true;
-            if ($row['Field'] == 'order_date')
+            }
+            if ($row['Field'] == 'order_date') {
                 $order_date_found = true;
-            if ($row['Field'] == 'external_id')
+            }
+            if ($row['Field'] == 'external_id') {
                 $external_id_found = true;
-            if ($row['Field'] == 'batch_id')
+            }
+            if ($row['Field'] == 'batch_id') {
                 $batch_id_found = true;
+            }
         }
         if (!$order_string_found) {
             $sql = "alter table $table add column order_string varchar(250) default null\n";
@@ -138,8 +148,9 @@ class Generator extends DBInterfaceBase {
 
         $title_found = false;
         foreach ($rows as $row) {
-            if ($row['Field'] == 'title')
+            if ($row['Field'] == 'title') {
                 $title_found = true;
+            }
         }
         if (!$title_found) {
             $sql = "alter table omp_search add column title varchar(250) default null\n";
@@ -152,8 +163,9 @@ class Generator extends DBInterfaceBase {
 
         $params_found = false;
         foreach ($rows as $row) {
-            if ($row['Field'] == 'params')
+            if ($row['Field'] == 'params') {
                 $params_found = true;
+            }
         }
         if (!$params_found) {
             $sql = "alter table omp_attributes add column params text default null\n";
@@ -167,8 +179,9 @@ class Generator extends DBInterfaceBase {
 
         $json_val_found = false;
         foreach ($rows as $row) {
-            if ($row['Field'] == 'json_val')
+            if ($row['Field'] == 'json_val') {
                 $json_val_found = true;
+            }
         }
         if (!$json_val_found) {
             $sql = "alter table omp_values add column json_val TEXT default null\n";
@@ -232,7 +245,8 @@ class Generator extends DBInterfaceBase {
         return $changes;
     }
 
-    public function resetPasswords($length = 8) {
+    public function resetPasswords($length = 8)
+    {
         $this->conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
         $sm = $this->conn->getSchemaManager();
         $columns = $sm->listTableColumns('omp_users');
@@ -275,7 +289,8 @@ class Generator extends DBInterfaceBase {
         }
     }
 
-    public function encryptPasswords() {
+    public function encryptPasswords()
+    {
         $this->conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
         $sm = $this->conn->getSchemaManager();
         $columns = $sm->listTableColumns('omp_users');
@@ -318,7 +333,8 @@ class Generator extends DBInterfaceBase {
         }
     }
 
-    public function checkPassword($user, $hassed_password) {
+    public function checkPassword($user, $hassed_password)
+    {
         $user = $this->conn->quote($user);
         $hassed_password = $this->conn->quote($hassed_password);
 
@@ -336,8 +352,8 @@ class Generator extends DBInterfaceBase {
      * @throws \Doctrine\DBAL\DBALException
      * @throws \Exception
      */
-    public function createEditora(array $data) {
-
+    public function createEditora(array $data)
+    {
         $this->data = $this->editoraPrepareData($data);
 
 
@@ -346,7 +362,8 @@ class Generator extends DBInterfaceBase {
         }
 
         extract(
-            $this->data, EXTR_OVERWRITE
+            $this->data,
+            EXTR_OVERWRITE
         );
 
 
@@ -363,7 +380,7 @@ class Generator extends DBInterfaceBase {
         }
 
         $i = 2;
-        if($attributes_params){
+        if ($attributes_params) {
             // Creem l'atribut nom_intern
             $nom_intern_values = ['nom_intern', 'caption'=>['Nom intern', 'Nombre interno', 'Internal name']];
             $this->create_params_attribute($nomintern_id, 'S', 0, 'ALL', $nom_intern_values);
@@ -485,12 +502,12 @@ class Generator extends DBInterfaceBase {
                 }
             }
 
-            if(isset($attributes_json)){
+            if (isset($attributes_json)) {
                 foreach ($attributes_json as $id => $val) {
                     $this->create_params_attribute($id, 'J', 0, 'ALL', $val);
                 }
             }
-            if(isset($attributes_multi_json)){
+            if (isset($attributes_multi_json)) {
                 foreach ($attributes_multi_json as $id => $val) {
                     foreach ($languages as $key_lang => $val_lang) {
                         $this->create_params_attribute($id, 'J', $key_lang, $val_lang, $val);
@@ -504,7 +521,7 @@ class Generator extends DBInterfaceBase {
             foreach ($groups as $group_id => $group_values) {
                 $name = $caption_ca = $caption_es = $caption_en =$this->key_to_title($group_values[0]);
 
-                if(isset($group_values['caption'])){
+                if (isset($group_values['caption'])) {
                     $caption = $group_values['caption'];
                     $caption_ca = $this->key_to_title($caption[0]);
                     $caption_es = $this->key_to_title(isset($caption[1]) ? $caption[1] : $caption[0]);
@@ -512,28 +529,29 @@ class Generator extends DBInterfaceBase {
                 }
                 $this->create_class_group($name, $group_id, $caption_ca, $caption_es, $caption_en);
 
-                if(isset($group_values['classes'])){
+                if (isset($group_values['classes'])) {
                     foreach ($group_values['classes'] as $class_id => $class_values) {
                         $name = $caption_ca = $caption_es = $caption_en =$this->key_to_title($class_values[0]);
 
-                        if(isset($class_values['caption'])){
+                        if (isset($class_values['caption'])) {
                             $caption = $class_values['caption'];
                             $caption_ca = $this->key_to_title($caption[0]);
                             $caption_es = $this->key_to_title(isset($caption[1]) ? $caption[1] : $caption[0]);
                             $caption_en = $this->key_to_title(isset($caption[2]) ? $caption[2] : $caption[0]);
                         }
-                        if(isset($class_values['editable']) && $class_values['editable']==false){
+                        if (isset($class_values['editable']) && $class_values['editable']==false) {
                             $editable = 'N';
-                        }else{
+                        } else {
                             $editable = 'Y';
                         }
 
 
                         $this->create_class($class_id, $name, $group_id, $i++, $caption, $caption_ca, $caption_es, $caption_en, $editable);
-                        $this->create_class_attribute($class_id, $nomintern_id, 0, 1, 1, 1, true, true);;
+                        $this->create_class_attribute($class_id, $nomintern_id, 0, 1, 1, 1, true, true);
+                        ;
 
 
-                        if(isset($class_values['seo_options']) && $class_values['seo_options']==true && isset($data['seo_attributes'])){
+                        if (isset($class_values['seo_options']) && $class_values['seo_options']==true && isset($data['seo_attributes'])) {
                             $seo_attributes_in_class = explode(',', $data['seo_attributes'][0]);
                             $fila = $lang_fila = 1;
 
@@ -552,26 +570,23 @@ class Generator extends DBInterfaceBase {
                                 if (array_key_exists($atri_id, $this->data['original_localized_attributes'])) {// es un atribut localized
                                     foreach ($languages as $key_lang => $val_lang) {
                                         $this->create_class_attribute($class_id, $atri_id+$key_lang, 0, 100, $lang_fila, $key_lang, false, $mandatory);
-
                                     }
                                     $lang_fila++;
                                 } else {
                                     $this->create_class_attribute($class_id, $atri_id, 0, 100, $fila, 1, false, $mandatory);
                                     $fila++;
                                 }
-
                             }
                         }
 
 
-                        if(isset($class_values['attributes'])){
+                        if (isset($class_values['attributes'])) {
                             $filas = [1 => 2];
                             foreach ($languages as $key_lang => $val_lang) {
                                 $filas[$key_lang] = 2;
                             }
                             $attributes_in_class = explode(',', $class_values['attributes'][0]);
                             foreach ($attributes_in_class as $atri_id) {
-
                                 $atri_ids = explode('-', $atri_id);
                                 $atri_id = $atri_ids[0];
 
@@ -632,8 +647,7 @@ class Generator extends DBInterfaceBase {
                     }
                 }
             }
-
-        }else{
+        } else {
             // Creem l'atribut nom_intern
             $this->create_attribute($nomintern_id, $nomintern_name, 'S', 0, 'ALL', 0, $nomintern_caption);
 
@@ -972,13 +986,11 @@ class Generator extends DBInterfaceBase {
                     } else {
                         $this->create_class_group($key, $i++);
                     }
-
                 }
 
                 $i = 1;
                 foreach ($classes as $group_key => $group_val) {
                     foreach ($group_val as $key => $val) {
-
                         if (is_array($val)) {
                             $caption = null;
                             $caption_ca = $this->key_to_title(isset($val[1]) ? $val[1] : $val[0]);
@@ -1002,7 +1014,7 @@ class Generator extends DBInterfaceBase {
                     $this->create_class($key, $val, 1, $i++);
                     $this->create_class_attribute($key, $nomintern_id, 0, 1, 1, 1, true, true);
                     foreach ($languages as $key_lang => $val_lang) {
-                //echo "1. create_class_attribute $key, $key_lang+$niceurl_id, 0, $key_lang, 1, 2, false, false\n";
+                        //echo "1. create_class_attribute $key, $key_lang+$niceurl_id, 0, $key_lang, 1, 2, false, false\n";
                         $this->create_class_attribute($key, $key_lang + $niceurl_id, 0, $key_lang, 1, 2, false, false);
                     }
                 }
@@ -1022,7 +1034,6 @@ class Generator extends DBInterfaceBase {
 
                 $attributes_in_class = explode(',', $val);
                 foreach ($attributes_in_class as $atri_id) {
-
                     $atri_ids = explode('-', $atri_id);
                     $atri_id = $atri_ids[0];
 
@@ -1084,12 +1095,10 @@ class Generator extends DBInterfaceBase {
                     }
                 }
             }
-
         }
 
         if (isset($roles) && is_array($roles)) {
             foreach ($roles as $aRole) {
-
                 if (!isset($aRole['id']) || !isset($aRole['name'])) {
                     //TODO throw
                 }
@@ -1103,7 +1112,6 @@ class Generator extends DBInterfaceBase {
 
 
         foreach ($users as $user) {
-
             $hasher = new BcryptHasher();
             //$password = substr(md5(rand()), 0, 7);
             $password = Strings::generateStrongPassword(8);
@@ -1139,36 +1147,43 @@ class Generator extends DBInterfaceBase {
             }
         }
         $ret = $loader->ExistingInstanceIsDifferent(2, 'GLOBAL', ['nom_intern' => 'GLOBAL'], 'O', $difference, $attr_difference);
-        if ($ret)
+        if ($ret) {
             $loader->insertInstanceForcingID(2, 1, 'GLOBAL', ['nom_intern' => 'GLOBAL']);
+        }
 
         return true;
     }
 
-    public function get_users_passwords() {
+    public function get_users_passwords()
+    {
         return $this->users_passwords;
     }
 
-    public function editoraDefaultNomInternId() {
+    public function editoraDefaultNomInternId()
+    {
         return 1;
     }
 
-    public function editoraDefaultNomInternName() {
+    public function editoraDefaultNomInternName()
+    {
         return 'nom_intern';
     }
 
-    public function editoraDefaultNomInternCaption() {
+    public function editoraDefaultNomInternCaption()
+    {
         return ['Nom intern', 'Nombre interno', 'Internal name'];
     }
 
-    public function editoraDefaultRoles() {
+    public function editoraDefaultRoles()
+    {
         return array(
             array('id' => 1, 'name' => 'admin'),
             array('id' => 2, 'name' => 'user'),
         );
     }
 
-    public function editoraPrepareData($data) {
+    public function editoraPrepareData($data)
+    {
         $defaultData = $this->editoraDefaultData();
 
         $process_variables = [
@@ -1183,8 +1198,9 @@ class Generator extends DBInterfaceBase {
 
 
         foreach ($defaultData as $aDefaultDataKey => $aDefaultDataValue) {
-            if (empty($aDefaultDataValue))
+            if (empty($aDefaultDataValue)) {
                 continue;
+            }
 
             if (isset($data[$aDefaultDataKey])) {
                 if (!is_array($aDefaultDataValue)) {
@@ -1200,7 +1216,8 @@ class Generator extends DBInterfaceBase {
         return array_merge($defaultData, $process_variables, $data);
     }
 
-    public function validateData($data) {
+    public function validateData($data)
+    {
         return !(
             !is_array($data) ||
             empty($data['users']) ||
@@ -1210,7 +1227,8 @@ class Generator extends DBInterfaceBase {
 
     // funcions auxiliars
 
-    function create_relation($id, $parent, $children, $name) {
+    public function create_relation($id, $parent, $children, $name)
+    {
         $children = trim($children);
         if (is_array($name)) {
             $nice_name = $name[0];
@@ -1234,7 +1252,8 @@ class Generator extends DBInterfaceBase {
 			values($id, '$name_tag', '$nice_name', 'ALL', '$name_tag', $parent, $single_child, '$multiple_children', 'M', 'Y', 'Y', 'N', '$nice_name_ca', '$nice_name_es', '$nice_name', 'Y');");
     }
 
-    function create_params_relation($key, $class_id, $params) {
+    public function create_params_relation($key, $class_id, $params)
+    {
         $id = $key;
         $parent = $class_id;
         $name = $params['caption'];
@@ -1242,7 +1261,7 @@ class Generator extends DBInterfaceBase {
 
         $name = $params[0];
         $caption_ca = $caption_es = $caption_en =$this->key_to_title($name);
-        if(isset($params['caption'])){
+        if (isset($params['caption'])) {
             $caption = $params['caption'];
             $caption_ca = $this->key_to_title($caption[0]);
             $caption_es = $this->key_to_title(isset($caption[1]) ? $caption[1] : $caption[0]);
@@ -1269,24 +1288,23 @@ class Generator extends DBInterfaceBase {
 			values($id, $name_tag, '$name', 'ALL', $name_tag, '$parent', '$single_child', '$multiple_children', 'M', 'Y', 'Y', 'N', $nice_name_ca, $nice_name_es, $nice_name_en, 'Y');");
     }
 
-    function get_relation_name($rel_id, $parent_id, $childs_array) {
+    public function get_relation_name($rel_id, $parent_id, $childs_array)
+    {
         $classes_with_url_nice = $this->data['classes_with_url_nice'];
         $other_classes = $this->data['other_classes'];
         $relation_names = $this->data['relation_names'];
 
         if (array_key_exists($rel_id, $relation_names)) {
-
             if (is_array($relation_names[$rel_id])) {
                 $name[0] = $relation_names[$rel_id][0];
                 $name[1] = $relation_names[$rel_id][1];
 
-                if( isset($relation_names[$rel_id][2]) ){
+                if (isset($relation_names[$rel_id][2])) {
                     $name[2] = $relation_names[$rel_id][2];
                 }
-                if( isset($relation_names[$rel_id][3]) ){
+                if (isset($relation_names[$rel_id][3])) {
                     $name[3] = $relation_names[$rel_id][3];
                 }
-
             } else {
                 $name = $relation_names[$rel_id];
             }
@@ -1310,15 +1328,23 @@ class Generator extends DBInterfaceBase {
         return $name;
     }
 
-    function create_class_group($group, $id, $caption_ca = null, $caption_es = null, $caption_en = null) {
-        if($caption_ca == null){ $caption_ca = $group; }
-        if($caption_es == null){ $caption_es = $group; }
-        if($caption_en == null){ $caption_en = $group; }
+    public function create_class_group($group, $id, $caption_ca = null, $caption_es = null, $caption_en = null)
+    {
+        if ($caption_ca == null) {
+            $caption_ca = $group;
+        }
+        if ($caption_es == null) {
+            $caption_es = $group;
+        }
+        if ($caption_en == null) {
+            $caption_en = $group;
+        }
 
         array_push($this->queries, "insert into omp_class_groups (id, caption, caption_ca, caption_es, caption_en, ordering) values ($id, '$group', '$caption_ca', '$caption_es', '$caption_en', $id);");
     }
 
-    function create_class($id, $key, $grp_id, $grp_order, $caption = null, $caption_ca = null, $caption_es = null, $caption_en = null, $editableclass='Y') {
+    public function create_class($id, $key, $grp_id, $grp_order, $caption = null, $caption_ca = null, $caption_es = null, $caption_en = null, $editableclass='Y')
+    {
         $name = $this->key_to_title($key);
         if ($caption == null) {
             $caption = $name;
@@ -1330,15 +1356,21 @@ class Generator extends DBInterfaceBase {
         }
 
         if (isset($this->data['bloqued_class']) && !empty($this->data['bloqued_class'])) {
-            foreach ($this->data['bloqued_class'] as $bloqued_class){
-                if ($bloqued_class==$id){
+            foreach ($this->data['bloqued_class'] as $bloqued_class) {
+                if ($bloqued_class==$id) {
                     $editableclass='N';
                 }
             }
         }
-        if($caption_ca==null){$caption_ca=$caption;}
-        if($caption_es==null){$caption_es=$caption;}
-        if($caption_en==null){$caption_en=$caption;}
+        if ($caption_ca==null) {
+            $caption_ca=$caption;
+        }
+        if ($caption_es==null) {
+            $caption_es=$caption;
+        }
+        if ($caption_en==null) {
+            $caption_en=$caption;
+        }
         array_push($this->queries, "insert into omp_classes (id, name, tag, grp_id, grp_order, name_ca, name_es, name_en, recursive_clone) values ($id, '$key', '$key', $grp_id, $grp_order, '$caption_ca', '$caption_es', '$caption_en', 'N');");
         array_push($this->queries, "insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values ($id, 1, 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');");
         array_push($this->queries, "insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values ($id, 2, 'Y', '$editableclass', 'Y', '$editableclass', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');");
@@ -1354,13 +1386,11 @@ class Generator extends DBInterfaceBase {
                 $currentRoleId = $aRole['id'];
 
                 if (empty($aRole['classes'])) {
-
                     array_push($this->queries, "insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values ($id, $currentRoleId, 'Y', '$editableclass', 'Y', '$editableclass', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');");
                 } else {
-
                     if (is_array($aRole['classes'])) {
-                        foreach ($aRole['classes'] as $role_key => $role_class){
-                            if($id == $role_key){
+                        foreach ($aRole['classes'] as $role_key => $role_class) {
+                            if ($id == $role_key) {
                                 $browseableField = isset($role_class['browseable']) ? $role_class['browseable'] : 'Y';
                                 $insertableField = isset($role_class['insertable']) ? $role_class['insertable'] : $editableclass;
                                 $editableField = isset($role_class['editable']) ? $role_class['editable'] : 'Y';
@@ -1382,19 +1412,19 @@ class Generator extends DBInterfaceBase {
                             array_push($this->queries, "insert into omp_roles_classes (class_id, rol_id, browseable, insertable, editable, deleteable, permisos, status1, status2, status3, status4, status5) values ($id, $currentRoleId, 'Y', '$editableclass', 'Y', '$editableclass', 'Y', 'Y', 'Y', 'Y', 'Y', 'Y');");
                         }
                     }
-
                 }
             }
         }
     }
 
-    function create_params_attribute($id, $type, $language_id = 0, $language = 'ALL', $values) {
+    public function create_params_attribute($id, $type, $language_id = 0, $language = 'ALL', $values=null)
+    {
         $localized_attributes = $this->data['localized_attributes'];
         $simple_attributes = $this->data['simple_attributes'];
 
         $key = $values[0];
         $name = $caption_ca = $caption_es = $caption_en =$this->key_to_title($key);
-        if(isset($values['caption'])){
+        if (isset($values['caption'])) {
             $caption = $values['caption'];
             $caption_ca = $this->key_to_title($caption[0]);
             $caption_es = $this->key_to_title(isset($caption[1]) ? $caption[1] : $caption[0]);
@@ -1433,9 +1463,9 @@ class Generator extends DBInterfaceBase {
 
 
         $img_width = $img_height = $lookup_id = 'null';
-        if(isset($values['params'])){
+        if (isset($values['params'])) {
             $params = $values['params'];
-            if(isset($params['size'])){
+            if (isset($params['size'])) {
                 $arr_sizes = explode('x', $params['size'][0]);
 
                 if (isset($arr_sizes[0]) && !empty($arr_sizes[0])) {
@@ -1448,7 +1478,7 @@ class Generator extends DBInterfaceBase {
             }
 
             $json_params = json_encode($params);
-            if(isset($params['lookup'])){
+            if (isset($params['lookup'])) {
                 $lookup_id = $id;
                 array_push($this->queries, "insert into omp_lookups (id, name, type, default_id) values ($lookup_id, $name, 'L', 0);");
                 $i = 0;
@@ -1461,13 +1491,13 @@ class Generator extends DBInterfaceBase {
                     $i++;
                 }
             }
-        }else{
+        } else {
             $json_params = null;
         }
 
-        if(isset($values['description'])){
+        if (isset($values['description'])) {
             $description = $values['description'];
-        }else{
+        } else {
             $description = null;
         }
 
@@ -1477,7 +1507,8 @@ class Generator extends DBInterfaceBase {
                                     $caption_ca, $caption_es, $caption_en, $img_width, $img_height, '$json_params', '$description');");
     }
 
-    function create_attribute($id, $key, $type, $language_id = 0, $language = 'ALL', $lookup_id = 0, $caption = null) {
+    public function create_attribute($id, $key, $type, $language_id = 0, $language = 'ALL', $lookup_id = 0, $caption = null)
+    {
         $localized_attributes = $this->data['localized_attributes'];
         $simple_attributes = $this->data['simple_attributes'];
         //$original_localized_attributes = $this->data['original_localized_attributes'];
@@ -1539,7 +1570,8 @@ class Generator extends DBInterfaceBase {
 																	values ($id, '$key', $name, '$tag', '$type', $lookup_id, '$language', $caption_ca, $caption_es, $caption_en);");
     }
 
-    function create_class_attribute($class_id, $atri_id, $rel_id, $tab_id, $fila, $columna, $is_key, $is_mandatory) {
+    public function create_class_attribute($class_id, $atri_id, $rel_id, $tab_id, $fila, $columna, $is_key, $is_mandatory)
+    {
         if ($is_key) {
             $ordre_key = 1;
         } else {
@@ -1564,51 +1596,70 @@ class Generator extends DBInterfaceBase {
 																	 values ($class_id, $atri_id, $rel_id, $tab_id, $fila, $columna, 'left', $ordre_key, '$mandatory', 'N');");
     }
 
-    function create_tab($key, $val, $order) {
+    public function create_tab($key, $val, $order)
+    {
         array_push($this->queries, "insert into omp_tabs (id, name, name_ca, name_es, name_en, ordering) values ($key, '$val', '$val', '$val', '$val', $order);");
     }
 
-    function key_to_title($key) {
+    public function key_to_title($key)
+    {
         $str = str_replace('_', ' ', $key);
         $str = str_replace('-', ' ', $str);
         $str = ucwords($str);
         return $str;
     }
 
-    function title_to_key($key) {
-
+    public function title_to_key($key)
+    {
         $str = $this->clean_characters($key);
         $str = ucwords($str);
         $str = str_replace(' ', '', $str);
         return $str;
     }
 
-    function clean_characters($key) {
+    public function clean_characters($key)
+    {
         $str = str_replace(
-            array('á', 'à', 'ä', 'â', 'ª', 'Á', 'À', 'Â', 'Ä'), array('a', 'a', 'a', 'a', 'a', 'A', 'A', 'A', 'A'), $key
+            array('á', 'à', 'ä', 'â', 'ª', 'Á', 'À', 'Â', 'Ä'),
+            array('a', 'a', 'a', 'a', 'a', 'A', 'A', 'A', 'A'),
+            $key
         );
 
         $str = str_replace(
-            array('é', 'è', 'ë', 'ê', 'É', 'È', 'Ê', 'Ë'), array('e', 'e', 'e', 'e', 'E', 'E', 'E', 'E'), $str);
+            array('é', 'è', 'ë', 'ê', 'É', 'È', 'Ê', 'Ë'),
+            array('e', 'e', 'e', 'e', 'E', 'E', 'E', 'E'),
+            $str
+        );
 
         $str = str_replace(
-            array('í', 'ì', 'ï', 'î', 'Í', 'Ì', 'Ï', 'Î'), array('i', 'i', 'i', 'i', 'I', 'I', 'I', 'I'), $str);
+            array('í', 'ì', 'ï', 'î', 'Í', 'Ì', 'Ï', 'Î'),
+            array('i', 'i', 'i', 'i', 'I', 'I', 'I', 'I'),
+            $str
+        );
 
         $str = str_replace(
-            array('ó', 'ò', 'ö', 'ô', 'Ó', 'Ò', 'Ö', 'Ô'), array('o', 'o', 'o', 'o', 'O', 'O', 'O', 'O'), $str);
+            array('ó', 'ò', 'ö', 'ô', 'Ó', 'Ò', 'Ö', 'Ô'),
+            array('o', 'o', 'o', 'o', 'O', 'O', 'O', 'O'),
+            $str
+        );
 
         $str = str_replace(
-            array('ú', 'ù', 'ü', 'û', 'Ú', 'Ù', 'Û', 'Ü'), array('u', 'u', 'u', 'u', 'U', 'U', 'U', 'U'), $str);
+            array('ú', 'ù', 'ü', 'û', 'Ú', 'Ù', 'Û', 'Ü'),
+            array('u', 'u', 'u', 'u', 'U', 'U', 'U', 'U'),
+            $str
+        );
 
         $str = str_replace(
-            array('ñ', 'Ñ', 'ç', 'Ç'), array('n', 'N', 'c', 'C'), $str
+            array('ñ', 'Ñ', 'ç', 'Ç'),
+            array('n', 'N', 'c', 'C'),
+            $str
         );
         return $str;
     }
 
     // Data
-    private function editoraDefaultData() {
-
+    private function editoraDefaultData()
+    {
         return array(
             'attributes_params' => false,
             'nomintern_id' => $this->editoraDefaultNomInternId(),
@@ -1656,5 +1707,4 @@ class Generator extends DBInterfaceBase {
             )
         );
     }
-
 }
