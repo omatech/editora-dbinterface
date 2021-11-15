@@ -36,7 +36,7 @@ class Generator extends DBInterfaceBase
     public function fromEnumToVarchar($table, $columns_array)
     {
         $sql = "show columns from $table";
-        $rows = $this->conn->fetchAll($sql);
+        $rows = $this->fetchAll($sql);
         $changes = 0;
         foreach ($rows as $row) {
             if (in_array($row['Field'], $columns_array)) {
@@ -99,7 +99,7 @@ class Generator extends DBInterfaceBase
 
         $table = 'omp_instances';
         $sql = "show columns from $table";
-        $rows = $this->conn->fetchAll($sql);
+        $rows = $this->fetchAll($sql);
 
         $order_string_found = false;
         $order_date_found = false;
@@ -144,7 +144,7 @@ class Generator extends DBInterfaceBase
 
 
         $sql = "show columns from omp_search";
-        $rows = $this->conn->fetchAll($sql);
+        $rows = $this->fetchAll($sql);
 
         $title_found = false;
         foreach ($rows as $row) {
@@ -159,7 +159,7 @@ class Generator extends DBInterfaceBase
         }
 
         $sql = "show columns from omp_attributes";
-        $rows = $this->conn->fetchAll($sql);
+        $rows = $this->fetchAll($sql);
 
         $params_found = false;
         foreach ($rows as $row) {
@@ -175,7 +175,7 @@ class Generator extends DBInterfaceBase
 
         /* Column json_val in omp_values */
         $sql = "show columns from omp_values";
-        $rows = $this->conn->fetchAll($sql);
+        $rows = $this->fetchAll($sql);
 
         $json_val_found = false;
         foreach ($rows as $row) {
@@ -270,7 +270,7 @@ class Generator extends DBInterfaceBase
         }
 
         $sql = "select username, id from omp_users";
-        $users = $this->conn->fetchAll($sql);
+        $users = $this->fetchAll($sql);
 
         foreach ($users as $user) {
             $user_id = $user['id'];
@@ -314,7 +314,7 @@ class Generator extends DBInterfaceBase
         }
 
         $sql = "select username, password, id from omp_users where hashed_password = 0";
-        $users = $this->conn->fetchAll($sql);
+        $users = $this->fetchAll($sql);
 
         foreach ($users as $user) {
             $user_id = $user['id'];
@@ -343,7 +343,7 @@ class Generator extends DBInterfaceBase
 		where username=$user
 		and password=$hassed_password
 		";
-        $num = $this->conn->FetchColumn($sql);
+        $num = $this->fetchColumn($sql);
         return $num == 1;
     }
 
