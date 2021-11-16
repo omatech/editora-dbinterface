@@ -461,8 +461,12 @@ class DBInterfaceBase
 
                 $prepare = $this->conn->prepare($sql);
                 $prepare->bindValue('language', $language);
-                $prepare->execute();
-                $row = $prepare->fetch();
+                $resultSet = $prepare->executeQuery();
+                $rows=$resultSet->fetchAllAssociative();
+                $row = $rows[0];
+
+                //$prepare->execute();
+                //$row = $prepare->fetch();
 
                 if ($row['num'] == 0) {// error language not found!
                     return ['type' => 'Error', 'language' => $language];
@@ -485,8 +489,11 @@ class DBInterfaceBase
                 $prepare = $this->conn->prepare($sql);
                 $prepare->bindValue('language', $language);
                 $prepare->bindValue('nice_url', $nice_url);
-                $prepare->execute();
-                $row = $prepare->fetch();
+                $resultSet = $prepare->executeQuery();
+                $rows=$resultSet->fetchAllAssociative();
+                $row = $rows[0];
+                //$prepare->execute();
+                //$row = $prepare->fetch();
 
                 if ($row) {
                     $result = ['type' => 'Instance'
@@ -538,8 +545,11 @@ class DBInterfaceBase
         $prepare = $this->conn->prepare($sql);
         $prepare->bindValue('lang', $lang);
         $prepare->bindValue('inst_id', $inst_id);
-        $prepare->execute();
-        return $prepare->fetchAll();
+        $resultSet = $prepare->executeQuery();
+        $rows=$resultSet->fetchAllAssociative();
+        return $rows;
+        //$prepare->execute();
+        //return $prepare->fetchAll();
     }
     
     public function deleteCache($memcache_key)
