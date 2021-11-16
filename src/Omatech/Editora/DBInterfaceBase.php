@@ -175,7 +175,7 @@ class DBInterfaceBase
         if (method_exists($this->conn, 'fetchAssoc')) {
             return $this->conn->fetchAssoc($sql);
         } else {
-            return $this->conn->query($sql)->fetchAll()[0];
+            return $this->conn->query($sql)->fetchAssociative();
         }
     }
 
