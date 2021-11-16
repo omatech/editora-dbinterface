@@ -3,7 +3,7 @@
     "description": "Extract or Load information from Editora in powerful and misterious ways using closures with Eloquant like syntax",
 		"minimum-stability":"dev",
     "require": {
-      "doctrine/orm": "2.*",
+      "doctrine/orm": "3.*",
       "phpoffice/phpspreadsheet": "1.*",
       "jawira/plantuml-encoding": "^1.0"
     },
