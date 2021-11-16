@@ -268,7 +268,7 @@ class ReverseEngineerator extends DBInterfaceBase {
 		from omp_relations
 		order by id
 		";
-		$rows=$this->conn->fetchAll($sql);
+		$rows=$this->fetchAll($sql);
 		if ($rows)
 		{
 			foreach ($rows as $row)
@@ -293,7 +293,7 @@ class ReverseEngineerator extends DBInterfaceBase {
 		from omp_relations
 		order by id
 		";
-		$rows=$this->conn->fetchAll($sql);
+		$rows=$this->fetchAll($sql);
 		if ($rows)
 		{
 			foreach ($rows as $row)
@@ -316,7 +316,7 @@ class ReverseEngineerator extends DBInterfaceBase {
 		) t
 		order by class_id, es_rel, tab_id, fila, columna
 		";
-		$rows=$this->conn->fetchAll($sql);
+		$rows=$this->fetchAll($sql);
 		$class_id=$rows[0]['class_id'];
 		$atris='';
 		foreach ($rows as $row)
@@ -361,7 +361,7 @@ class ReverseEngineerator extends DBInterfaceBase {
 		where type='I'
 		order by id
 		";
-		$rows=$this->conn->fetchAll($sql);
+		$rows=$this->fetchAll($sql);
 		if ($rows)
 		{
 			foreach ($rows as $row)
@@ -393,7 +393,7 @@ class ReverseEngineerator extends DBInterfaceBase {
 		where id>=10000
 		order by id
 		";
-		$rows=$this->conn->fetchAll($sql);
+		$rows=$this->fetchAll($sql);
 		if ($rows)
 		{
 			foreach ($rows as $row)
@@ -413,7 +413,7 @@ class ReverseEngineerator extends DBInterfaceBase {
 		order by id
 		";
 			
-		$rows=$this->conn->fetchAll($sql);
+		$rows=$this->fetchAll($sql);
 		if ($rows)
 		{
 			foreach ($rows as $row)
@@ -438,7 +438,7 @@ class ReverseEngineerator extends DBInterfaceBase {
 		order by id
 		";
 			
-		$rows=$this->conn->fetchAll($sql);
+		$rows=$this->fetchAll($sql);
 		if ($rows)
 		{
 			foreach ($rows as $row)
@@ -458,7 +458,7 @@ class ReverseEngineerator extends DBInterfaceBase {
 		order by id
 		";
 			
-		$rows=$this->conn->fetchAll($sql);
+		$rows=$this->fetchAll($sql);
 		if ($rows)
 		{
 			foreach ($rows as $row)
@@ -470,7 +470,7 @@ class ReverseEngineerator extends DBInterfaceBase {
 				where c.grp_id=".$row['id']."
 				order by grp_order
 				";
-				$rows_classes=$this->conn->fetchAll($sql);
+				$rows_classes=$this->fetchAll($sql);
 				foreach ($rows_classes as $class)
 				{
 					$classes_array[$class['id']]=array($class['tag'], $class['name_ca']);
@@ -499,7 +499,7 @@ class ReverseEngineerator extends DBInterfaceBase {
 		and id>1
 		$sql_multilang_condition
 		";
-		$rows=$this->conn->fetchAll($sql);
+		$rows=$this->fetchAll($sql);
 		foreach ($rows as $row)
 		{
 			$id=$row['id'];
@@ -516,13 +516,13 @@ class ReverseEngineerator extends DBInterfaceBase {
 	{
 		$return_array=array();
 		$sql="select id, name from omp_lookups";
-		$rows=$this->conn->fetchAll($sql);
+		$rows=$this->fetchAll($sql);
 		foreach ($rows as $row)
 		{
 			$lookup_id=$row['id'];
 			$lookup_name=$row['name'];
 			$sql="select * from omp_lookups_values where lookup_id=$lookup_id order by ordre";
-			$values=$this->conn->fetchAll($sql);
+			$values=$this->fetchAll($sql);
 			$values_array=array();
 			foreach ($values as $value)
 			{

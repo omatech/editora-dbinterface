@@ -14,7 +14,7 @@ final class ExtractorTest extends TestCaseBase
 		
 		public function testConnection()
 		{
-			$row=$this->connection->fetchAssoc("select * from omp_classes where id=1");
+			$row=$this->fetchAssoc("select * from omp_classes where id=1");
 			$this->assertEquals(1, $row['id']);
 			$this->assertEquals('Global', $row['name']);
 		}

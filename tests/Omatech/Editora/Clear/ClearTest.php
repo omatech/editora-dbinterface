@@ -14,7 +14,7 @@ class ClearTest extends TestCaseBase
 
     protected function setUp()
     {
-        $this->Clear = new Clear($this->connection, array());
+        $this->Clear = new Clear($this->conn, array());
         $this->Clear->dropAllData();
 
         parent::setUp();
@@ -24,58 +24,58 @@ class ClearTest extends TestCaseBase
     {
         $class = 'test_class_'.rand();
         $query = "select c.id class_id, c.name, c.tag from omp_classes c where c.tag='$class' limit 1;";
-        $this->connection->insert($this->connection->getDatabase().'.omp_classes', array(
+        $this->conn->insert($this->conn->getDatabase().'.omp_classes', array(
            'name' => $class,
            'tag' => $class,
         ));
-        $query_result = $this->connection->fetchAssoc($query);
-				
+        $query_result = $this->fetchAssoc($query);
+                
 
-        if(is_array($query_result) && !empty($query_result['name'])){
+        if (is_array($query_result) && !empty($query_result['name'])) {
             $this->assertArrayHasKey('name', $query_result);
             $this->assertTrue($query_result['name'] == $class);
-        }else{
+        } else {
             $this->assertTrue(false);
         }
 
         $this->Clear->truncateTables();
 
-        $query_result = $this->connection->fetchAssoc($query);
+        $query_result = $this->fetchAssoc($query);
 
         $this->assertEmpty($query_result);
     }
 
-		
+        
     public function testTableOmpInstancesNotTruncated()
     {
         $class = 'test_class_'.rand();
         $query = "select c.id class_id, c.name, c.tag from omp_classes c where c.tag='$class' limit 1;";
-        $this->connection->insert($this->connection->getDatabase().'.omp_classes', array(
+        $this->conn->insert($this->conn->getDatabase().'.omp_classes', array(
             'name' => $class,
             'tag' => $class,
         ));
-        $query_result = $this->connection->fetchAssoc($query);
+        $query_result = $this->fetchAssoc($query);
 
-        if(is_array($query_result) && !empty($query_result['name']) && !empty($query_result['class_id'])){
+        if (is_array($query_result) && !empty($query_result['name']) && !empty($query_result['class_id'])) {
             $this->assertArrayHasKey('name', $query_result);
             $this->assertTrue($query_result['name'] == $class);
-        }else{
+        } else {
             $this->assertTrue(false);
         }
 
         $class_id = $query_result['class_id'];
 
-        $this->connection->insert($this->connection->getDatabase().'.omp_instances', array(
+        $this->conn->insert($this->conn->getDatabase().'.omp_instances', array(
             'class_id' => $class_id,
         ));
 
         $this->Clear->truncateTables();
 
-        $query_result = $this->connection->fetchAssoc($query);
+        $query_result = $this->fetchAssoc($query);
 
         $this->assertEmpty($query_result);
 
-        $query_result = $this->connection->fetchAssoc("select omp_instances.id, omp_instances.class_id from omp_instances where omp_instances.class_id='$class_id' limit 1;");
+        $query_result = $this->fetchAssoc("select omp_instances.id, omp_instances.class_id from omp_instances where omp_instances.class_id='$class_id' limit 1;");
 
         $this->assertNotEmpty($query_result['class_id']);
         $this->assertEquals($class_id, $query_result['class_id']);
@@ -85,34 +85,33 @@ class ClearTest extends TestCaseBase
     {
         $class = 'test_class_'.rand();
         $query = "select c.id class_id, c.name, c.tag from omp_classes c where c.tag='$class' limit 1;";
-        $this->connection->insert($this->connection->getDatabase().'.omp_classes', array(
+        $this->conn->insert($this->conn->getDatabase().'.omp_classes', array(
             'name' => $class,
             'tag' => $class,
         ));
-        $query_result = $this->connection->fetchAssoc($query);
+        $query_result = $this->fetchAssoc($query);
 
-        if(is_array($query_result) && !empty($query_result['name']) && !empty($query_result['class_id'])){
+        if (is_array($query_result) && !empty($query_result['name']) && !empty($query_result['class_id'])) {
             $this->assertArrayHasKey('name', $query_result);
             $this->assertTrue($query_result['name'] == $class);
-        }else{
+        } else {
             $this->assertTrue(false);
         }
 
         $class_id = $query_result['class_id'];
 
-        $this->connection->insert($this->connection->getDatabase().'.omp_instances', array(
+        $this->conn->insert($this->conn->getDatabase().'.omp_instances', array(
             'class_id' => $class_id,
         ));
 
         $this->Clear->dropAllData();
 
-        $query_result = $this->connection->fetchAssoc($query);
+        $query_result = $this->fetchAssoc($query);
 
         $this->assertEmpty($query_result);
 
-        $query_result = $this->connection->fetchAssoc("select omp_instances.id, omp_instances.class_id from omp_instances where omp_instances.class_id='$class_id' limit 1;");
+        $query_result = $this->fetchAssoc("select omp_instances.id, omp_instances.class_id from omp_instances where omp_instances.class_id='$class_id' limit 1;");
 
         $this->assertEmpty($query_result);
     }
-
 }

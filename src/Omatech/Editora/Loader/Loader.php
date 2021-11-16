@@ -103,7 +103,7 @@ class Loader extends DBInterfaceBase
     {
         //$batch_id = $this->conn->quote($batch_id);
         $sql = "select id from omp_instances where batch_id=$batch_id";
-        $rows = $this->conn->fetchAll($sql);
+        $rows = $this->fetchAll($sql);
 
         if ($rows) {
             foreach ($rows as $row) {
@@ -119,7 +119,7 @@ class Loader extends DBInterfaceBase
     public function deleteInstancesWithExternalID($external_id, $class_id)
     {
         $sql = "select id from omp_instances where external_id=$external_id and class_id=$class_id";
-        $rows = $this->conn->fetchAll($sql);
+        $rows = $this->fetchAll($sql);
         
         if ($rows) {
             foreach ($rows as $row) {
@@ -212,7 +212,7 @@ class Loader extends DBInterfaceBase
             $sql .= ';';
         }
 
-        $row = $this->conn->fetchAll($sql);
+        $row = $this->fetchAll($sql);
         if (!$row) {
             return null;
         }
@@ -235,7 +235,7 @@ class Loader extends DBInterfaceBase
 						and ri.rel_id=$rel_id
 						GROUP BY ri.rel_id, ri.parent_inst_id";
 
-            $weight_row = $this->conn->fetchAssoc($sql);
+            $weight_row = $this->fetchAssoc($sql);
 
             if (empty($weight_row) || $weight_row["weight"] == -10) {
                 $weight = 100000;
@@ -409,7 +409,7 @@ class Loader extends DBInterfaceBase
     {
         //$batch_id = $this->conn->quote($batch_id);
         $sql = "select id from omp_instances where batch_id=$batch_id";
-        $rows = $this->conn->fetchAll($sql);
+        $rows = $this->fetchAll($sql);
 
         if ($rows) {
             foreach ($rows as $row) {
@@ -426,7 +426,7 @@ class Loader extends DBInterfaceBase
     {
         //$batch_id = $this->conn->quote($batch_id);
         $sql = "select id from omp_relation_instances where batch_id=$batch_id";
-        $rows = $this->conn->fetchAll($sql);
+        $rows = $this->fetchAll($sql);
 
         if ($rows) {
             foreach ($rows as $row) {
@@ -847,7 +847,7 @@ class Loader extends DBInterfaceBase
 				from omp_attributes
 				group by language';
 
-        $row = $this->conn->fetchAll($sql);
+        $row = $this->fetchAll($sql);
         if (!$row) {
             return null;
         }

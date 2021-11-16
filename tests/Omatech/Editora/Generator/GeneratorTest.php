@@ -16,10 +16,10 @@ class GeneratorTest extends TestCaseBase
 
     protected function setUp()
     {
-        $Clear = new Clear($this->connection, array());
+        $Clear = new Clear($this->conn, array());
         $Clear->dropAllData();
 
-        $this->Generator = new Generator($this->connection, array());
+        $this->Generator = new Generator($this->conn, array());
 
         parent::setUp();
     }
@@ -161,7 +161,6 @@ class GeneratorTest extends TestCaseBase
         $created = $this->Generator->createEditora($data);
 
         $this->assertTrue($created);
-
     }
 
     public function testGenerateEditoraDbStructure()
@@ -172,7 +171,7 @@ class GeneratorTest extends TestCaseBase
 
         $this->assertTrue($created);
 
-        $dbname = $this->connection->getDatabase();
+        $dbname = $this->conn->getDatabase();
         $required_tables = array(
             'omp_attributes',
             'omp_class_attributes',
@@ -197,13 +196,12 @@ class GeneratorTest extends TestCaseBase
         );
         $sql = "SELECT table_name FROM information_schema.tables WHERE table_schema = '$dbname';";
 
-        $query_result = $this->connection->fetchAll($sql);
+        $query_result = $this->fetchAll($sql);
 
         $required_tables_in_results = 0;
 
-        foreach ($query_result as $aTable)
-        {
-            if(in_array($aTable['table_name'], $required_tables)){
+        foreach ($query_result as $aTable) {
+            if (in_array($aTable['table_name'], $required_tables)) {
                 $required_tables_in_results++;
             }
         }
@@ -220,7 +218,7 @@ class GeneratorTest extends TestCaseBase
 
         $this->Generator->createEditora($data);
 
-        $query_result = $this->connection->fetchAssoc("select * from omp_attributes a where a.name='$nomintern_name' limit 1;");
+        $query_result = $this->fetchAssoc("select * from omp_attributes a where a.name='$nomintern_name' limit 1;");
 
         $this->assertTrue(!empty($query_result['name']));
         $this->assertTrue(!empty($query_result['id']) && $query_result['id'] == $data['nomintern_id']);
@@ -239,19 +237,19 @@ class GeneratorTest extends TestCaseBase
 
         $this->Generator->createEditora($data);
 
-        $query_result = $this->connection->fetchAssoc("select * from omp_attributes a where a.name='$nomintern_name' limit 1;");
+        $query_result = $this->fetchAssoc("select * from omp_attributes a where a.name='$nomintern_name' limit 1;");
 
         $this->assertFalse($query_result);
 
-        $query_result = $this->connection->fetchAssoc("select * from omp_attributes a where a.id='$nomintern_id' limit 1;");
+        $query_result = $this->fetchAssoc("select * from omp_attributes a where a.id='$nomintern_id' limit 1;");
 
         $this->assertFalse($query_result);
 
-        $query_result = $this->connection->fetchAssoc("select * from omp_attributes a where a.name='$default_nomintern_name' limit 1;");
+        $query_result = $this->fetchAssoc("select * from omp_attributes a where a.name='$default_nomintern_name' limit 1;");
 
         $this->assertTrue(!empty($query_result['name']) && $query_result['name'] != $nomintern_name && $query_result['name'] == $default_nomintern_name);
 
-        $query_result = $this->connection->fetchAssoc("select * from omp_attributes a where a.id='$default_nomintern_id' limit 1;");
+        $query_result = $this->fetchAssoc("select * from omp_attributes a where a.id='$default_nomintern_id' limit 1;");
 
         $this->assertTrue(!empty($query_result['id']) && $query_result['id'] != $nomintern_id && $query_result['id'] == $default_nomintern_id);
     }
@@ -267,11 +265,11 @@ class GeneratorTest extends TestCaseBase
 
         $this->Generator->createEditora($data);
 
-        $query_result = $this->connection->fetchAssoc("select * from omp_attributes a where a.name='$default_nomintern_name' limit 1;");
+        $query_result = $this->fetchAssoc("select * from omp_attributes a where a.name='$default_nomintern_name' limit 1;");
 
         $this->assertTrue(!empty($query_result['name']) && $query_result['name'] == $default_nomintern_name);
 
-        $query_result = $this->connection->fetchAssoc("select * from omp_attributes a where a.id='$default_nomintern_id' limit 1;");
+        $query_result = $this->fetchAssoc("select * from omp_attributes a where a.id='$default_nomintern_id' limit 1;");
 
         $this->assertTrue(!empty($query_result['id']) && $query_result['id'] == $default_nomintern_id);
     }
@@ -285,12 +283,12 @@ class GeneratorTest extends TestCaseBase
 
         $this->Generator->createEditora($data);
 
-        $query_result = $this->connection->fetchAll("SELECT language FROM omp_attributes where language != 'ALL' group by language;");
+        $query_result = $this->fetchAll("SELECT language FROM omp_attributes where language != 'ALL' group by language;");
 
         $this->assertNotEmpty($query_result);
         $this->assertTrue(is_array($query_result));
 
-        if(is_array($query_result)) {
+        if (is_array($query_result)) {
             $dbLanguages = array();
 
             foreach ($query_result as $aResult) {
@@ -314,23 +312,20 @@ class GeneratorTest extends TestCaseBase
 
         $this->Generator->createEditora($data);
 
-        $query_result = $this->connection->fetchAll("select * from omp_roles;");
+        $query_result = $this->fetchAll("select * from omp_roles;");
 
         $this->assertTrue(is_array($query_result));
 
         $new_role_exists = false;
 
-        foreach ($query_result as $aRole)
-        {
-            if($aRole['id'] == $testRoleId && $aRole['rol_name'] == $testRoleName)
-            {
+        foreach ($query_result as $aRole) {
+            if ($aRole['id'] == $testRoleId && $aRole['rol_name'] == $testRoleName) {
                 $new_role_exists = true;
                 break;
             }
         }
 
         $this->assertTrue($new_role_exists);
-
     }
 
     public function testsGenerateEditoraDefaultRoles()
@@ -339,25 +334,22 @@ class GeneratorTest extends TestCaseBase
 
         $this->Generator->createEditora($data);
 
-        $query_result = $this->connection->fetchAll("select * from omp_roles;");
+        $query_result = $this->fetchAll("select * from omp_roles;");
 
         $this->assertTrue(is_array($query_result));
 
         $check_admin = $check_user = false;
 
-        foreach ($query_result as $aRole)
-        {
-            if($aRole['id'] == 1 && $aRole['rol_name'] == 'admin')
-            {
+        foreach ($query_result as $aRole) {
+            if ($aRole['id'] == 1 && $aRole['rol_name'] == 'admin') {
                 $check_admin = true;
-            }elseif ($aRole['id'] == 2 && $aRole['rol_name'] == 'user'){
+            } elseif ($aRole['id'] == 2 && $aRole['rol_name'] == 'user') {
                 $check_user = true;
             }
         }
 
         $this->assertTrue($check_admin);
         $this->assertTrue($check_user);
-
     }
 
     public function testsGenerateEditoraDataWithoutRoles()
@@ -367,19 +359,17 @@ class GeneratorTest extends TestCaseBase
 
         $this->Generator->createEditora($data);
 
-        $query_result = $this->connection->fetchAll("select * from omp_roles;");
+        $query_result = $this->fetchAll("select * from omp_roles;");
 
         $this->assertTrue(is_array($query_result));
         $this->assertTrue(count($query_result) == 2);
 
         $check_admin = $check_user = false;
 
-        foreach ($query_result as $aRole)
-        {
-            if($aRole['id'] == 1 && $aRole['rol_name'] == 'admin')
-            {
+        foreach ($query_result as $aRole) {
+            if ($aRole['id'] == 1 && $aRole['rol_name'] == 'admin') {
                 $check_admin = true;
-            }elseif ($aRole['id'] == 2 && $aRole['rol_name'] == 'user'){
+            } elseif ($aRole['id'] == 2 && $aRole['rol_name'] == 'user') {
                 $check_user = true;
             }
         }
@@ -396,9 +386,8 @@ class GeneratorTest extends TestCaseBase
 
         $randomClassIds = array();
 
-        for ($i = 0; $i < $randomNumOfNewClasses; $i++)
-        {
-            $randomClassId = rand(100*$i+101,100*($i+1)+100);
+        for ($i = 0; $i < $randomNumOfNewClasses; $i++) {
+            $randomClassId = rand(100*$i+101, 100*($i+1)+100);
             $randomClassName = 'testclass'.substr(md5(rand()), 0, 5);
 
             $data['classes']['Secondary'][$randomClassId] = $randomClassName;
@@ -408,7 +397,7 @@ class GeneratorTest extends TestCaseBase
 
         $testRoleId = rand(3, 10);
         $testRoleName = 'test'.rand(1, 10);
-        $testRoleClasses = implode(',',$randomClassIds);
+        $testRoleClasses = implode(',', $randomClassIds);
         $data['roles'] = array(
             array(
                 'id' => $testRoleId,
@@ -419,7 +408,7 @@ class GeneratorTest extends TestCaseBase
 
         $this->Generator->createEditora($data);
 
-        $query_result = $this->connection->fetchAll("select * from omp_roles_classes where rol_id IN ($testRoleId) and class_id IN ($testRoleClasses);");
+        $query_result = $this->fetchAll("select * from omp_roles_classes where rol_id IN ($testRoleId) and class_id IN ($testRoleClasses);");
 
         $this->assertTrue(is_array($query_result));
         $this->assertTrue(!empty($query_result));
@@ -427,12 +416,9 @@ class GeneratorTest extends TestCaseBase
 
         $role_classes_relation_count = 0;
 
-        foreach ($query_result as $aRoleClassRelation)
-        {
-            foreach ($randomClassIds as $aRandomClassIdKey => $aRandomClassId)
-            {
-                if($aRoleClassRelation['class_id'] == $aRandomClassId)
-                {
+        foreach ($query_result as $aRoleClassRelation) {
+            foreach ($randomClassIds as $aRandomClassIdKey => $aRandomClassId) {
+                if ($aRoleClassRelation['class_id'] == $aRandomClassId) {
                     $role_classes_relation_count++;
                     unset($randomClassIds[$aRandomClassIdKey]);
                     break;
@@ -459,7 +445,7 @@ class GeneratorTest extends TestCaseBase
 
         $this->Generator->createEditora($data);
 
-        $query_result = $this->connection->fetchAll("select * from omp_roles_classes where rol_id IN ($testRoleId);");
+        $query_result = $this->fetchAll("select * from omp_roles_classes where rol_id IN ($testRoleId);");
 
         $this->assertTrue(is_array($query_result));
         $this->assertTrue(!empty($query_result));
@@ -476,13 +462,12 @@ class GeneratorTest extends TestCaseBase
 
         $this->Generator->createEditora($data);
 
-        $query_result = $this->connection->fetchAll("select * from omp_classes where id=$class_id;");
+        $query_result = $this->fetchAll("select * from omp_classes where id=$class_id;");
 
         $this->assertTrue(isset($query_result[0]));
         $this->assertTrue($query_result[0]['name_ca'] == $name_ca);
         $this->assertTrue($query_result[0]['name_es'] == $name_es);
         $this->assertTrue($query_result[0]['name_en'] == $name_en);
-
     }
 
     //validation data
@@ -510,7 +495,7 @@ class GeneratorTest extends TestCaseBase
 //
 //        $this->assertTrue($generated);
 //
-//        $query_result = $this->connection->fetchAll("select * from omp_users WHERE username='omatech';");
+//        $query_result = $this->fetchAll("select * from omp_users WHERE username='omatech';");
 //
 //        $usernameOmatechCount = 0;
 //        foreach ($query_result as $anUser)
@@ -539,11 +524,10 @@ class GeneratorTest extends TestCaseBase
 
         $this->assertTrue($generated);
 
-        $query_result = $this->connection->fetchAll("select * from omp_users WHERE username='omatech';");
+        $query_result = $this->fetchAll("select * from omp_users WHERE username='omatech';");
 
-        foreach ($query_result as $anUser)
-        {
-            if($anUser['username'] == 'omatech'){
+        foreach ($query_result as $anUser) {
+            if ($anUser['username'] == 'omatech') {
                 $this->assertTrue(true);
                 break;
             }
