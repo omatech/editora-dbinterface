@@ -190,13 +190,6 @@ class DBInterfaceBase
 
     protected function fetchColumn($sql)
     {
-        /*
-        if (method_exists($this->conn, 'fetchColumn')) {
-        return $this->conn->fetchColumn($sql);
-        } else {
-        return $this->conn->query($sql)->fetchColumn();
-        }
-            */
         $row=$this->fetchAssoc($sql);
         return $row[key($row)];
     }
