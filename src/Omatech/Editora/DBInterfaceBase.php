@@ -455,8 +455,7 @@ class DBInterfaceBase
                 $prepare = $this->conn->prepare($sql);
                 $prepare->bindValue('language', $language);
                 $resultSet = $prepare->executeQuery();
-                $rows=$resultSet->fetchAllAssociative();
-                $row = $rows[0];
+                $row=$resultSet->fetchAssociative();
 
                 //$prepare->execute();
                 //$row = $prepare->fetch();
@@ -483,8 +482,7 @@ class DBInterfaceBase
                 $prepare->bindValue('language', $language);
                 $prepare->bindValue('nice_url', $nice_url);
                 $resultSet = $prepare->executeQuery();
-                $rows=$resultSet->fetchAllAssociative();
-                $row = $rows[0];
+                $row=$resultSet->fetchAssociative();
                 //$prepare->execute();
                 //$row = $prepare->fetch();
 
