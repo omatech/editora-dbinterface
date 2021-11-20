@@ -1142,8 +1142,8 @@ class Extractor extends DBInterfaceBase
                     }
                     $pagination_info['currentPage'] = $pagination_array[1];
                 }
+                $this->paginator = $pagination_info;
             }
-            $this->paginator = $pagination_info;
         }
     }
 }
