@@ -507,8 +507,8 @@ class Generator extends DBInterfaceBase
                     $this->create_params_attribute($id, 'J', 0, 'ALL', $val);
                 }
             }
-            if (isset($attributes_multi_json)) {
-                foreach ($attributes_multi_json as $id => $val) {
+            if (isset($attributes_multi_lang_json)) {
+                foreach ($attributes_multi_lang_json as $id => $val) {
                     foreach ($languages as $key_lang => $val_lang) {
                         $this->create_params_attribute($id, 'J', $key_lang, $val_lang, $val);
                     }
@@ -603,8 +603,10 @@ class Generator extends DBInterfaceBase
                                         $filas[$key_lang] = $filas[$key_lang] + 1;
                                     }
                                 } else {
-                                    $this->create_class_attribute($class_id, $atri_id, 0, 1, $filas[1], 1, false, $mandatory);
-                                    $filas[1] = $filas[1] + 1;
+                                    if (!empty($atri_id)) {
+                                        $this->create_class_attribute($class_id, $atri_id, 0, 1, $filas[1], 1, false, $mandatory);
+                                        $filas[1] = $filas[1] + 1;
+                                    }
                                 }
 
                                 if (array_key_exists(1, $atri_ids)) {
@@ -621,7 +623,9 @@ class Generator extends DBInterfaceBase
                                             $this->create_class_attribute($class_id, $atri_id + $key_lang, 0, $key_lang, $filas[$key_lang] - 1, 2, false, $mandatory);
                                         }
                                     } else {
-                                        $this->create_class_attribute($class_id, $atri_id, 0, 1, $filas[1] - 1, 2, false, $mandatory);
+                                        if (!empty($atri_id)) {
+                                            $this->create_class_attribute($class_id, $atri_id, 0, 1, $filas[1] - 1, 2, false, $mandatory);
+                                        }
                                     }
                                 }
                             }
@@ -1110,18 +1114,25 @@ class Generator extends DBInterfaceBase
         }
 
 
+        
+        $create_users=true;
+        if (isset($data['create_users']) && $data['create_users']==false) {
+            $create_users=false;
+        }
 
-        foreach ($users as $user) {
-            $hasher = new BcryptHasher();
-            //$password = substr(md5(rand()), 0, 7);
-            $password = Strings::generateStrongPassword(8);
-            $hashed_password = $hasher->make($password);
-
-            $username = $this->conn->quote($user[0]);
-            $complete_name = $this->conn->quote($user[1]);
-
-            array_push($this->queries, "insert ignore into omp_users (username, password, complete_name, language, rol_id, tipus) values ($username, '$hashed_password', $complete_name, '$user[2]', '$user[3]', '$user[4]');");
-            $this->users_passwords[$user[0]] = array($password, $hashed_password);
+        if ($create_users) {
+            foreach ($users as $user) {
+                $hasher = new BcryptHasher();
+                //$password = substr(md5(rand()), 0, 7);
+                $password = Strings::generateStrongPassword(8);
+                $hashed_password = $hasher->make($password);
+    
+                $username = $this->conn->quote($user[0]);
+                $complete_name = $this->conn->quote($user[1]);
+    
+                array_push($this->queries, "insert ignore into omp_users (username, password, complete_name, language, rol_id, tipus) values ($username, '$hashed_password', $complete_name, '$user[2]', '$user[3]', '$user[4]');");
+                $this->users_passwords[$user[0]] = array($password, $hashed_password);
+            }
         }
 
 
@@ -1592,8 +1603,10 @@ class Generator extends DBInterfaceBase
             $rel_id = 'null';
         }
 
-        array_push($this->queries, "insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail)
-																	 values ($class_id, $atri_id, $rel_id, $tab_id, $fila, $columna, 'left', $ordre_key, '$mandatory', 'N');");
+        if ($atri_id!='null' || $rel_id!='null') {
+            array_push($this->queries, "insert into omp_class_attributes (class_id, atri_id, rel_id, tab_id, fila, columna, caption_position, ordre_key, mandatory, detail)
+            values ($class_id, $atri_id, $rel_id, $tab_id, $fila, $columna, 'left', $ordre_key, '$mandatory', 'N');");
+        }
     }
 
     public function create_tab($key, $val, $order)
@@ -1696,6 +1709,10 @@ class Generator extends DBInterfaceBase
             'attributes_multi_lang_privatefile' => array(),
             'attributes_multi_lang_image' => array(),
             'attributes_multi_lang_video' => array(),
+
+            'attributes_json' => array(),
+            'attributes_multi_lang_json' => array(),
+
             'lookups' => array(),
             'relations' => array(),
             'relation_names' => array(),
