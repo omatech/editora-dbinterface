@@ -372,6 +372,16 @@ class Generator extends DBInterfaceBase
         $editora_structure = file_get_contents(__DIR__ . '/../../../../data/editora.sql');
         array_push($this->queries, $editora_structure);
 
+        array_push($this->queries, "delete from omp_attributes;");
+        array_push($this->queries, "delete from omp_class_attributes;");
+        array_push($this->queries, "delete from omp_class_groups;");
+        array_push($this->queries, "delete from omp_classes;");
+        array_push($this->queries, "delete from omp_lookups;");
+        array_push($this->queries, "delete from omp_lookups_values;");
+        array_push($this->queries, "delete from omp_relations;");
+        array_push($this->queries, "delete from omp_roles;");
+        array_push($this->queries, "delete from omp_roles_classes;");
+        array_push($this->queries, "delete from omp_tabs;");
 
         if (isset($tabs) && is_array($tabs)) {
             foreach ($tabs as $key => $tab) {
@@ -381,6 +391,7 @@ class Generator extends DBInterfaceBase
 
         $i = 2;
         if ($attributes_params) {
+
             // Creem l'atribut nom_intern
             $nom_intern_values = ['nom_intern', 'caption'=>['Nom intern', 'Nombre interno', 'Internal name']];
             $this->create_params_attribute($nomintern_id, 'S', 0, 'ALL', $nom_intern_values);
@@ -516,7 +527,6 @@ class Generator extends DBInterfaceBase
             }
 
 
-            array_push($this->queries, "delete from omp_class_groups;");
             $i = 1;
             foreach ($groups as $group_id => $group_values) {
                 $name = $caption_ca = $caption_es = $caption_en =$this->key_to_title($group_values[0]);
