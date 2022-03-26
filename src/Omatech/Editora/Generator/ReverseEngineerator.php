@@ -102,10 +102,11 @@ class ReverseEngineerator extends DBInterfaceBase
     
     public function attributeArrayToCode($label, $rows, $remove_internal_keys=false)
     {
-        if (!$rows) {
-            return;
-        }
         $return_string="'$label'=>[";
+        if (!$rows) {
+            return "$return_string],\n\n";
+        }
+        
         if ($rows) {
             foreach ($rows as $key=>$val) {
                 if (!is_numeric($key)) {
