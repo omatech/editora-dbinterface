@@ -541,7 +541,8 @@ class Generator extends DBInterfaceBase
 
                 if (isset($group_values['classes'])) {
                     foreach ($group_values['classes'] as $class_id => $class_values) {
-                        $name = $caption_ca = $caption_es = $caption_en =$this->key_to_title($class_values[0]);
+                        $key=$class_values[0];
+                        $name = $caption_ca = $caption_es = $caption_en =$this->key_to_title($key);
 
                         if (isset($class_values['caption'])) {
                             $caption = $class_values['caption'];
@@ -556,7 +557,7 @@ class Generator extends DBInterfaceBase
                         }
 
 
-                        $this->create_class($class_id, $name, $group_id, $i++, $caption, $caption_ca, $caption_es, $caption_en, $editable);
+                        $this->create_class($class_id, $key, $group_id, $i++, $caption, $caption_ca, $caption_es, $caption_en, $editable);
                         $this->create_class_attribute($class_id, $nomintern_id, 0, 1, 1, 1, true, true);
                         ;
 
@@ -1010,9 +1011,9 @@ class Generator extends DBInterfaceBase
                             $caption_ca = $this->key_to_title(isset($val[1]) ? $val[1] : $val[0]);
                             $caption_es = $this->key_to_title(isset($val[2]) ? $val[2] : $val[0]);
                             $caption_en = $this->key_to_title(isset($val[3]) ? $val[3] : $val[0]);
-                            $val = $this->key_to_title($val[0]);
+                            //$val = $this->key_to_title($val[0]);
 
-                            $this->create_class($key, $val, $groups[$group_key], $i++, $caption, $caption_ca, $caption_es, $caption_en);
+                            $this->create_class($key, $val[0], $groups[$group_key], $i++, $caption, $caption_ca, $caption_es, $caption_en);
                         } else {
                             $caption = $val;
                             $this->create_class($key, $val, $groups[$group_key], $i++, $caption);
@@ -1370,7 +1371,12 @@ class Generator extends DBInterfaceBase
         if ($caption == null) {
             $caption = $name;
         }
+
+        /*
+        echo "key=$key ";
         $key = $this->title_to_key($key);
+        echo "y ahora key=$key\n";
+        */
 
         if (is_array($grp_id)) {
             $grp_id = $grp_id[0];
