@@ -675,11 +675,17 @@ class Generator extends DBInterfaceBase
                 $arr_lookup_info = explode(',', $lookup_key);
                 $lookup_id = $arr_lookup_info[0];
                 $lookup_name = $arr_lookup_info[1];
-                array_push($this->queries, "insert into omp_lookups (id, name, type, default_id) values ($lookup_id, '$lookup_name', 'L', 0);");
+
+                echo "insert into omp_lookups (id, name, type, default_id) values ($lookup_id, '$lookup_name', 'L', 0);\n";
+                array_push($this->queries, "insert into omp_lookups (id, name, type, default_id) values ($lookup_id, '$lookup_name', 'L', 0);\n");
                 $i = 0;
                 foreach ($lookup as $value_key => $value) {
-                    array_push($this->queries, "insert into omp_lookups_values (id, lookup_id, ordre, value, caption_ca, caption_es, caption_en) values ($value_key, $lookup_id, $i, '$value[0]', '$value[1]', '$value[2]', '$value[3]');");
+                    echo "insert into omp_lookups_values (id, lookup_id, ordre, value, caption_ca, caption_es, caption_en) values ($value_key, $lookup_id, $i, '$value[0]', '$value[1]', '$value[2]', '$value[3]');\n";
+
+                    array_push($this->queries, "insert into omp_lookups_values (id, lookup_id, ordre, value, caption_ca, caption_es, caption_en) values ($value_key, $lookup_id, $i, '$value[0]', '$value[1]', '$value[2]', '$value[3]');\n");
                     if ($i == 0) {
+                        echo "update omp_lookups set default_id='" . $value_key . "' where id=$lookup_id;\n";
+
                         array_push($this->queries, "update omp_lookups set default_id='" . $value_key . "' where id=$lookup_id;\n");
                     }
                     $i++;
@@ -1514,9 +1520,15 @@ class Generator extends DBInterfaceBase
                 array_push($this->queries, "insert into omp_lookups (id, name, type, default_id) values ($lookup_id, $name, 'L', 0);");
                 $i = 0;
                 foreach ($params['lookup'] as $value_key => $value) {
+                    echo "insert into omp_lookups_values (id, lookup_id, ordre, value, caption_ca, caption_es, caption_en)
+                    values ($value_key, $lookup_id, $i, '$value[0]', '$value[1]', '$value[2]', '$value[3]');";
+
                     array_push($this->queries, "insert into omp_lookups_values (id, lookup_id, ordre, value, caption_ca, caption_es, caption_en)
                                 values ($value_key, $lookup_id, $i, '$value[0]', '$value[1]', '$value[2]', '$value[3]');");
                     if ($i == 0) {
+                        //default value
+                        echo "update omp_lookups set default_id='" . $value_key . "' where id=$lookup_id;\n";
+
                         array_push($this->queries, "update omp_lookups set default_id='" . $value_key . "' where id=$lookup_id;\n");
                     }
                     $i++;

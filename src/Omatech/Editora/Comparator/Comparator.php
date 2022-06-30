@@ -18,8 +18,6 @@ class Comparator extends DBInterfaceBase {
     $this->tables_to_check=[
       'omp_attributes'
       , 'omp_class_groups'
-      , 'omp_lookups'
-      , 'omp_lookups_values'
       , 'omp_relations'
       , 'omp_roles'
       , 'omp_users'];
@@ -35,6 +33,7 @@ class Comparator extends DBInterfaceBase {
     $this->compareRelations();
     $this->compareRelationClasses();
     $this->compareAttributes();
+    $this->compareLookups();
     if ($this->errors==0)
     {
       echo "We've reached the end of all compare procedures, it seems OK!\n";
@@ -180,7 +179,7 @@ class Comparator extends DBInterfaceBase {
 
   private function compareAttributes ()
   {
-    $sql="select c.tag, a.tag, a.name, a.type, a.lookup_id, a.img_width, a.img_height, a.language
+    $sql="select c.tag, a.tag, a.name, a.type, a.lookup_id, a.img_width, a.img_height, a.language, a.caption_ca, a.caption_es, a.caption_en
     from :schema.omp_class_attributes ca
     , :schema.omp_attributes a
     , :schema.omp_classes c
@@ -217,5 +216,15 @@ class Comparator extends DBInterfaceBase {
     return $this->compareQuery('relationClasses', $sql);
   }
 
+  private function compareLookups ()
+  {
+    $sql="select l.name, l.type, lv.ordre, lv.value, lv.caption_es, lv.caption_en, lv.caption_ca, dv.value default_value 
+    from :schema.omp_lookups l left join :schema.omp_lookups_values dv on (l.default_id=dv.id)
+    , :schema.omp_lookups_values lv
+    where l.id=lv.lookup_id
+    order by l.name, lv.ordre";
+
+    return $this->compareQuery('Lookups', $sql);
+  }
 	
 }
