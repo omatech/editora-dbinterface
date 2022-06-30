@@ -1130,6 +1130,10 @@ class Generator extends DBInterfaceBase
         if (isset($data['create_users']) && $data['create_users']==false) {
             $create_users=false;
         }
+        if ($data['truncate_users']==false)
+        {// si no volem truncar la taula users es que no els volem recrear
+            $create_users=false;
+        }
 
         if ($create_users) {
             foreach ($users as $user) {

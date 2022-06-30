@@ -20,7 +20,7 @@ $options_array = getopt(null, ['from::', 'to::'
 	, 'help']);
 //print_r($options_array);
 if (isset($options_array['help'])) {
-	echo 'Use data_transfer.php to extract editora4 information and get it into editora5 format
+	echo 'Use data-transfer.php to extract editora4 information and get it into editora5 format
 		
 Only works in localhost! and with dbuser root
 

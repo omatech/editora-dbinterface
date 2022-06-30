@@ -29,10 +29,11 @@ class Clear extends DBInterfaceBase
             'omp_roles_classes',
             'omp_tabs',
         );
-				if ($truncate_users)
-				{
-					$tables_to_truncate[]='omp_users';
-				}
+
+        if ($truncate_users)
+        {
+            $tables_to_truncate[]='omp_users';
+        }
 
         $tables_truncate_queries = '';
 
