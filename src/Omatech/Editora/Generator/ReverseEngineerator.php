@@ -473,11 +473,12 @@ class ReverseEngineerator extends DBInterfaceBase
     public function getLookups()
     {
         $return_array=array();
-        $sql="select id, name from omp_lookups";
+        $sql="select id, name, default_id from omp_lookups";
         $rows=$this->fetchAll($sql);
         foreach ($rows as $row) {
             $lookup_id=$row['id'];
             $lookup_name=$row['name'];
+            $lookup_default_id=$row['default_id'];
             $sql="select * from omp_lookups_values where lookup_id=$lookup_id order by ordre";
             $values=$this->fetchAll($sql);
             $values_array=array();
