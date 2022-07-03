@@ -21,7 +21,8 @@ $options_array = getopt(null, ['dbpass:', 'dbfromname:', 'dbtoname:'
 if (isset($options_array['help'])) {
 	echo 'Use compare_editoras.php to compare two editoras in different databases, useful to test reverse engineered editoras, for example.
 		
-Only works in localhost! and with dbuser root only db4 format is supported
+Only works in localhost! and with dbuser=root 
+Only db4 format is supported
 
 General parameters:
 --dbpass= database password for both databases

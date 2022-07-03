@@ -353,6 +353,9 @@ Generate editora structure from an array or json file
 ### reverse-engineer-editora.php
 Takes out the editora structure and generates a compatible generator file
 
+### compare-editoras.php
+Compare two editora structures in two local databases, get a report of the differences between them
+
 ### modernize.php
 Modernize editora DB to include latest changes in DB structure
 
