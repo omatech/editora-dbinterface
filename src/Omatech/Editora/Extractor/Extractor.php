@@ -1061,6 +1061,7 @@ class Extractor extends DBInterfaceBase
         //$this->debug($sql);
         $values = $this->fetchAssoc($sql);
         if (!$values) {
+            $values=[];
             $values['id'] = null;
             $values['text_val'] = null;
             $values['date_val'] = null;
