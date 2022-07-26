@@ -984,7 +984,7 @@ class Extractor extends DBInterfaceBase
                             if ($subval == 'D') {
                                 $attrs[$attr_key]['text_val'] = $attrs[$attr_key]['date_val'];
                             }
-                            if (($subval == 'F' || $subval == 'I' || $subval == 'H') && substr($attrs[$attr_key]['text_val'], 0, 8) == 'uploads/') {// Backwards compatibility with editoras that save uploads/ instead of /uploads/
+                            if (($subval == 'F' || $subval == 'I' || $subval == 'H') && isset($attrs[$attr_key]['text_val']) && substr($attrs[$attr_key]['text_val'], 0, 8) == 'uploads/') {// Backwards compatibility with editoras that save uploads/ instead of /uploads/
                                 $attrs[$attr_key]['text_val'] = '/' . $attrs[$attr_key]['text_val'];
                             }
                             if ($subval == 'I' || $subval == 'H') {
@@ -993,11 +993,17 @@ class Extractor extends DBInterfaceBase
                                 $attrs[$tag.'_imgid']['text_val'] = $attrs[$attr_key]['id'];
                                 
                                 $attrs[$tag.'_imghash']['tag'] = $tag.'_imghash';
-                                $attrs[$tag.'_imghash']['text_val'] = md5($attrs[$attr_key]['text_val']).'_'.$attrs[$attr_key]['id'];
-
-                                $file_info = explode('.', $attrs[$attr_key]['text_val']);
+                                $hash_key='';
+                                $file_info=['jpg'];
+                                if (isset($attrs[$attr_key]['text_val']))
+                                {
+                                    $hash_key=$attrs[$attr_key]['text_val'];
+                                    $file_info = explode('.', $attrs[$attr_key]['text_val']);
+                                }
+                                $attrs[$tag.'_imghash']['text_val'] = md5($hash_key).'_'.$attrs[$attr_key]['id'];
                                 $attrs[$tag.'_imgextension']['tag'] = $tag.'_imgextension';
                                 $attrs[$tag.'_imgextension']['text_val'] = end($file_info);
+                                
                             }
                             if ($subval == 'Y' && isset($attrs[$attr_key]['json_val'])) {
                                 $tag=$attrs[$attr_key]['tag'];
