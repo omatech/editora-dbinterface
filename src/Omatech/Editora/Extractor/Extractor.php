@@ -373,7 +373,11 @@ class Extractor extends DBInterfaceBase
         }
         
         $class_filter = $this->getClassFilter($class);
-        $order_filter = " order by FIELD(i.id, " . $inst_ids . ") ";
+        if (isset($params['order'])) {
+            $order_filter = $this->getOrderFilter($params['order'], $params['order_direction']);
+        } else {// si no tenemos order ordenamos por los publicados recientemente
+            $order_filter = $this->getOrderFilter('publishing_begins', 'desc');
+        }
 
         $preview_filter = $this->getPreviewFilter();
         $ids_filter = $this->getIDsListFilter($inst_ids);
