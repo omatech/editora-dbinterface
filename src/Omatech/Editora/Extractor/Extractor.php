@@ -316,10 +316,12 @@ class Extractor extends DBInterfaceBase
         } else {// si no tenemos order ordenamos por los publicados recientemente
             $order_filter = $this->getOrderFilter('publishing_begins', 'desc');
         }
+
+        $date_filter = $this->getFilterDate($params);
         $preview_filter = $this->getPreviewFilter();
 
         if (isset($params['niceurl_in_language']) && $params['niceurl_in_language']==true) {
-            $this->setPagination($num, $class_filter, $preview_filter, $order_filter, "", "", $params['niceurl_in_language']);
+            $this->setPagination($num, $class_filter, $preview_filter, $order_filter, "", "", $params['niceurl_in_language'], $date_filter);
             $sql = $this->sql_select_instances . "  
 				from omp_instances i 
 				, omp_classes c
@@ -329,6 +331,7 @@ class Extractor extends DBInterfaceBase
 				and c.id=i.class_id
 				and i.id = u.inst_id 
 				and u.language = '".$this->lang."'
+                $date_filter
 				$preview_filter
 				$order_filter
 				" . $this->getLimitFilter($num) . "
@@ -341,6 +344,7 @@ class Extractor extends DBInterfaceBase
 				where 1=1
 				$class_filter
 				and c.id=i.class_id
+                $date_filter
 				$preview_filter
 				$order_filter
 				" . $this->getLimitFilter($num) . "
@@ -1099,7 +1103,7 @@ class Extractor extends DBInterfaceBase
         return $values;
     }
 
-    private function setPagination($num, $class_filter, $preview_filter, $order_filter = "", $ids_filter = "", $search_filter = "", $niceurl_in_language=false)
+    private function setPagination($num, $class_filter, $preview_filter, $order_filter = "", $ids_filter = "", $search_filter = "", $niceurl_in_language=false, $date_filter = "")
     {
         if ($num != null && $this->paginator == null) {
             if (stripos($num, '/')) {
@@ -1118,6 +1122,7 @@ class Extractor extends DBInterfaceBase
 							and c.id=i.class_id
 							and i.id = u.inst_id 
 							and u.language = '".$this->lang."'
+                            $date_filter
 							$preview_filter
 							$ids_filter
 							$search_filter
@@ -1129,6 +1134,7 @@ class Extractor extends DBInterfaceBase
 							where 1=1
 							$class_filter
 							and c.id=i.class_id
+                            $date_filter
 							$preview_filter
 							$ids_filter
 							$search_filter
