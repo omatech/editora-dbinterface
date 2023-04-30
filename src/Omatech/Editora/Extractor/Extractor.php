@@ -336,7 +336,7 @@ class Extractor extends DBInterfaceBase {
 				" . $this->getLimitFilter($num) . "
 			";
 		}else{
-			$this->setPagination($num, $class_filter, $preview_filter, $order_filter);
+			$this->setPagination($num, $class_filter, $preview_filter, $order_filter, "", "", "", $date_filter);
 			$sql = $this->sql_select_instances . "  
 				from omp_instances i 
 				, omp_classes c
