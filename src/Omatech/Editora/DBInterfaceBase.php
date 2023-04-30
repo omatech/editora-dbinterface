@@ -940,6 +940,15 @@ class DBInterfaceBase
         return $order_sql;
     }
 
+    protected function getFilterDate($params){
+		$date_filter = "";
+		if (isset($params['filter_date']) && array_diff_key(['format','operator','date'], $params['filter_date'])) {
+			$filter = $params['filter_date'];
+			$date_filter = "and DATE_FORMAT(order_date, '".$filter['format']."') ".$filter['operator']." '".$filter['date']."'";
+		}
+		return $date_filter;
+	}
+
     protected function getLimitFilter($num = null)
     {
         // $num can be only integer or with syntax 10/3 (give 10 elements in page 3 (elements from 31 to 40)
