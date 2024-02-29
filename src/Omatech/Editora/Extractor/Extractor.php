@@ -369,6 +369,10 @@ class Extractor extends DBInterfaceBase
     {
         $start = microtime(true);
         $this->debug("Extractor::findInstancesInList class=$class inst_ids=$inst_ids\n");
+
+        if (!$inst_ids) {
+            return [];
+        }
         
         $result = $this->getExtractionFromCache($params);
         // if we get the info from cache let's return
