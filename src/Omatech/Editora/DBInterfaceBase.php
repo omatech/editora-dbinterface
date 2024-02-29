@@ -175,7 +175,7 @@ class DBInterfaceBase
         if (method_exists($this->conn, 'fetchAssoc')) {
             return $this->conn->fetchAssoc($sql);
         } else {
-            return $this->conn->query($sql)->fetchAssociative();
+            return $this->conn->query($sql)->fetchAll()[0];
         }
     }
 
@@ -190,6 +190,13 @@ class DBInterfaceBase
 
     protected function fetchColumn($sql)
     {
+        /*
+        if (method_exists($this->conn, 'fetchColumn')) {
+        return $this->conn->fetchColumn($sql);
+        } else {
+        return $this->conn->query($sql)->fetchColumn();
+        }
+            */
         $row=$this->fetchAssoc($sql);
         return $row[key($row)];
     }
@@ -455,7 +462,8 @@ class DBInterfaceBase
                 $prepare = $this->conn->prepare($sql);
                 $prepare->bindValue('language', $language);
                 $resultSet = $prepare->executeQuery();
-                $row=$resultSet->fetchAssociative();
+                $rows=$resultSet->fetchAllAssociative();
+                $row = $rows[0];
 
                 //$prepare->execute();
                 //$row = $prepare->fetch();
@@ -482,7 +490,8 @@ class DBInterfaceBase
                 $prepare->bindValue('language', $language);
                 $prepare->bindValue('nice_url', $nice_url);
                 $resultSet = $prepare->executeQuery();
-                $row=$resultSet->fetchAssociative();
+                $rows=$resultSet->fetchAllAssociative();
+                $row = $rows[0];
                 //$prepare->execute();
                 //$row = $prepare->fetch();
 
@@ -933,16 +942,9 @@ class DBInterfaceBase
 
     protected function getFilterDate($params){
 		$date_filter = "";
-		if (isset($params['filter_date'])) {
+		if (isset($params['filter_date']) && array_diff_key(['format','operator','date'], $params['filter_date'])) {
 			$filter = $params['filter_date'];
-			if(isset($filter['type'])){
-				if($filter['type'] == "date"){
-					$date_filter = "and order_date ".$filter['operator']." '".date('Y-m-d', strtotime($filter['date']))."'";
-				}elseif($filter['type'] == "month"){
-					$date_filter = "and MONTH(order_date) = ".$filter['data'];
-
-				}
-			}
+			$date_filter = "and DATE_FORMAT(order_date, '".$filter['format']."') ".$filter['operator']." '".$filter['date']."'";
 		}
 		return $date_filter;
 	}
