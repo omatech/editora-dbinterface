@@ -424,6 +424,9 @@ Export all instances to the output or a file in json format.
 * Y: Video (Youtube or Vimeo)
 * Z: url nice
 
+# Class diagram
+
+![](Documentation/editora.png)
 
 # Authors
 

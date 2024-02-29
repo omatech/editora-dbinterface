@@ -1,0 +1,175 @@
+@startuml
+skinparam linetype ortho
+!define primary_key(x) <b><color:#b8861b><&key></color> x</b>
+!define foreign_key(x) <color:#aaaaaa><&key></color> x
+!define unique(x) <color:#03fcdb>U</color> x
+!define column(x) <color:#efefef><&media-record></color> x
+!define table(x) object x << (T, white) >>
+
+table( OMP_CLASSES) {
+    primary_key( id ): INT
+    column(name): VARCHAR
+    column(description): TEXT
+    column(tag): VARCHAR
+    foreign_key(grp_id): INT
+    column(grp_order): INT
+    column(name_ca): VARCHAR
+    column(name_es): VARCHAR
+    column(name_en): VARCHAR
+    column(recursive_clone): char
+    column( isActive ): BOOLEAN
+}
+
+table(OMP_ATTRIBUTES) {
+    primary_key(id): INT
+    column(name): VARCHAR
+    column(caption): VARCHAR
+    column(description): TEXT
+    column(tag): VARCHAR
+    column(type): VARCHAR <S, B...>
+    foreign_key(lookup_id): INT
+    column(width): INT
+    column(height): INT
+    column(max_length): INT
+    column(img_width): INT
+    column(img_height): INT
+    column(language): VARCHAR
+    column(caption_ca): VARCHAR
+    column(caption_es): VARCHAR
+    column(caption_en): VARCHAR
+    column(params): TEXT
+}
+
+table(OMP_LOOKUPS) {
+    primary_key(id): INT
+    column(name): VARCHAR
+    column(type): ENUM <L,R,C>
+    column(default_id): INT
+}
+
+table(OMP_INSTANCES) {
+    primary_key(id): INT
+    foreign_key(class_id): INT
+    column(key_fields): VARCHAR
+    column(status): VARCHAR <P,O,R>
+    column(publishing_begins): DATETIME
+    column(publishing_ends): DATETIME
+    column(creation_date): DATETIME
+    column(update_date): DATETIME
+    column(default_draw): VARCHAR
+    column(nice_url): VARCHAR
+    column(external_id): VARCHAR
+    column(batch_id): VARCHAR
+    column(order_string): VARCHAR
+    column(order_date): DATETIME
+}
+
+table(OMP_LOOKUPS_VALUES) {
+    primary_key(id): INT
+    foreign_key(lookup_id): INT
+    column(ordre): INT
+    column(value): VARCHAR
+    column(value_es): VARCHAR
+    column(value_en): VARCHAR
+    column(value_ca): VARCHAR
+    column(caption_es): VARCHAR
+    column(caption_en): VARCHAR
+    column(caption_ca): VARCHAR
+}
+
+table(OMP_VALUES) {
+    primary_key(id): INT
+    foreign_key(inst_id): INT
+    foreign_key(atri_id): INT
+    column(text_val): TEXT
+    column(date_val): DATETIME
+    column(num_val): DOUBLE
+    column(img_info): VARCHAR
+    column(json_val): TEXT
+}
+
+table(OMP_RELATIONS) {
+    primary_key(id): INT
+    column(name): VARCHAR
+    column(caption): VARCHAR
+    column(description): TEXT
+    column(language): VARCHAR
+    column(tag): VARCHAR
+    column(parent_class_id): INT
+    column(child_class_id): INT
+    column(multiple_child_class_id): VARCHAR
+    column(order_type): VARCHAR
+    column(join_icon): CHAR
+    column(create_icon): CHAR
+    column(join_massive): CHAR
+    column(massive_file): VARCHAR
+    column(caption_ca): VARCHAR
+    column(caption_es): VARCHAR
+    column(caption_en): VARCHAR
+    column(autocomplete): CHAR
+}
+
+table(OMP_CLASS_ATTRIBUTES) {
+    primary_key(id): INT
+    foreign_key(class_id): INT
+    foreign_key(atri_id): INT
+    foreign_key(rel_id): INT
+    column(tab_id): INT
+    column(fila): INT
+    column(columna): INT
+    column(width): INT
+    column(height): INT
+    column(img_width): INT
+    column(img_height): INT
+    column(caption_position): VARCHAR
+    column(ordre_key): INT
+    column(mandatory): VARCHAR
+    column(detail): VARCHAR
+}
+
+table(OMP_CLASS_GROUPS) {
+    PRIMARY_KEY(id): INT
+    column(caption): VARCHAR
+    column(caption_ca): VARCHAR
+    column(caption_es): VARCHAR
+    column(caption_en): VARCHAR
+    column(ordering): INT
+}
+
+table(OMP_NICEURL) {
+    primary_key(id): INT
+    foreign_key(inst_id): INT
+    column(language): VARCHAR
+    column(niceurl): VARCHAR
+    --
+    unique(niceurl), language
+}
+
+table(OMP_RELATION_INSTANCES) {
+    primary_key(id): INT
+    foreign_key(rel_id): INT
+    foreign_key(parent_inst_id): INT
+    foreign_key(child_inst_id): INT
+    column(weight): DOUBLE
+    column(relation_date): DATETIME
+    column(clone_session): VARCHAR
+    column(cloned_instance): VARCHAR
+    column(external_id): VARCHAR
+    column(batch_id): VARCHAR
+}
+
+OMP_INSTANCES }|--|| OMP_CLASSES : class_id
+OMP_ATTRIBUTES ||--|| OMP_LOOKUPS : lookup_id
+OMP_LOOKUPS_VALUES }|--|| OMP_LOOKUPS : lookup_id
+OMP_VALUES }|--|| OMP_INSTANCES : inst_id
+OMP_VALUES }|--|| OMP_ATTRIBUTES : atri_id
+OMP_CLASS_ATTRIBUTES }|--|| OMP_CLASSES : class_id
+OMP_CLASS_ATTRIBUTES }|--|| OMP_ATTRIBUTES : atri_id
+OMP_CLASS_ATTRIBUTES }|--|| OMP_RELATIONS : rel_id
+OMP_CLASSES }|--|| OMP_CLASS_GROUPS : grp_id
+OMP_NICEURL }|--|| OMP_INSTANCES : inst_id
+OMP_RELATION_INSTANCES }|--|| OMP_RELATIONS : rel_id
+OMP_RELATION_INSTANCES }|--|| OMP_INSTANCES : parent_id
+OMP_RELATION_INSTANCES }|--|| OMP_INSTANCES : child_id
+
+@enduml
