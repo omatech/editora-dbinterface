@@ -759,6 +759,9 @@ class DBInterfaceBase
 
     public function getInstIDFromURLNice($nice_url, $language)
     {
+        $nice_url = $this->conn->quote($nice_url);
+        $language = $this->conn->quote($language);
+        
         $sql = "select inst_id from omp_niceurl where niceurl='$nice_url' and language='$language'";
         $inst_id = $this->fetchColumn($sql);
         return $inst_id;
