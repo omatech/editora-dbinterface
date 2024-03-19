@@ -218,6 +218,7 @@ class DBInterfaceBase
 
     public function findClassIDFromInstID($inst_id)
     {
+        $inst_id = $this->conn->quote($inst_id);
         $this->debug("Extractor::findClassIDFromInstID inst_id=$inst_id\n");
         $sql = "select class_id from omp_instances where id=$inst_id";
         return $this->fetchColumn($sql);
@@ -244,6 +245,7 @@ class DBInterfaceBase
 
     public function getAllAttributesInClass($class_id)
     {
+        $class_id = $this->conn->quote($class_id);
         $this->debug("Extractor::getAllAttributesInClass\n");
 
         $sql = "select a.id, a.name, a.type, a.img_width, a.img_height, a.language
@@ -330,9 +332,10 @@ class DBInterfaceBase
 
     public function getClassRelations($id)
     {
+        $id = $this->conn->quote($id);
         $sql = "select id, name, parent_class_id, child_class_id, multiple_child_class_id
 				from omp_relations 
-				where parent_class_id = '.$id.';";
+				where parent_class_id = $id;";
 
         $this->debug($sql);
         $row = $this->fetchAll($sql);
@@ -385,6 +388,7 @@ class DBInterfaceBase
 
     public function getInstanceRandomClassID($class_id)
     {
+        $class_id = $this->conn->quote($class_id);
         $sql = "select id from omp_instances where class_id = '.$class_id.' ORDER BY rand()";
 
         $this->debug($sql);
@@ -397,6 +401,7 @@ class DBInterfaceBase
 
     public function getInstanceLink($inst_id)
     {
+        $inst_id = $this->conn->quote($inst_id);
         $sql = "select niceurl
 				from omp_niceurl
 				where inst_id=$inst_id
@@ -427,6 +432,7 @@ class DBInterfaceBase
 
     public function getHasUrlnice($inst_id)
     {
+        $inst_id = $this->conn->quote($inst_id);
         $sql = "select niceurl
 				from omp_niceurl
 				where inst_id=$inst_id
@@ -653,6 +659,10 @@ class DBInterfaceBase
 
     public function relationInstanceExist($rel_id, $parent_inst_id, $child_inst_id)
     {
+        $rel_id = $this->conn->quote($rel_id);
+        $parent_inst_id = $this->conn->quote($parent_inst_id);
+        $child_inst_id = $this->conn->quote($child_inst_id);
+
         $sql = "select id 
 				from omp_relation_instances 
 				where rel_id=$rel_id 
@@ -718,7 +728,7 @@ class DBInterfaceBase
     public function getInstIDFromNumericValue($class_tag, $atri, $value)
     {// retorna -1 si no existeix la instancia d'aquesta class o el id si existeix
         $class_tag = $this->conn->quote($class_tag);
-        //$value = $this->conn->quote($value);
+        $value = $this->conn->quote($value);
 
         $atri_info = $this->getAttrInfo($atri);
         $atri_id = $atri_info['id'];
@@ -750,7 +760,10 @@ class DBInterfaceBase
 
     public function getInstIDFromURLNice($nice_url, $language)
     {
-        $sql = "select inst_id from omp_niceurl where niceurl='$nice_url' and language='$language'";
+        $nice_url = $this->conn->quote($nice_url);
+        $language = $this->conn->quote($language);
+
+        $sql = "select inst_id from omp_niceurl where niceurl=$nice_url and language=$language";
         $inst_id = $this->fetchColumn($sql);
         return $inst_id;
     }
@@ -767,6 +780,8 @@ class DBInterfaceBase
 
     public function getInstanceRowAndExistingValues($inst_id)
     {
+        $inst_id = $this->conn->quote($inst_id);
+
         $sql = "select * 
 				from omp_instances
 				where id=$inst_id";
@@ -786,6 +801,8 @@ class DBInterfaceBase
 
     public function existInstance($inst_id)
     {
+        $inst_id = $this->conn->quote($inst_id);
+
         $sql = "select count(*) num 
 				from omp_instances
 				where id=$inst_id
@@ -797,6 +814,8 @@ class DBInterfaceBase
     public function existsInstanceWithExternalID($class_id, $external_id)
     {// return false if not exists, inst_id if exists
         $external_id = $this->conn->quote($external_id);
+        $class_id = $this->conn->quote($class_id);
+        
         $sql = "select id from omp_instances where external_id=$external_id and class_id=$class_id limit 1";
         $inst_id = $this->fetchColumn($sql);
         return $inst_id;
@@ -809,17 +828,23 @@ class DBInterfaceBase
 
     public function existsURLNice($nice_url, $language)
     {
-        $sql = "select count(*) num from omp_niceurl where niceurl='$nice_url' and language='$language'";
+        $nice_url = $this->conn->quote($nice_url);
+        $language = $this->conn->quote($language);
+
+        $sql = "select count(*) num from omp_niceurl where niceurl=$nice_url and language=$language";
         $num = $this->fetchColumn($sql);
         return $num > 0;
     }
 
     public function getHasUrlniceLanguage($inst_id, $lang)
     {
+        $inst_id = $this->conn->quote($inst_id);
+        $lang = $this->conn->quote($lang);
+
         $sql = "select niceurl
 				from omp_niceurl
 				where inst_id=$inst_id
-				and language='" . $lang . "'";
+				and language=$lang";
 
         $niceurl_row = $this->fetchAssoc($sql);
         if ($niceurl_row) {
@@ -832,6 +857,7 @@ class DBInterfaceBase
     public function getLookupValueID($lookup_id, $value)
     {
         $value = $this->conn->quote($value);
+        $lookup_id = $this->conn->quote($lookup_id);
 
         $sql = "select lv.id
 				from omp_lookups_values lv
@@ -848,6 +874,9 @@ class DBInterfaceBase
 
     public function existValue($inst_id, $atri_id)
     {
+        $inst_id = $this->conn->quote($inst_id);
+        $atri_id = $this->conn->quote($atri_id);
+
         $sql = "select count(*) num
 				from omp_values v
 				where v.inst_id=$inst_id
@@ -996,6 +1025,7 @@ class DBInterfaceBase
             if (is_numeric($class)) {
                 return " and c.id=$class ";
             } else {
+                $class = $this->conn->quote($class);
                 return " and c.tag='$class' ";
             }
         }
