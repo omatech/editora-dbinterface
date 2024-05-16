@@ -16,7 +16,7 @@ class Clear extends DBInterfaceBase
      */
     public function truncateTables($truncate_users=false)
     {
-        $database_name = $this->conn->getDatabase();
+        $database_name = env('DB_DATABASE', '');
         $tables_to_truncate = array(
             'omp_attributes',
             'omp_class_attributes',
@@ -56,7 +56,7 @@ class Clear extends DBInterfaceBase
      */
     public function dropAllData()
     {
-        $database_name = $this->conn->getDatabase();
+        $database_name = env('DB_DATABASE', '');
 
         $tables = $this->conn->query("SELECT concat('DROP TABLE IF EXISTS ', table_name, ';') FROM information_schema.tables WHERE table_schema = '$database_name';")->fetchAll();
 

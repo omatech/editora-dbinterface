@@ -24,7 +24,7 @@ class ClearTest extends TestCaseBase
     {
         $class = 'test_class_'.rand();
         $query = "select c.id class_id, c.name, c.tag from omp_classes c where c.tag='$class' limit 1;";
-        $this->conn->insert($this->conn->getDatabase().'.omp_classes', array(
+        $this->conn->insert(env('DB_DATABASE', '').'.omp_classes', array(
            'name' => $class,
            'tag' => $class,
         ));
@@ -50,7 +50,7 @@ class ClearTest extends TestCaseBase
     {
         $class = 'test_class_'.rand();
         $query = "select c.id class_id, c.name, c.tag from omp_classes c where c.tag='$class' limit 1;";
-        $this->conn->insert($this->conn->getDatabase().'.omp_classes', array(
+        $this->conn->insert(env('DB_DATABASE', '').'.omp_classes', array(
             'name' => $class,
             'tag' => $class,
         ));
@@ -65,7 +65,7 @@ class ClearTest extends TestCaseBase
 
         $class_id = $query_result['class_id'];
 
-        $this->conn->insert($this->conn->getDatabase().'.omp_instances', array(
+        $this->conn->insert(env('DB_DATABASE', '').'.omp_instances', array(
             'class_id' => $class_id,
         ));
 
@@ -85,7 +85,7 @@ class ClearTest extends TestCaseBase
     {
         $class = 'test_class_'.rand();
         $query = "select c.id class_id, c.name, c.tag from omp_classes c where c.tag='$class' limit 1;";
-        $this->conn->insert($this->conn->getDatabase().'.omp_classes', array(
+        $this->conn->insert(env('DB_DATABASE', '').'.omp_classes', array(
             'name' => $class,
             'tag' => $class,
         ));
@@ -100,7 +100,7 @@ class ClearTest extends TestCaseBase
 
         $class_id = $query_result['class_id'];
 
-        $this->conn->insert($this->conn->getDatabase().'.omp_instances', array(
+        $this->conn->insert(env('DB_DATABASE', '').'.omp_instances', array(
             'class_id' => $class_id,
         ));
 

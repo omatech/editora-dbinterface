@@ -171,7 +171,7 @@ class GeneratorTest extends TestCaseBase
 
         $this->assertTrue($created);
 
-        $dbname = $this->conn->getDatabase();
+        $dbname = env('DB_DATABASE', '');
         $required_tables = array(
             'omp_attributes',
             'omp_class_attributes',

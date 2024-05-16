@@ -620,7 +620,7 @@ class Extractor extends DBInterfaceBase
 
     private function clearExtractionCache($cache_key)
     {
-        $memcache_key = $this->conn->getDatabase() . ":extractor_cache:$cache_key:$this->lang";
+        $memcache_key = env('DB_DATABASE', '') . ":extractor_cache:$cache_key:$this->lang";
         $this->deleteCache($memcache_key);
     }
 
@@ -629,7 +629,7 @@ class Extractor extends DBInterfaceBase
         if (isset($params['extraction_cache_key'])) {
             $cache_key = $params['extraction_cache_key'];
 
-            $memcache_key = $this->conn->getDatabase() . ":extractor_cache:$cache_key:$this->lang";
+            $memcache_key = env('DB_DATABASE', '') . ":extractor_cache:$cache_key:$this->lang";
             $this->debug("MEMCACHE:: using key $memcache_key extraction\n");
             if (!$this->avoid_cache) {
                 $this->debug("CACHE:: avoid_cache desactivado\n");
@@ -657,7 +657,7 @@ class Extractor extends DBInterfaceBase
         if (isset($params['extraction_cache_key'])) {
             $cache_key = $params['extraction_cache_key'];
 
-            $memcache_key = $this->conn->getDatabase() . "_extractor_cache:$cache_key:$this->lang";
+            $memcache_key = env('DB_DATABASE', '') . "_extractor_cache:$cache_key:$this->lang";
             $this->debug("MEMCACHE:: using key $memcache_key extraction\n");
             if (!$this->avoid_cache) {
                 $this->debug("CACHE:: avoid_cache desactivado\n");
@@ -868,7 +868,7 @@ class Extractor extends DBInterfaceBase
             $filter = $params['filter'];
         }
 
-        $memcache_key = $this->conn->getDatabase() . ":dbinterface:$this->lang:$inst_id:$filter";
+        $memcache_key = env('DB_DATABASE', '') . ":dbinterface:$this->lang:$inst_id:$filter";
         $this->debug("MEMCACHE:: using key $memcache_key instance update_timestamp=$update_timestamp\n");
         if (!$this->avoid_cache) {
             $this->debug("CACHE:: avoid_cache desactivado\n");
