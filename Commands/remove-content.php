@@ -78,7 +78,11 @@ if ($to_version != 4) {
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
 if (isset($options_array['debug'])) {
-	$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+	if (method_exists($dbal_config, 'setSQLLogger')) {
+		$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+	} else {
+		$dbal_config->setMiddlewares([new \Doctrine\DBAL\Logging\Middleware(new \Psr\Log\NullLogger())]);
+	}
 	$params['debug'] = true;
 }
 

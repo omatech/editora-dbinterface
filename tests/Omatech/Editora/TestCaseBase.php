@@ -28,7 +28,15 @@ class TestCaseBase extends PHPUnit_Framework_TestCase
         if (method_exists($this->conn, 'fetchAssoc')) {
             return $this->conn->fetchAssoc($sql);
         } else {
-            return $this->conn->query($sql)->fetchAssociative();
+            if (method_exists($this->conn, 'query')) {
+                if (method_exists($this->conn, 'fetchAssociative')) {
+                    return $this->conn->query($sql)->fetchAssociative();
+                } else {
+                    return $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
+                }
+            } else {
+                return $this->conn->executeQuery($sql)->fetchAssociative();
+            }
         }
     }
 
@@ -37,7 +45,12 @@ class TestCaseBase extends PHPUnit_Framework_TestCase
         if (method_exists($this->conn, 'fetchAll')) {
             return $this->conn->fetchAll($sql);
         } else {
-            return $this->conn->query($sql)->fetchAll();
+            if (method_exists($this->conn, 'query')) {
+                return $this->conn->query($sql)->fetchAll();
+            } else {
+                return $this->conn->executeQuery($sql)->fetchAllAssociative();
+            }
+            
         }
     }
 

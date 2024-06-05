@@ -23,7 +23,11 @@ require_once __DIR__ . $autoload_location;
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
 if (DEBUG)
-	$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+	if (method_exists($dbal_config, 'setSQLLogger')) {
+		$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+	} else {
+		$dbal_config->setMiddlewares([new \Doctrine\DBAL\Logging\Middleware(new \Psr\Log\NullLogger())]);
+	}
 $connection_params = array(
 	'dbname' => DBNAME,
 	'user' => DBUSER,

@@ -216,8 +216,10 @@ class FakeContent extends DBInterfaceBase
                             }
 
                             foreach ($instances_rel as $instance_rel) {
-                                $result = $loader->insertRelationInstance($relation['id'], $instance_class['id'], $instance_rel['id'], -1, $batch_id);
-                                $relation_instance_count++;
+                                if ($instance_rel !== null) {
+                                    $result = $loader->insertRelationInstance($relation['id'], $instance_class['id'], $instance_rel['id'], -1, $batch_id);
+                                    $relation_instance_count++;
+                                }
                             }
                             echo('r');
                         }

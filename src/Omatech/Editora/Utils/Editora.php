@@ -39,8 +39,14 @@ class Editora {
 			";
 
 			$prepare = self::$conn->prepare($sql);
-			$prepare->bindParam(':lang', $lang, PDO::PARAM_STR);
-			$prepare->bindParam(':inst_id', $inst_id, PDO::PARAM_INT);
+			if (method_exists($prepare, 'bindParam')) {
+				$prepare->bindParam(':lang', $lang, PDO::PARAM_STR);
+				$prepare->bindParam(':inst_id', $inst_id, PDO::PARAM_INT);
+			} else {
+				$prepare->bindValue('lang', $lang);
+				$prepare->bindValue('inst_id', $inst_id);
+			}
+			
 			$resultSet = $prepare->executeQuery();
 			$rows=$resultSet->fetchAllAssociative();
 			return $rows;
@@ -68,10 +74,20 @@ class Editora {
 				and i.class_id = c.id";
 
 				$prepare = self::$conn->prepare($sql);
-				$prepare->bindParam(':id', $id, PDO::PARAM_INT);
+				$prepare = self::$conn->prepare($sql);
+				if (method_exists($prepare, 'bindParam')) {
+					$prepare->bindParam(':id', $id, PDO::PARAM_INT);
+				} else {
+					$prepare->bindValue('id', $id);
+				}
 
-				$resultSet = $prepare->executeQuery();
-				$row=$resultSet->fetch();
+				if (method_exists($prepare, 'fetch')) {
+					$resultSet = $prepare->executeQuery();
+					$row=$resultSet->fetch();
+				} else {
+					$resultSet = $prepare->executeQuery();
+					$row=$resultSet->fetchOne();
+				}
 
 				if ($row) {
 						return $row['tag'];
@@ -93,10 +109,21 @@ class Editora {
 				$sql = "select niceurl as id from omp_niceurl n, omp_instances i where i.id=inst_id and inst_id=:id and language=:language";
 
 				$prepare = self::$conn->prepare($sql);
-				$prepare->bindParam(':id', $id, PDO::PARAM_INT);
-				$prepare->bindParam(':language', $lg, PDO::PARAM_STR);
-				$resultSet = $prepare->executeQuery();
-				$row=$resultSet->fetch();
+				
+				if (method_exists($prepare, 'bindParam')) {
+					$prepare->bindParam(':id', $id, PDO::PARAM_INT);
+					$prepare->bindParam(':language', $lg, PDO::PARAM_STR);
+				} else {
+					$prepare->bindValue('id', $id);
+					$prepare->bindValue('language', $lg);
+				}
+				if (method_exists($prepare, 'fetch')) {
+					$resultSet = $prepare->executeQuery();
+					$row=$resultSet->fetch();
+				} else {
+					$resultSet = $prepare->executeQuery();
+					$row=$resultSet->fetchOne();
+				}
 
 				if (isset($row['id']))
 						return $row['id'];
@@ -123,10 +150,20 @@ class Editora {
 								$sql.=" and i.status = 'O'";
 
 						$prepare = self::$conn->prepare($sql);
-						$prepare->bindParam(':url', $url, PDO::PARAM_STR);
-						$prepare->bindParam(':language', $lg, PDO::PARAM_STR);
-						$resultSet = $prepare->executeQuery();
-						$row=$resultSet->fetch();
+						if (method_exists($prepare, 'bindParam')) {
+							$prepare->bindParam(':url', $url, PDO::PARAM_INT);
+							$prepare->bindParam(':language', $lg, PDO::PARAM_STR);
+						} else {
+							$prepare->bindValue('url', $url);
+							$prepare->bindValue('language', $lg);
+						}
+						if (method_exists($prepare, 'fetch')) {
+							$resultSet = $prepare->executeQuery();
+							$row=$resultSet->fetch();
+						} else {
+							$resultSet = $prepare->executeQuery();
+							$row=$resultSet->fetchOne();
+						}
 
 						if ($row) {
 								// Permanent redirection
@@ -141,9 +178,18 @@ class Editora {
 								$sql.=" and status = 'O'";
 
 						$prepare = self::$conn->prepare($sql);
-						$prepare->bindParam(':url', $url, PDO::PARAM_STR);
-						$resultSet = $prepare->executeQuery();
-						$row=$resultSet->fetch();
+						if (method_exists($prepare, 'bindParam')) {
+							$prepare->bindParam(':url', $url, PDO::PARAM_INT);
+						} else {
+							$prepare->bindValue('url', $url);
+						}
+						if (method_exists($prepare, 'fetch')) {
+							$resultSet = $prepare->executeQuery();
+							$row=$resultSet->fetch();
+						} else {
+							$resultSet = $prepare->executeQuery();
+							$row=$resultSet->fetchOne();
+						}
 
 						if ($row) {
 								$_REQUEST['inst_id_from_url'] = $row['id'];
@@ -158,10 +204,20 @@ class Editora {
 
 
 				$prepare = self::$conn->prepare($sql);
-				$prepare->bindParam(':url', $url, PDO::PARAM_STR);
 
-				$resultSet = $prepare->executeQuery();
-				$row=$resultSet->fetch();;
+				if (method_exists($prepare, 'bindParam')) {
+					$prepare->bindParam(':url', $url, PDO::PARAM_STR);
+				} else {
+					$prepare->bindValue('url', $url);
+				}
+
+				if (method_exists($prepare, 'fetch')) {
+					$resultSet = $prepare->executeQuery();
+					$row=$resultSet->fetch();
+				} else {
+					$resultSet = $prepare->executeQuery();
+					$row=$resultSet->fetchOne();
+				}
 
 				if ($row) {
 						$_REQUEST['inst_id_from_url'] = $row['id'];
@@ -232,9 +288,19 @@ class Editora {
             }
 
             $prepare = self::$conn->prepare($sql);
-            $prepare->bindParam(':url', $url, PDO::PARAM_STR);
-						$resultSet = $prepare->executeQuery();
-						$row=$resultSet->fetch();
+			if (method_exists($prepare, 'bindParam')) {
+				$prepare->bindParam(':url', $url, PDO::PARAM_INT);
+			} else {
+				$prepare->bindValue('url', $url);
+			}
+
+			if (method_exists($prepare, 'fetch')) {
+				$resultSet = $prepare->executeQuery();
+				$row=$resultSet->fetch();
+			} else {
+				$resultSet = $prepare->executeQuery();
+				$row=$resultSet->fetchOne();
+			}
 
             if ($row) {
                 $_REQUEST['class_from_url'] = $row['class'];
@@ -250,9 +316,18 @@ class Editora {
 
 
         $prepare = self::$conn->prepare($sql);
-        $prepare->bindParam(':url', $url, PDO::PARAM_STR);
-				$resultSet = $prepare->executeQuery();
-				$row=$resultSet->fetch();
+		if (method_exists($prepare, 'bindParam')) {
+			$prepare->bindParam(':url', $url, PDO::PARAM_STR);
+		} else {
+			$prepare->bindValue('url', $url);
+		}
+		if (method_exists($prepare, 'fetch')) {
+			$resultSet = $prepare->executeQuery();
+			$row=$resultSet->fetch();
+		} else {
+			$resultSet = $prepare->executeQuery();
+			$row=$resultSet->fetchOne();
+		}
 
         if ($row) {
             $_REQUEST['class_from_url'] = $row['class'];

@@ -2,6 +2,8 @@
 
 namespace Omatech\Editora;
 
+use PDO;
+
 class DBInterfaceBase
 {
     public $debug_messages = '';
@@ -175,7 +177,15 @@ class DBInterfaceBase
         if (method_exists($this->conn, 'fetchAssoc')) {
             return $this->conn->fetchAssoc($sql);
         } else {
-            return $this->conn->query($sql)->fetchAssociative();
+            if (method_exists($this->conn, 'query')) {
+                if (method_exists($this->conn, 'fetchAssociative')) {
+                    return $this->conn->query($sql)->fetchAssociative();
+                } else {
+                    return $this->conn->query($sql)->fetch(PDO::FETCH_ASSOC);
+                }
+            } else {
+                return $this->conn->executeQuery($sql)->fetchAssociative();
+            }
         }
     }
 
@@ -184,7 +194,12 @@ class DBInterfaceBase
         if (method_exists($this->conn, 'fetchAll')) {
             return $this->conn->fetchAll($sql);
         } else {
-            return $this->conn->query($sql)->fetchAll();
+            if (method_exists($this->conn, 'query')) {
+                return $this->conn->query($sql)->fetchAll();
+            } else {
+                return $this->conn->executeQuery($sql)->fetchAllAssociative();
+            }
+            
         }
     }
 
@@ -460,8 +475,13 @@ class DBInterfaceBase
 
                 $prepare = $this->conn->prepare($sql);
                 $prepare->bindValue('language', $language);
-                $resultSet = $prepare->executeQuery();
-                $row=$resultSet->fetchAssociative();
+                if (method_exists($prepare, 'executeQuery')) {
+                    $resultSet = $prepare->executeQuery();
+                    $row=$resultSet->fetchAssociative();
+                } else {
+                    $prepare->execute();
+                    $row = $prepare->fetch(PDO::FETCH_ASSOC);
+                }
 
                 //$prepare->execute();
                 //$row = $prepare->fetch();
@@ -487,8 +507,13 @@ class DBInterfaceBase
                 $prepare = $this->conn->prepare($sql);
                 $prepare->bindValue('language', $language);
                 $prepare->bindValue('nice_url', $nice_url);
-                $resultSet = $prepare->executeQuery();
-                $row=$resultSet->fetchAssociative();
+                if (method_exists($prepare, 'executeQuery')) {
+                    $resultSet = $prepare->executeQuery();
+                    $row=$resultSet->fetchAssociative();
+                } else {
+                    $prepare->execute();
+                    $row = $prepare->fetch(PDO::FETCH_ASSOC);
+                }
                 //$prepare->execute();
                 //$row = $prepare->fetch();
 
@@ -542,8 +567,13 @@ class DBInterfaceBase
         $prepare = $this->conn->prepare($sql);
         $prepare->bindValue('lang', $lang);
         $prepare->bindValue('inst_id', $inst_id);
-        $resultSet = $prepare->executeQuery();
-        $rows=$resultSet->fetchAllAssociative();
+        if (method_exists($prepare, 'executeQuery')) {
+            $resultSet = $prepare->executeQuery();
+            $rows=$resultSet->fetchAllAssociative();
+        } else {
+            $prepare->execute();
+            $rows = $prepare->fetchAll();
+        }
         return $rows;
         //$prepare->execute();
         //return $prepare->fetchAll();

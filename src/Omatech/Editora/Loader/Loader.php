@@ -75,7 +75,11 @@ class Loader extends DBInterfaceBase
                 $sql = substr($sql, 0, -1); // eliminem la ultima ,
                 echo $i;
                 //echo PHP_EOL . $i . ' - ' . $sql . PHP_EOL;
-                $this->conn->query($sql);
+                if (method_exists($this->conn, 'query')) {
+                    $this->conn->query($sql);
+                } else {
+                    $this->conn->executeQuery($sql);
+                }
                 $sql = $initial_sql;
             } else {
                 echo '.';
@@ -86,7 +90,11 @@ class Loader extends DBInterfaceBase
         echo "$i\n";
         //echo "$sql\n";
         //$this->last_massive_sql = $sql;
-        $this->conn->query($sql);
+        if (method_exists($this->conn, 'query')) {
+            $this->conn->query($sql);
+        } else {
+            $this->conn->executeQuery($sql);
+        }
         return $i;
     }
 
@@ -469,8 +477,17 @@ class Loader extends DBInterfaceBase
             }
         }
 
-        $external_id = $this->conn->quote($external_id);
-        $batch_id = $this->conn->quote($batch_id);
+        if ($external_id) { 
+            $external_id = $this->conn->quote($external_id);
+        } else {
+            $external_id = 'null';
+        }
+
+        if ($batch_id) { 
+            $batch_id = $this->conn->quote($batch_id);
+        } else {
+            $batch_id = 'null';
+        }
 
         $sql = "insert into omp_instances (class_id, key_fields, status, publishing_begins, publishing_ends, creation_date, update_date, external_id, batch_id)
 						values ($class_id, " . $this->conn->quote($nom_intern) . ", $status, $publishing_begins, $publishing_ends, $creation_date, $update_date, $external_id, $batch_id)";
