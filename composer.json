@@ -1,20 +1,20 @@
 {
     "name": "omatech/editora-dbinterface",
     "description": "Extract or Load information from Editora in powerful and misterious ways using closures with Eloquant like syntax",
-		"minimum-stability":"dev",
+	"minimum-stability":"dev",
     "require": {
-      "doctrine/orm": "3.*",
+      "doctrine/orm": "^2.19.5",
       "phpoffice/phpspreadsheet": "1.*",
       "jawira/plantuml-encoding": "^1.0"
     },
     "require-dev": {
         "phpunit/phpunit": "4.8.28",
         "fzaninotto/faker": "^1.9@dev"
-        },
-		"autoload": {
-				"psr-4": {
-						"Omatech\\": "src/Omatech"
-				}
+    },
+    "autoload": {
+        "psr-4": {
+	        "Omatech\\": "src/Omatech"
+	    }
     }
 }
 
