@@ -399,8 +399,9 @@ class DBInterfaceBase
         return $row;
     }
 
-    public function getInstanceLink($inst_id)
+    public function getInstanceLink($inst_id, $lang = null)
     {
+        $this->lang = $this->lang ?? $lang;
         $inst_id = $this->conn->quote($inst_id);
         $sql = "select niceurl
 				from omp_niceurl
