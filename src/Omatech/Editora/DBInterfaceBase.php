@@ -1027,7 +1027,7 @@ class DBInterfaceBase
                 return " and c.id=$class ";
             } else {
                 $class = $this->conn->quote($class);
-                return " and c.tag='$class' ";
+                return " and c.tag=$class ";
             }
         }
         return "";
