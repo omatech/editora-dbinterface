@@ -944,7 +944,7 @@ class Extractor extends DBInterfaceBase
 
 
 
-        $sql = "select i.id inst_id, a.id atri_id, a.name atri_name, a.tag atri_tag, a.type atri_type, a.language atri_language, ca.detail is_detail, i.update_date, ifnull(unix_timestamp(i.update_date),0) update_timestamp 
+        $sql = "select i.id inst_id, a.id atri_id, a.name atri_name, a.tag atri_tag, a.type atri_type, a.language atri_language, a.img_width atri_img_width, a.img_height atri_img_height, ca.detail is_detail, i.update_date, ifnull(unix_timestamp(i.update_date),0) update_timestamp
 				from omp_attributes a
 				, omp_class_attributes ca
 				, omp_instances i
@@ -1015,6 +1015,32 @@ class Extractor extends DBInterfaceBase
                                 $attrs[$tag.'_imghash']['text_val'] = md5($hash_key).'_'.$attrs[$attr_key]['id'];
                                 $attrs[$tag.'_imgextension']['tag'] = $tag.'_imgextension';
                                 $attrs[$tag.'_imgextension']['text_val'] = end($file_info);
+
+				if (isset($attrs[$attr_key]['img_info'])) {
+
+                                    $attrs[$tag.'_container_height']['tag'] = $tag.'_container_height';
+                                    $attrs[$tag.'_container_height']['text_val'] = $attrs[$attr_key]['atri_img_height'] ?? null;
+
+                                    $attrs[$tag.'_container_width']['tag'] = $tag.'_container_width';
+                                    $attrs[$tag.'_container_width']['text_val'] = $attrs[$attr_key]['atri_img_width'] ?? null;
+
+                                    $img_info = $attrs[$attr_key]['img_info'] ?? '';
+                                    $size = explode('.', $img_info);
+                                    $attrs[$tag.'_height']['tag'] = $tag.'_height';
+                                    $attrs[$tag.'_height']['text_val'] = (int) $size[0] ?? null;
+                                    $attrs[$tag.'_width']['tag'] = $tag.'_width';
+                                    $attrs[$tag.'_width']['text_val'] = (int) $size[1] ?? null;
+
+                                    $width = $attrs[$attr_key]['atri_img_width'];
+                                    $height = $attrs[$attr_key]['atri_img_height'];
+
+                                    if($width && $height && $width > 0 && $height > 0 && extension_loaded('gmp')) {
+                                        $divisor = ($width % $height) ? gmp_gcd($height, $width % $height) : $height;
+                                        $aspectRatio = $width / $divisor . ':' . $height / $divisor;
+                                        $attrs[$tag.'_aspect_ratio']['tag'] = $tag.'_aspect_ratio';
+                                        $attrs[$tag.'_aspect_ratio']['text_val'] = $aspectRatio;
+                                    }
+                                }
                                 
                             }
                             if ($subval == 'Y' && isset($attrs[$attr_key]['json_val'])) {
