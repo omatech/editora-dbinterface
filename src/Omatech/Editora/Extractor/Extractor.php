@@ -144,8 +144,8 @@ class Extractor extends DBInterfaceBase
             return $result;
         }
 
-        $sql = $this->sql_select_instances . "  
-					from omp_instances i 
+        $sql = $this->sql_select_instances . "
+					from omp_instances i
 					, omp_classes c
 					where 1=1
 					and i.id=$inst_id
@@ -272,8 +272,8 @@ class Extractor extends DBInterfaceBase
             return $result;
         }
 
-        $sql = $this->sql_select_instances . "  
-					from omp_instances i 
+        $sql = $this->sql_select_instances . "
+					from omp_instances i
 					, omp_classes c
 					where 1=1
 					and i.id=$inst_id
@@ -303,13 +303,13 @@ class Extractor extends DBInterfaceBase
         // $params['order_direction'] = direction of the order by clause, desc|asc defaults to asc
         $start = microtime(true);
         $this->debug("Extractor::findInstancesInClass class=$class num=$num\n");
-        
+
         $result = $this->getExtractionFromCache($params);
         // if we get the info from cache let's return
         if ($result) {
             return $result;
         }
-        
+
         $class_filter = $this->getClassFilter($class);
         if (isset($params['order'])) {
             $order_filter = $this->getOrderFilter($params['order'], $params['order_direction']);
@@ -322,14 +322,14 @@ class Extractor extends DBInterfaceBase
 
         if (isset($params['niceurl_in_language']) && $params['niceurl_in_language']==true) {
             $this->setPagination($num, $class_filter, $preview_filter, $order_filter, "", "", $params['niceurl_in_language'], $date_filter);
-            $sql = $this->sql_select_instances . "  
-				from omp_instances i 
+            $sql = $this->sql_select_instances . "
+				from omp_instances i
 				, omp_classes c
 				, omp_niceurl u
 				where 1=1
 				$class_filter
 				and c.id=i.class_id
-				and i.id = u.inst_id 
+				and i.id = u.inst_id
 				and u.language = '".$this->lang."'
                 $date_filter
 				$preview_filter
@@ -338,8 +338,8 @@ class Extractor extends DBInterfaceBase
 			";
         } else {
             $this->setPagination($num, $class_filter, $preview_filter, $order_filter);
-            $sql = $this->sql_select_instances . "  
-				from omp_instances i 
+            $sql = $this->sql_select_instances . "
+				from omp_instances i
 				, omp_classes c
 				where 1=1
 				$class_filter
@@ -359,7 +359,7 @@ class Extractor extends DBInterfaceBase
         foreach ($rows as $row) {
             $result[] = $this->prepareInstanceResultStructure($row, $params, $callback);
         }
-        
+
         // put info into the cache before returning
         $this->putInExtractionCache($result, $params);
         return $result;
@@ -373,13 +373,13 @@ class Extractor extends DBInterfaceBase
         if (!$inst_ids) {
             return [];
         }
-        
+
         $result = $this->getExtractionFromCache($params);
         // if we get the info from cache let's return
         if ($result) {
             return $result;
         }
-        
+
         $class_filter = $this->getClassFilter($class);
         if (isset($params['order'])) {
             $order_filter = $this->getOrderFilter($params['order'], $params['order_direction']);
@@ -391,8 +391,8 @@ class Extractor extends DBInterfaceBase
         $ids_filter = $this->getIDsListFilter($inst_ids);
         $this->setPagination($num, $class_filter, $preview_filter, $order_filter, $ids_filter);
 
-        $sql = $this->sql_select_instances . "  
-			from omp_instances i 
+        $sql = $this->sql_select_instances . "
+			from omp_instances i
 			, omp_classes c
 			where 1=1
 			$class_filter
@@ -411,7 +411,7 @@ class Extractor extends DBInterfaceBase
         foreach ($rows as $row) {
             $result[] = $this->prepareInstanceResultStructure($row, $params, $callback);
         }
-        
+
         // put info into the cache before returning
         $this->putInExtractionCache($result, $params);
         return $result;
@@ -421,13 +421,13 @@ class Extractor extends DBInterfaceBase
     {
         $start = microtime(true);
         $this->debug("Extractor::findInstancesBySearch class=$class query=$query\n");
-        
+
         $result = $this->getExtractionFromCache($params);
         // if we get the info from cache let's return
         if ($result) {
             return $result;
         }
-        
+
         $class_filter = $this->getClassFilter($class);
         $order_filter = " order by relevance ";
         $search_filter = $this->getSearchFilter($query);
@@ -612,6 +612,47 @@ class Extractor extends DBInterfaceBase
         }
 
         return $result;
+    }
+
+    public function findInstancesByUrl(string $url, $params = null, callable $callback = null)
+    {
+        $start = microtime(true);
+        $this->debug("Extractor::findInstancesByNiceurl url=$url\n");
+        $result = $this->getExtractionFromCache($params);
+        // if we get the info from cache let's return
+        if ($result) {
+            return $result;
+        }
+
+        $niceurls = explode('/', $url);
+        $niceurls = array_map(fn($n) => $n === '' ? 'home' : $n, $niceurls);
+
+        $sql = "select inst_id
+            from omp_instances i
+            , omp_niceurl u
+            where 1=1
+            and i.id = u.inst_id
+            and u.language = '" . $this->lang . "'
+            and u.niceurl IN ('" . implode("','", $niceurls) . "')
+            order by FIND_IN_SET(u.niceurl, '" . implode(",", $niceurls) . "')
+        ";
+
+        $this->debug("SQL a findInstancesByNiceurl\n");
+        $this->debug($sql);
+        $rows = $this->fetchAll($sql);
+        $inst_ids = array_reduce($rows, function ($acc, $row) {
+            $acc .= ','.$row['inst_id'];
+            return $acc;
+        }, '');
+        $inst_ids = ltrim($inst_ids, ',');
+
+        $instances = $this->findInstancesInList($inst_ids, null, null, [
+            'order' => 'ignore',
+            'order_direction' => 'ignore'
+        ]);
+
+        $this->putInExtractionCache($instances, $params);
+        return $instances;
     }
 
     ///
@@ -1003,7 +1044,7 @@ class Extractor extends DBInterfaceBase
                                 $tag=$attrs[$attr_key]['tag'];
                                 $attrs[$tag.'_imgid']['tag'] = $tag.'_imgid';
                                 $attrs[$tag.'_imgid']['text_val'] = $attrs[$attr_key]['id'];
-                                
+
                                 $attrs[$tag.'_imghash']['tag'] = $tag.'_imghash';
                                 $hash_key='';
                                 $file_info=['jpg'];
@@ -1041,7 +1082,7 @@ class Extractor extends DBInterfaceBase
                                         $attrs[$tag.'_aspect_ratio']['text_val'] = $aspectRatio;
                                     }
                                 }
-                                
+
                             }
                             if ($subval == 'Y' && isset($attrs[$attr_key]['json_val'])) {
                                 $tag=$attrs[$attr_key]['tag'];
@@ -1083,7 +1124,7 @@ class Extractor extends DBInterfaceBase
     public function getLookupValue($id)
     {
         $sql = "select value
-				from omp_lookups_values 
+				from omp_lookups_values
 				where id=$id
 				";
         $row = $this->fetchAssoc($sql);
@@ -1113,7 +1154,7 @@ class Extractor extends DBInterfaceBase
             $values['img_info'] = null;
             $values['json_val'] = null;
             if ($type == 'L') {
-                $sql = "SELECT lv.id 
+                $sql = "SELECT lv.id
 				FROM omp_lookups_values lv
 				, omp_lookups l
 				, omp_attributes a
@@ -1141,16 +1182,16 @@ class Extractor extends DBInterfaceBase
                 if (isset($pagination_array[0]) && isset($pagination_array[1]) && is_numeric($pagination_array[0]) && is_numeric($pagination_array[1]) && $pagination_array[1] > 0) {
                     $limit = $pagination_array[0];
                     $offset = ($pagination_array[1] - 1) * $limit;
-                    
+
                     if ($niceurl_in_language) {
-                        $sql = "select count(*) num 
-							from omp_instances i 
+                        $sql = "select count(*) num
+							from omp_instances i
 							, omp_classes c
 							, omp_niceurl u
 							where 1=1
 							$class_filter
 							and c.id=i.class_id
-							and i.id = u.inst_id 
+							and i.id = u.inst_id
 							and u.language = '".$this->lang."'
                             $date_filter
 							$preview_filter
@@ -1158,8 +1199,8 @@ class Extractor extends DBInterfaceBase
 							$search_filter
 						";
                     } else {
-                        $sql = "select count(*) num 
-							from omp_instances i 
+                        $sql = "select count(*) num
+							from omp_instances i
 							, omp_classes c
 							where 1=1
 							$class_filter
