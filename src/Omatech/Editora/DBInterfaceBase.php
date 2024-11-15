@@ -87,7 +87,7 @@ class DBInterfaceBase
     public function getAllInstances($limit=1000000000)
     {
         $sql="select i.*, c.name class_name, c.tag class_tag, c.id class_id, i.key_fields nom_intern, i.update_date, ifnull(unix_timestamp(i.update_date),0) update_timestamp
-		from omp_instances i 
+		from omp_instances i
 		, omp_classes c
 		where 1=1
 		and c.id=i.class_id
@@ -114,7 +114,7 @@ class DBInterfaceBase
         return $res;
     }
 
-    
+
     public function getAllRelations()
     {
         $sql="select * from omp_relations";
@@ -131,8 +131,8 @@ class DBInterfaceBase
     public function getBulkInstances($include = '', $exclude = '')
     {
         $sql_add = $this->getIncludeExcludeClassesFilter($include, $exclude);
-        $sql = "select i.*  
-					from omp_instances i 
+        $sql = "select i.*
+					from omp_instances i
 					, omp_classes c
 					where 1=1
 					and c.id=i.class_id
@@ -334,7 +334,7 @@ class DBInterfaceBase
     {
         $id = $this->conn->quote($id);
         $sql = "select id, name, parent_class_id, child_class_id, multiple_child_class_id
-				from omp_relations 
+				from omp_relations
 				where parent_class_id = $id;";
 
         $this->debug($sql);
@@ -348,7 +348,7 @@ class DBInterfaceBase
 
     public function getAllClassAttributes()
     {
-        $sql="select class_id, a.language, a.tag, a.id 
+        $sql="select class_id, a.language, a.tag, a.id
 		from omp_class_attributes ca
 		, omp_attributes a
 		where ca.atri_id=a.id
@@ -423,7 +423,7 @@ class DBInterfaceBase
                 $link = '/' . $this->lang . '/' . $inst_id;
             }
         }
-        
+
         if ($this->default_language_to_remove_from_url && strlen($this->default_language_to_remove_from_url)==2) {
             $link=str_replace('/'.$this->default_language_to_remove_from_url.'/', '/', $link);
         }
@@ -482,7 +482,7 @@ class DBInterfaceBase
 								and n.niceurl = :nice_url
 								and i.id=n.inst_id
 								and i.class_id=c.id
-								" . $this->getPreviewFilter() . "								
+								" . $this->getPreviewFilter() . "
 								";
 
                 $prepare = $this->conn->prepare($sql);
@@ -521,9 +521,9 @@ class DBInterfaceBase
                                             $result['multilang_urls'][$multilang_url_row['language']] = $multilang_url_row['niceurl'];
                                         }
                     */
-                    
-                    
-                
+
+
+
                     return $result;
                 } else {
                     return ['type' => 'Error', 'language' => $language];
@@ -549,7 +549,7 @@ class DBInterfaceBase
         //$prepare->execute();
         //return $prepare->fetchAll();
     }
-    
+
     public function deleteCache($memcache_key)
     {
         $this->mc->delete($memcache_key);
@@ -560,7 +560,7 @@ class DBInterfaceBase
         if ($expiration==null) {
             $expiration=$this->cache_expiration;
         }
-        
+
         if ($this->type_of_cache == 'memcached') {
             $this->mc->set($memcache_key, $memcache_value, $expiration);
         } else {// memcache standard
@@ -664,10 +664,10 @@ class DBInterfaceBase
         $parent_inst_id = $this->conn->quote($parent_inst_id);
         $child_inst_id = $this->conn->quote($child_inst_id);
 
-        $sql = "select id 
-				from omp_relation_instances 
-				where rel_id=$rel_id 
-				and parent_inst_id=$parent_inst_id 
+        $sql = "select id
+				from omp_relation_instances
+				where rel_id=$rel_id
+				and parent_inst_id=$parent_inst_id
 				and child_inst_id=$child_inst_id;";
         $row = $this->fetchAssoc($sql);
         if ($row) {
@@ -684,7 +684,7 @@ class DBInterfaceBase
         $sql = "SELECT i.id
 				FROM omp_instances i
 				, omp_classes c
-				WHERE 
+				WHERE
 				 i.class_id = c.id
 				AND c.tag=$class_tag
 				AND i.key_fields=$nom_intern
@@ -710,7 +710,7 @@ class DBInterfaceBase
 				FROM omp_instances i
 				, omp_classes c
 				, omp_values v
-				WHERE 
+				WHERE
 				 i.class_id = c.id
 				AND c.tag=$class_tag
 				AND v.inst_id = i.id
@@ -738,7 +738,7 @@ class DBInterfaceBase
 				FROM omp_instances i
 				, omp_classes c
 				, omp_values v
-				WHERE 
+				WHERE
 				 i.class_id = c.id
 				AND c.tag=$class_tag
 				AND v.inst_id = i.id
@@ -771,7 +771,7 @@ class DBInterfaceBase
 
     public function getAllActiveLanguages()
     {
-        $sql="select language 
+        $sql="select language
 		from omp_attributes a
 		, omp_class_attributes ca
 		where ca.atri_id=a.id
@@ -783,12 +783,12 @@ class DBInterfaceBase
     {
         $inst_id = $this->conn->quote($inst_id);
 
-        $sql = "select * 
+        $sql = "select *
 				from omp_instances
 				where id=$inst_id";
         $current_inst = $this->fetchAssoc($sql);
 
-        $sql = "select a.name, a.type, v.text_val, v.num_val, v.date_val 
+        $sql = "select a.name, a.type, v.text_val, v.num_val, v.date_val
 				from omp_values v
 				, omp_attributes a
 				where a.id=v.atri_id
@@ -804,7 +804,7 @@ class DBInterfaceBase
     {
         $inst_id = $this->conn->quote($inst_id);
 
-        $sql = "select count(*) num 
+        $sql = "select count(*) num
 				from omp_instances
 				where id=$inst_id
 				";
@@ -816,7 +816,7 @@ class DBInterfaceBase
     {// return false if not exists, inst_id if exists
         $external_id = $this->conn->quote($external_id);
         $class_id = $this->conn->quote($class_id);
-        
+
         $sql = "select id from omp_instances where external_id=$external_id and class_id=$class_id limit 1";
         $inst_id = $this->fetchColumn($sql);
         return $inst_id;
@@ -854,7 +854,7 @@ class DBInterfaceBase
             return false;
         }
     }
-    
+
     public function getLookupValueID($lookup_id, $value)
     {
         $value = $this->conn->quote($value);
@@ -865,7 +865,7 @@ class DBInterfaceBase
 				where lv.lookup_id=$lookup_id
 				and (lv.value=$value or
 						lv.caption_ca=$value or
-						lv.caption_es=$value or 
+						lv.caption_es=$value or
 						lv.caption_en=$value
 				)
 				";
@@ -906,7 +906,7 @@ class DBInterfaceBase
 
     protected function getSearchFilter($query)
     {
-        return " and MATCH (s.text) AGAINST ('" . $this->conn->quote($query) . "' in boolean mode) 
+        return " and MATCH (s.text) AGAINST ('" . $this->conn->quote($query) . "' in boolean mode)
 			and (s.language = '" . $this->lang . "' OR s.language = 'ALL')
 		";
     }
@@ -927,6 +927,8 @@ class DBInterfaceBase
 
     protected function getOrderFilter($order, $order_direction = null, $previous_order_filter = null)
     {
+        $order_sql = "";
+
         if (isset($order)) {
             if (strtolower($order) == 'update_date') {
                 $order_sql = " order by i.update_date ";
