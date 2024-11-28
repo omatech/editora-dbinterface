@@ -1068,9 +1068,9 @@ class Extractor extends DBInterfaceBase
                                     $img_info = $attrs[$attr_key]['img_info'] ?? '';
                                     $size = explode('.', $img_info);
                                     $attrs[$tag.'_height']['tag'] = $tag.'_height';
-                                    $attrs[$tag.'_height']['text_val'] = (int) $size[0] ?? null;
+                                    $attrs[$tag.'_height']['text_val'] = (int) $size[1] ?? null;
                                     $attrs[$tag.'_width']['tag'] = $tag.'_width';
-                                    $attrs[$tag.'_width']['text_val'] = (int) $size[1] ?? null;
+                                    $attrs[$tag.'_width']['text_val'] = (int) $size[0] ?? null;
 
                                     $width = $attrs[$attr_key]['atri_img_width'];
                                     $height = $attrs[$attr_key]['atri_img_height'];
