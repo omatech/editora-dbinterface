@@ -401,9 +401,16 @@ class DBInterfaceBase
 
     public function getInstanceLink($inst_id, $lang = null)
     {
+        $sql = "SHOW COLUMNS FROM omp_niceurl LIKE 'full_niceurl'";
+        $row = $this->fetchAssoc($sql);
+        $select = 'niceurl';
+
+        if ($row) {
+            $select .= ', full_niceurl ';
+        }
         $this->lang = $this->lang ?? $lang;
         $inst_id = $this->conn->quote($inst_id);
-        $sql = "select niceurl
+        $sql = "select $select
 				from omp_niceurl
 				where inst_id=$inst_id
 				and language='" . $this->lang . "'";
@@ -412,9 +419,9 @@ class DBInterfaceBase
         $niceurl_row = $this->fetchAssoc($sql);
         if ($niceurl_row) {
             if ($this->lang == 'ALL') {
-                $link = '/' . $niceurl_row['niceurl'];
+                $link = '/' . ($niceurl_row['full_niceurl'] ?? $niceurl_row['niceurl']);
             } else {
-                $link = '/' . $this->lang . '/' . $niceurl_row['niceurl'];
+                $link = '/' . $this->lang . '/' . ($niceurl_row['full_niceurl'] ?? $niceurl_row['niceurl']);
             }
         } else {
             if ($this->lang == 'ALL') {
@@ -474,24 +481,41 @@ class DBInterfaceBase
                     //return ['type' => 'ChangeLanguage', 'language' => $language];
                 }
             } else {// check valid urlnice
-                $sql = "select n.inst_id, n.niceurl, i.class_id, c.tag, i.key_fields nom_intern
-								from omp_niceurl n
-								, omp_instances i
-								, omp_classes c
-								where n.language = :language
-								and n.niceurl = :nice_url
-								and i.id=n.inst_id
-								and i.class_id=c.id
-								" . $this->getPreviewFilter() . "
-								";
+                $segments = request()->segments();
+                $parents = null;
+
+                $prepare = $this->conn->prepare("select * from omp_niceurl LIMIT 1");
+                $resultSet = $prepare->executeQuery();
+                $row=$resultSet->fetchAssociative();
+
+                $haveFullNiceUrl = count($segments) > 2 && array_key_exists('full_niceurl', $row);
+
+                $sql = "select n.inst_id, n.niceurl, i.class_id, c.tag, i.key_fields nom_intern";
+
+                if ($haveFullNiceUrl) $sql .= ", n.full_niceurl";
+
+                $sql .= " from omp_niceurl n
+                        , omp_instances i
+                        , omp_classes c
+                        where n.language = :language";
+
+                if ($haveFullNiceUrl) {
+                    $sql .= " and n.full_niceurl = :nice_url";
+                } else {
+                    $sql .= " and n.niceurl = :nice_url";
+                }
+
+                $sql .= "
+                        and i.id=n.inst_id
+                        and i.class_id=c.id
+                        " . $this->getPreviewFilter() . "
+                        ";
 
                 $prepare = $this->conn->prepare($sql);
                 $prepare->bindValue('language', $language);
                 $prepare->bindValue('nice_url', $nice_url);
                 $resultSet = $prepare->executeQuery();
                 $row=$resultSet->fetchAssociative();
-                //$prepare->execute();
-                //$row = $prepare->fetch();
 
                 if ($row) {
                     $result = ['type' => 'Instance'
