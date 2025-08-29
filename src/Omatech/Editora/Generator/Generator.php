@@ -590,6 +590,33 @@ class Generator extends DBInterfaceBase
                             }
                         }
 
+                        if (isset($class_values['og_seo_options']) && $class_values['og_seo_options']==true && isset($data['og_seo_attributes'])) {
+                            $og_seo_attributes_in_class = explode(',', $data['og_seo_attributes'][0]);
+                            $fila = $lang_fila = 1;
+
+                            foreach ($og_seo_attributes_in_class as $atri_id) {
+                                $atri_ids = explode('-', $atri_id);
+                                $atri_id = $atri_ids[0];
+
+                                if (stripos($atri_id, '*') !== false) {
+                                    $atri_id = str_replace('*', '', $atri_id);
+                                    $mandatory = true;
+                                } else {
+                                    $mandatory = false;
+                                }
+
+
+                                if (array_key_exists($atri_id, $this->data['original_localized_attributes'])) {// es un atribut localized
+                                    foreach ($languages as $key_lang => $val_lang) {
+                                        $this->create_class_attribute($class_id, $atri_id+$key_lang, 0, 100, $lang_fila, $key_lang, false, $mandatory);
+                                    }
+                                    $lang_fila++;
+                                } else {
+                                    $this->create_class_attribute($class_id, $atri_id, 0, 100, $fila, 1, false, $mandatory);
+                                    $fila++;
+                                }
+                            }
+                        }
 
                         if (isset($class_values['attributes'])) {
                             $filas = [1 => 2];
