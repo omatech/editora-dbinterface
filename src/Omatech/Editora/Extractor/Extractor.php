@@ -627,24 +627,63 @@ class Extractor extends DBInterfaceBase
         $niceurls = explode('/', $url);
         $niceurls = array_map(fn($n) => $n === '' ? 'home' : $n, $niceurls);
 
-        $sql = "select inst_id
-            from omp_instances i
-            , omp_niceurl u
-            where 1=1
-            and i.id = u.inst_id
-            and u.language = '" . $this->lang . "'
-            and u.niceurl IN ('" . implode("','", $niceurls) . "')
-            order by FIND_IN_SET(u.niceurl, '" . implode(",", $niceurls) . "')
-        ";
+        $sql = "SHOW COLUMNS FROM omp_niceurl LIKE 'full_niceurl'";
+        $row = $this->fetchAssoc($sql);
+        $inst_ids = '';
 
-        $this->debug("SQL a findInstancesByNiceurl\n");
-        $this->debug($sql);
-        $rows = $this->fetchAll($sql);
-        $inst_ids = array_reduce($rows, function ($acc, $row) {
-            $acc .= ','.$row['inst_id'];
-            return $acc;
-        }, '');
-        $inst_ids = ltrim($inst_ids, ',');
+        if ($row) {
+            $url = (substr($url, 0, 1) === '/') ? substr($url, 1) : $url;
+
+            if (isset($niceurls[0])) {
+                $sql = "select inst_id
+                    from omp_instances i
+                    , omp_niceurl u
+                    where 1=1
+                    and i.id = u.inst_id
+                    and u.language = '" . $this->lang . "'
+                    and u.niceurl = '" . $niceurls[0] . "'
+                ";
+                $row = $this->fetchAssoc($sql);
+                if (isset($row['inst_id'])) {
+                    $inst_ids = $row['inst_id'];
+                }
+
+                $sql = "select CONCAT(parents, ',', inst_id) as ids
+                    from omp_instances i
+                    , omp_niceurl u
+                    where 1=1
+                    and i.id = u.inst_id
+                    and u.language = '" . $this->lang . "'
+                    and u.full_niceurl = '" . $url . "'
+                ";
+                $row = $this->fetchAssoc($sql);
+                if (isset($row['ids'])) {
+                    $inst_ids .= ',' . $row['ids'];
+                }
+            }
+        }
+
+        if (!$inst_ids) {
+
+            $sql = "select inst_id
+                from omp_instances i
+                , omp_niceurl u
+                where 1=1
+                and i.id = u.inst_id
+                and u.language = '" . $this->lang . "'
+                and u.niceurl IN ('" . implode("','", $niceurls) . "')
+                order by FIND_IN_SET(u.niceurl, '" . implode(",", $niceurls) . "')
+            ";
+
+            $this->debug("SQL a findInstancesByNiceurl\n");
+            $this->debug($sql);
+            $rows = $this->fetchAll($sql);
+            $inst_ids = array_reduce($rows, function ($acc, $row) {
+                $acc .= ','.$row['inst_id'];
+                return $acc;
+            }, '');
+            $inst_ids = ltrim($inst_ids, ',');
+        }
 
         $instances = $this->findInstancesInList($inst_ids, null, null, [
             'order' => 'ignore',

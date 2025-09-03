@@ -391,16 +391,20 @@ class Loader extends DBInterfaceBase
         return $inst_id;
     }
 
-    public function insertUrlNice($nice_url, $inst_id, $language)
+    public function insertUrlNice($nice_url, $inst_id, $language, $parents = null, $full_niceurl = null)
     {
-        if ($this->existsURLNice($nice_url, $language)) {
-            return -1;
-        }
-
-        $sql = "insert into omp_niceurl 
+        if (!$parents && !$full_niceurl) {
+            $sql = "insert into omp_niceurl
 						(inst_id, language , niceurl)
 						values
 						($inst_id, '$language','$nice_url')";
+        } else {
+            $sql = "insert into omp_niceurl
+						(inst_id, language , niceurl, parents, full_niceurl)
+						values
+						($inst_id, '$language','$nice_url','$parents','$full_niceurl')";
+        }
+
         $ret = $this->conn->executeQuery($sql);
         return $this->conn->lastInsertId();
     }

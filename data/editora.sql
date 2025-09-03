@@ -354,3 +354,13 @@ CREATE TABLE IF NOT EXISTS `omp_values` (
   KEY `omp_values_n2` (`date_val`) USING BTREE,
   KEY `omp_values_n3` (`num_val`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+-- ----------------------------
+-- Update structure for omp_niceurl
+-- ----------------------------
+ALTER TABLE `omp_niceurl`
+  ADD COLUMN `parents` VARCHAR(255) DEFAULT NULL,
+  ADD COLUMN `full_niceurl` VARCHAR(255) CHARACTER SET latin1 DEFAULT NULL AFTER `parents`,
+  DROP INDEX `omp_niceurl_u1`,
+  ADD UNIQUE KEY `omp_niceurl_u1` (`language`, `niceurl`, `parents`) USING BTREE;

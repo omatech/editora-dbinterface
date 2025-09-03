@@ -384,6 +384,9 @@ Export strings in one language from editora database to excel file or output
 ## import-translation.php
 Import strings from an excel, json file or input to editora database
 
+## field parents and full_niceurl
+Now the omp_niceurl table will have the parents field, which will contain the IDs of its parents separated by commas, and the full_niceurl field will have the parents + the niceurl to distinguish the niceurl in case there are two duplicates. All of this will be filled in automatically if the instances have a relationship called 'Childs'.
+
 ## Experimental
 
 ### data-transfer.php 

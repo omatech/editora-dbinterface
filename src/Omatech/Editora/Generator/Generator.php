@@ -173,6 +173,38 @@ class Generator extends DBInterfaceBase
             $changes++;
         }
 
+        /* Column parents in omp_niceurl */
+        $sql = "show columns from omp_niceurl";
+        $rows = $this->fetchAll($sql);
+        $parents_found = false;
+        foreach ($rows as $row) {
+            if ($row['Field'] == 'parents') {
+                $parents_found = true;
+            }
+        }
+        if (!$parents_found) {
+            $sql = "alter table omp_niceurl add column parents varchar(255) default null\n";
+            $this->conn->executeQuery($sql);
+            $changes++;
+            echo "Create column parents in omp_niceurl table\n";
+        }
+
+        /* Column full_niceurl in omp_niceurl */
+        $sql = "show columns from omp_niceurl";
+        $rows = $this->fetchAll($sql);
+        $full_niceurl_found = false;
+        foreach ($rows as $row) {
+            if ($row['Field'] == 'full_niceurl') {
+                $full_niceurl_found = true;
+            }
+        }
+        if (!$full_niceurl_found) {
+            $sql = "alter table omp_niceurl add column full_niceurl varchar(255) default null\n";
+            $this->conn->executeQuery($sql);
+            $changes++;
+            echo "Create column full_niceurl in omp_niceurl table\n";
+        }
+
         /* Column json_val in omp_values */
         $sql = "show columns from omp_values";
         $rows = $this->fetchAll($sql);
