@@ -648,13 +648,13 @@ class Extractor extends DBInterfaceBase
                     $inst_ids = $row['inst_id'];
                 }
 
-                $sql = "select CONCAT(parents, ',', inst_id) as ids
+                $sql = "select IF(parents IS NULL, inst_id, CONCAT(parents, ',', inst_id)) as ids
                     from omp_instances i
                     , omp_niceurl u
                     where 1=1
                     and i.id = u.inst_id
                     and u.language = '" . $this->lang . "'
-                    and u.full_niceurl = '" . $url . "'
+                    and (u.full_niceurl = '" . $url . "' OR u.niceurl = '" . $url . "')
                 ";
                 $row = $this->fetchAssoc($sql);
                 if (isset($row['ids'])) {
