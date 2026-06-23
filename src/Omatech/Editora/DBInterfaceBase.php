@@ -30,6 +30,11 @@ class DBInterfaceBase
         foreach ($params as $key => $value) {
             //echo "Parsing $key=$value\n";
             if (property_exists($this, $key)) {
+                // SECURITY (SQLi): language codes are alpha-only; sanitize here as a chokepoint
+                // to neutralize every raw "$this->lang" interpolation across the engine at once.
+                if ($key === 'lang') {
+                    $value = preg_replace('/[^a-zA-Z_]/', '', (string) $value);
+                }
                 $this->$key = $value;
             }
         }
