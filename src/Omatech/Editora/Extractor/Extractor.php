@@ -148,7 +148,7 @@ class Extractor extends DBInterfaceBase
 					from omp_instances i
 					, omp_classes c
 					where 1=1
-					and i.id=$inst_id
+					and i.id=".((int) $inst_id)."
 					and c.id=i.class_id
 					" . $this->getPreviewFilter() . "
 					limit 1
@@ -197,8 +197,8 @@ class Extractor extends DBInterfaceBase
                         from omp_relation_instances ri
                         , omp_instances i
                         , omp_classes c
-                        where ri.rel_id=$rel_id
-                        and ri.parent_inst_id=$inst_id
+                        where ri.rel_id=".((int) $rel_id)."
+                        and ri.parent_inst_id=".((int) $inst_id)."
                       and ri.child_inst_id=i.id
                         " . $this->getPreviewFilter() . "
                         and i.class_id=c.id
@@ -276,7 +276,7 @@ class Extractor extends DBInterfaceBase
 					from omp_instances i
 					, omp_classes c
 					where 1=1
-					and i.id=$inst_id
+					and i.id=".((int) $inst_id)."
 					and c.id=i.class_id
 					" . $this->getPreviewFilter() . "
 					limit 1
@@ -510,8 +510,8 @@ class Extractor extends DBInterfaceBase
 				from omp_relation_instances ri
 				, omp_instances i
 				, omp_classes c
-				where ri.rel_id=$rel_id
-				and ri.parent_inst_id=$inst_id
+				where ri.rel_id=".((int) $rel_id)."
+				and ri.parent_inst_id=".((int) $inst_id)."
 			  and ri.child_inst_id=i.id
 				" . $this->getPreviewFilter() . "
 				and i.class_id=c.id
@@ -580,8 +580,8 @@ class Extractor extends DBInterfaceBase
 				from omp_relation_instances ri
 				, omp_instances i
 				, omp_classes c
-				where ri.rel_id=$rel_id
-				and ri.child_inst_id=$inst_id
+				where ri.rel_id=".((int) $rel_id)."
+				and ri.child_inst_id=".((int) $inst_id)."
 			  and ri.parent_inst_id=i.id
 				" . $this->getPreviewFilter() . "
 				and i.class_id=c.id
@@ -1028,7 +1028,7 @@ class Extractor extends DBInterfaceBase
 				from omp_attributes a
 				, omp_class_attributes ca
 				, omp_instances i
-				where i.id=$inst_id
+				where i.id=".((int) $inst_id)."
 				and a.language in ('ALL', '" . $this->lang . "')
 				and i.class_id=ca.class_id
 				and a.id=ca.atri_id
