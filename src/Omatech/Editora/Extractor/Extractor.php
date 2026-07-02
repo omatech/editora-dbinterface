@@ -133,7 +133,7 @@ class Extractor extends DBInterfaceBase
         return $instance;
     }
 
-    public function findInstanceByIdAllElements($inst_id, $params = null, $num = null, $level = 1, callable $callback = null)
+    public function findInstanceByIdAllElements($inst_id, $params = null, $num = null, $level = 1, ?callable $callback = null)
     {
         $this->debug("Extractor::findInstanceByIdAllElements inst_id=$inst_id\n");
 
@@ -174,7 +174,7 @@ class Extractor extends DBInterfaceBase
     }
 
     //Recursive function, find all relations from instance id, number level is the number for bucles
-    public function findChildrenInstancesAll($inst_id, $num = null, $params = null, $level = 1, callable $callback = null)
+    public function findChildrenInstancesAll($inst_id, $num = null, $params = null, $level = 1, ?callable $callback = null)
     {
         $start = microtime(true);
         $this->debug("Extractor::findChildrenInstancesAll\n");
@@ -262,7 +262,7 @@ class Extractor extends DBInterfaceBase
     }
 
 
-    public function findInstanceById($inst_id, $params = null, callable $callback = null)
+    public function findInstanceById($inst_id, $params = null, ?callable $callback = null)
     {
         $this->debug("Extractor::findInstanceById inst_id=$inst_id\n");
 
@@ -297,7 +297,7 @@ class Extractor extends DBInterfaceBase
         return $result;
     }
 
-    public function findInstancesInClass($class, $num = null, $params = null, callable $callback = null)
+    public function findInstancesInClass($class, $num = null, $params = null, ?callable $callback = null)
     {
         // $params['order'] = order class instances by order criteria, update_date|publishing_begins|inst_id|key_fields|order_date|order_string default publishing_begins
         // $params['order_direction'] = direction of the order by clause, desc|asc defaults to asc
@@ -365,7 +365,7 @@ class Extractor extends DBInterfaceBase
         return $result;
     }
 
-    public function findInstancesInList($inst_ids, $num = null, $class = null, $params = null, callable $callback = null)
+    public function findInstancesInList($inst_ids, $num = null, $class = null, $params = null, ?callable $callback = null)
     {
         $start = microtime(true);
         $this->debug("Extractor::findInstancesInList class=$class inst_ids=$inst_ids\n");
@@ -417,7 +417,7 @@ class Extractor extends DBInterfaceBase
         return $result;
     }
 
-    public function findInstancesBySearch($query, $num = null, $class = null, $params = null, callable $callback = null)
+    public function findInstancesBySearch($query, $num = null, $class = null, $params = null, ?callable $callback = null)
     {
         $start = microtime(true);
         $this->debug("Extractor::findInstancesBySearch class=$class query=$query\n");
@@ -461,7 +461,7 @@ class Extractor extends DBInterfaceBase
         return $result;
     }
 
-    public function findRelatedInstances($inst_id, $relation, $num = null, $params = null, callable $callback = null)
+    public function findRelatedInstances($inst_id, $relation, $num = null, $params = null, ?callable $callback = null)
     {
         $this->debug("Extractor::findRelatedInstances inst_id=$inst_id relation=$relation\n");
 
@@ -481,7 +481,7 @@ class Extractor extends DBInterfaceBase
         return array();
     }
 
-    public function findChildrenInstances($inst_id, $relation, $num = null, $params = null, callable $callback = null)
+    public function findChildrenInstances($inst_id, $relation, $num = null, $params = null, ?callable $callback = null)
     {
         $start = microtime(true);
         $this->debug("Extractor::findChildInstances\n");
@@ -544,7 +544,7 @@ class Extractor extends DBInterfaceBase
         return $result;
     }
 
-    public function findParentInstances($inst_id, $relation, $num = null, $params = null, callable $callback = null)
+    public function findParentInstances($inst_id, $relation, $num = null, $params = null, ?callable $callback = null)
     {
         $start = microtime(true);
         $this->debug("Extractor::findParentInstances\n");
@@ -614,7 +614,7 @@ class Extractor extends DBInterfaceBase
         return $result;
     }
 
-    public function findInstancesByUrl(string $url, $params = null, callable $callback = null)
+    public function findInstancesByUrl(string $url, $params = null, ?callable $callback = null)
     {
         $start = microtime(true);
         $this->debug("Extractor::findInstancesByNiceurl url=$url\n");
@@ -817,7 +817,7 @@ class Extractor extends DBInterfaceBase
     }
 
 
-    private function prepareInstanceResultStructure($row, $params = null, callable $callback = null, $start = null)
+    private function prepareInstanceResultStructure($row, $params = null, ?callable $callback = null, $start = null)
     {
         if (!$start) {
             $start = microtime(true);
