@@ -52,7 +52,7 @@ class Strings {
 
 		static function utf8_substr($str,$start)
 		{
-			 preg_match_all("/./su", $str, $ar);
+			 preg_match_all("/./su", (string) $str, $ar);
 
 			 if(func_num_args() >= 3) 
 			 {
@@ -90,10 +90,10 @@ static function array2string($data){
 		static function urlnicify( $url, $id = '') 
 		{
 			if ('' == $url) return $url;
-			$url=trim($url);
+			$url=trim((string) $url);
 			$url=strip_tags($url);
 			$url=self::filter_text($url);
-			$temp=explode("/",$url);
+			$temp=explode("/",(string) $url);
 			$url=$temp[count($temp)-1];
 
 
@@ -105,7 +105,7 @@ static function array2string($data){
 			$url = str_replace(';//', '://', $url);
 			$url = preg_replace('/&([^#])(?![a-z]{2,8};)/', '&#038;$1', $url);
 
-			$url=strtolower($url);
+			$url=strtolower((string) $url);
 
 			//Últims canvis
 			$url = trim(mb_eregi_replace("[^ A-Za-z0-9_-]", "", $url)); 
@@ -146,15 +146,15 @@ static function array2string($data){
 
 		static function StartsWith($Haystack, $Needle)
 		{
-			return strpos($Haystack, $Needle) === 0;
+			return strpos((string) $Haystack, (string) $Needle) === 0;
 		}
 
 
 		static function substring_before($haystack, $needle)
 		{
-			if ($i=stripos($haystack, $needle))
+			if ($i=stripos((string) $haystack, (string) $needle))
 			{// Needle found, return from start to needle
-				return(substr($haystack, 0, $i));
+				return(substr((string) $haystack, 0, $i));
 			}
 			else
 			{// Needle not found
@@ -164,9 +164,9 @@ static function array2string($data){
 
 		static function substring_after($haystack, $needle)
 		{
-			if ($i=strripos($haystack, $needle))
+			if ($i=strripos((string) $haystack, (string) $needle))
 			{// Needle found, return from start to needle
-				return(substr($haystack, $i+1));
+				return(substr((string) $haystack, $i+1));
 			}
 			else
 			{// Needle not found
@@ -178,9 +178,9 @@ static function array2string($data){
 		
 		static function check_email($email) 
 		{
-			if(preg_match("/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/", $email))
+			if(preg_match("/^([a-zA-Z0-9])+([a-zA-Z0-9\._-])*@([a-zA-Z0-9_-])+([a-zA-Z0-9\._-]+)+$/", (string) $email))
 			{
-				list($username,$domain)=explode('@',$email);
+				list($username,$domain)=explode('@',(string) $email);
 				if(!checkdnsrr($domain,'MX')) 
 				{
 					return false;
@@ -203,14 +203,14 @@ static function array2string($data){
 			if ($def_params['lang']=='%idioma%') $def_params['lang']=$p_lang;
 			$def_params['search_flag'] = $p_searchflag;
 
-			foreach ($extra as $key => $value) $def_params[trim($key)] = trim($value);
+			foreach ($extra as $key => $value) $def_params[trim((string) $key)] = trim((string) $value);
 
 			return $def_params;
 		}
 
 		//////////////////////////////////////////////////////////////////////////////////////////
 		static function random_string($length) {
-			 srand((float) microtime() * 1000000);
+			 srand((int) ((float) microtime() * 1000000));
 			 $possible_charactors = "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 			 $string = "";
 			while(strlen($string)<$length) {
@@ -235,7 +235,7 @@ static function array2string($data){
 		}
 
 		static function sanitize($var) {
-			$var = strip_tags($var);
+			$var = strip_tags((string) $var);
 			$malo = array("\\","\'","\"","<",">");
 			$bueno = array("/","&acute;","&acute;","&lt;","&gt;");
 			$i=0;
@@ -249,8 +249,8 @@ static function array2string($data){
 
 		static function clean_url($url) {
 			$ret=$url;
-			if (stripos($ret, '&')!==false) {// tenim &
-				if (stripos($ret, '&amp;')===false) {// NO tenim &amps;
+			if (stripos((string) $ret, '&')!==false) {// tenim &
+				if (stripos((string) $ret, '&amp;')===false) {// NO tenim &amps;
 					$ret=str_replace('&', '&amp;', $ret);
 				}
 			}
@@ -260,7 +260,7 @@ static function array2string($data){
 
 		static function clean_title($title) {
 			$ret=$title;
-			$ret=strip_tags($ret);
+			$ret=strip_tags((string) $ret);
 			$ret=str_replace('"', "&quot;", $ret);
 			return $ret;
 		} 
@@ -271,7 +271,7 @@ static function array2string($data){
 		**/
 		static function obfuscate_email($email){
 				$link = '';
-				foreach(str_split($email) as $letter)
+				foreach(str_split((string) $email) as $letter)
 				$link .= '&#'.ord($letter).';';
 				return $link;
 		}

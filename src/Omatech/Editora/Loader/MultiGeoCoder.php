@@ -4,6 +4,8 @@ namespace Omatech\Editora\Loader;
 
 
 class MultiGeoCoder {
+    public $debug = false;
+
 
 		var $enabled_hosts=array();
 		var $status='pending'; // pending, ok, error

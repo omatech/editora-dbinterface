@@ -644,15 +644,17 @@ class Loader extends DBInterfaceBase
 
     public function insertUpdateGeoposVal($inst_id, $atri_id, $value)
     {
-        if (strpos($value, '@') == true && strpos($value, ':') == true) {
-            $value = $this->conn->quote($value);
-        } else {
-            $geoinfo = $this->$geocoder->geocode($value);
-            $value = $this->conn->quote($geoinfo['lat'] . ':' . $geoinfo['lng'] . '@' . $value);
+        if (strpos((string) $value, '@') === false || strpos((string) $value, ':') === false) {
+            if ($this->geocoder === null) {
+                throw new \InvalidArgumentException('A geocoder is required for an address without coordinates.');
+            }
+            $geoinfo = $this->geocoder->geocode($value);
+            if (!isset($geoinfo['lat'], $geoinfo['lng'])) {
+                throw new \RuntimeException('The geocoder returned no coordinates.');
+            }
+            $value = $geoinfo['lat'].':'.$geoinfo['lng'].'@'.$value;
         }
-
-        //print_r($geoinfo);die;
-        $value = $this->conn->quote($geoinfo['lat'] . ':' . $geoinfo['lng'] . '@' . $value);
+        $value = $this->conn->quote($value);
         if ($this->existValue($inst_id, $atri_id)) {// update
             $sql = "update omp_values v
 						set v.text_val=$value
@@ -760,8 +762,8 @@ class Loader extends DBInterfaceBase
 
     public function insertUpdateImageVal($inst_id, $atri_id, $value)
     {
-        if (substr($value, 0, 7) == 'http://' || substr($value, 0, 8) == 'https://') {
-            $file_name = basename($value);
+        if (substr((string) $value, 0, 7) == 'http://' || substr((string) $value, 0, 8) == 'https://') {
+            $file_name = basename((string) $value);
 
             if (stripos($file_name, '.') === false) {
                 $file_name = $file_name . '.png';
@@ -804,16 +806,16 @@ class Loader extends DBInterfaceBase
 
     public function insertUpdateRemoteImageVal($inst_id, $atri_id, $value)
     {
-        if (substr($value, 0, 7) == 'http://' || substr($value, 0, 8) == 'https://') {
-            if (substr($value, 0, 23) == 'https://lorempixel.com/') {
-                $path = parse_url($value, PHP_URL_PATH);
+        if (substr((string) $value, 0, 7) == 'http://' || substr((string) $value, 0, 8) == 'https://') {
+            if (substr((string) $value, 0, 23) == 'https://lorempixel.com/') {
+                $path = parse_url((string) $value, PHP_URL_PATH);
                 //echo "$path\n";
                 $arr_path = explode('/', $path);
                 //print_r($arr_path);
                 $width = $arr_path[1];
                 $height = $arr_path[2];
-            } elseif (substr($value, 0, 27) == 'https://www.dummyimage.com/') {
-                $path = parse_url($value, PHP_URL_PATH);
+            } elseif (substr((string) $value, 0, 27) == 'https://www.dummyimage.com/') {
+                $path = parse_url((string) $value, PHP_URL_PATH);
                 //echo "$path\n";
                 $arr_path = explode('/', $path);
                 //print_r($arr_path);

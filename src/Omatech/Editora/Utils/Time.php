@@ -7,11 +7,11 @@ class Time {
 		static function time_to_rfc822($newstime)
 		{
 		//echo '::'.$newstime.'::';
-			list($date, $hours) = split(' ', $newstime);
-			list($year,$month,$day) = split('-',$date);
-			list($hour,$min,$sec) = split(':',$hours);
+			list($date, $hours) = preg_split('# #m', (string) $newstime);
+			list($year,$month,$day) = preg_split('#\-#m',(string) $date);
+			list($hour,$min,$sec) = preg_split('#:#m',$hours);
 			//returns the date ready for the rss feed
-			$date = date(r,mktime($hour, $min, $sec, $month, $day, $year));
+			$date = date('r',mktime($hour, $min, $sec, $month, $day, $year));
 			return str_replace(',  ', ', ', $date);
 		}
 
@@ -25,7 +25,7 @@ class Time {
 				$now = time();
 			}
 
-			$timestamp=strtotime($from);
+			$timestamp=strtotime((string) $from);
 			$diff=$now-$timestamp;
 			$days=intval($diff/86400);
 			$diff=$diff%86400;
@@ -70,7 +70,7 @@ class Time {
 
 		static function spanish_date_to_mysql_date ($spanish_date)
 		{// takes an spanish date format dd/mm/yyyy and converts to mysql date format yyyy-mm-dd
-				$spanish_date_array=explode('/', $spanish_date);
+				$spanish_date_array=explode('/', (string) $spanish_date);
 				return $spanish_date_array[2].'-'.$spanish_date_array[1].'-'.$spanish_date_array[0];
 		}
 

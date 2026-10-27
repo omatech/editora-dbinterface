@@ -28,10 +28,10 @@ class Ips {
 				// del usuario se comienza a mirar por el principio hasta encontrar
 				// una direcci�n ip que no sea del rango privado. En caso de no
 				// encontrarse ninguna se toma como valor el REMOTE_ADDR
-				$entries = split('[, ]', $_SERVER['HTTP_X_FORWARDED_FOR']);
+				$entries = preg_split('#[, ]#m', $_SERVER['HTTP_X_FORWARDED_FOR']);
 
 				reset($entries);
-				while (list(, $entry) = each($entries)) {
+				foreach ($entries as $entry) {
 					$entry = trim($entry);
 					if (preg_match("/^([0-9]+\.[0-9]+\.[0-9]+\.[0-9]+)/", $entry, $ip_list)) {
 						// http://www.faqs.org/rfcs/rfc1918.html
@@ -43,7 +43,7 @@ class Ips {
 							'/^10\..*/'
 						);
 
-						$found_ip = preg_replace($private_ip, $client_ip, $ip_list[1]);
+						$found_ip = preg_replace($private_ip, (string) $client_ip, $ip_list[1]);
 
 						if ($client_ip != $found_ip) {
 							$client_ip = $found_ip;
@@ -69,7 +69,7 @@ class Ips {
 
 		static function ip_is_valid($ip)
 		{
-				return(!preg_match('/^(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:[.](?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}$/', $ip)) ? false : true;
+				return(!preg_match('/^(?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)(?:[.](?:25[0-5]|2[0-4]\d|1\d\d|[1-9]\d|\d)){3}$/', (string) $ip)) ? false : true;
 		}
 		
 		

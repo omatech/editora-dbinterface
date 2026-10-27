@@ -5,6 +5,7 @@
 namespace Omatech\Editora\Migrator;
 use \Omatech\Editora\DBInterfaceBase;
 
+#[\AllowDynamicProperties]
 class Migrator extends DBInterfaceBase {
 	
 	public $to_languages;

@@ -34,6 +34,7 @@ class Extractor extends DBInterfaceBase
 
     private function prepareInstanceResultStructureMongo($row, $class_attributes, $values, $relations, $relation_instances)
     {
+        $start = microtime(true);
         if (!$row) {
             return null;
         }
@@ -737,7 +738,7 @@ class Extractor extends DBInterfaceBase
         if (isset($params['extraction_cache_key'])) {
             $cache_key = $params['extraction_cache_key'];
 
-            $memcache_key = $this->conn->getDatabase() . "_extractor_cache:$cache_key:$this->lang";
+            $memcache_key = $this->conn->getDatabase() . ":extractor_cache:$cache_key:$this->lang";
             $this->debug("MEMCACHE:: using key $memcache_key extraction\n");
             if (!$this->avoid_cache) {
                 $this->debug("CACHE:: avoid_cache desactivado\n");
@@ -1216,8 +1217,8 @@ class Extractor extends DBInterfaceBase
     private function setPagination($num, $class_filter, $preview_filter, $order_filter = "", $ids_filter = "", $search_filter = "", $niceurl_in_language=false, $date_filter = "")
     {
         if ($num != null && $this->paginator == null) {
-            if (stripos($num, '/')) {
-                $pagination_array = explode("/", $num);
+            if (stripos((string) $num, '/')) {
+                $pagination_array = explode("/", (string) $num);
                 if (isset($pagination_array[0]) && isset($pagination_array[1]) && is_numeric($pagination_array[0]) && is_numeric($pagination_array[1]) && $pagination_array[1] > 0) {
                     $limit = $pagination_array[0];
                     $offset = ($pagination_array[1] - 1) * $limit;

@@ -5,7 +5,11 @@
 namespace Omatech\Editora\Comparator;
 use \Omatech\Editora\DBInterfaceBase;
 
+#[\AllowDynamicProperties]
 class Comparator extends DBInterfaceBase {
+    public $from_dbname;
+    public $to_dbname;
+
 	
   private $tables_to_check=[];
   private $errors=0;
@@ -92,7 +96,7 @@ class Comparator extends DBInterfaceBase {
       {
         $source_id=$array1[$key]['id'];
       }
-      if (array_key_exists($key, $array2))
+      if (array_key_exists((string) $key, $array2))
       {
         if ($val!==$array2[$key])
         {

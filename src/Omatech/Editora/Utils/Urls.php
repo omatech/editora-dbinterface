@@ -9,7 +9,7 @@ class Urls {
 			global $debug;
 			
 			$url = $_SERVER['REQUEST_URI'];
-			$l_step1 = explode('&', $url);
+			$l_step1 = explode('&', (string) $url);
 			$l_step2 = explode('?', $l_step1[0]);
 			$laurl = explode ('/', $l_step2[0]);
 

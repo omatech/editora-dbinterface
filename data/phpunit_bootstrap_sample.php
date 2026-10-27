@@ -23,7 +23,7 @@ require_once __DIR__ . $autoload_location;
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
 if (DEBUG)
-	$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+	\Omatech\Editora\Utils\EchoSqlLogger::enable($dbal_config);
 $connection_params = array(
 	'dbname' => DBNAME,
 	'user' => DBUSER,

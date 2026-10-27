@@ -294,7 +294,7 @@ class ReverseEngineerator extends DBInterfaceBase
                     $atris.="$atri_id,";
                 }
             }
-            
+
             /*
             if ($row['class_id']==62) {
                 echo "atris for class:".$atris."\n";
@@ -458,7 +458,7 @@ class ReverseEngineerator extends DBInterfaceBase
         foreach ($rows as $row) {
             $id=$row['id'];
             if ($multilang) {
-                $id=substr($id, 2);
+                $id=substr((string) $id, 2);
             }
             $tag=$row['tag'];
             if ($row['lookup_id']) {

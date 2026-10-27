@@ -4,6 +4,8 @@ namespace Omatech\Editora;
 
 class DBInterfaceBase
 {
+    protected $lang = null;
+
     public $debug_messages = '';
     protected $conn;
     protected $params = array();
@@ -427,7 +429,7 @@ class DBInterfaceBase
             }
         }
 
-        if ($this->default_language_to_remove_from_url && strlen($this->default_language_to_remove_from_url)==2) {
+        if ($this->default_language_to_remove_from_url && strlen((string) $this->default_language_to_remove_from_url)==2) {
             $link=str_replace('/'.$this->default_language_to_remove_from_url.'/', '/', $link);
         }
 
@@ -467,8 +469,8 @@ class DBInterfaceBase
                 $resultSet = $prepare->executeQuery();
                 $row=$resultSet->fetchAssociative();
 
-                //$prepare->execute();
-                //$row = $prepare->fetch();
+                //$prepare->executeStatement();
+                //$row = $prepare->fetchAssociative();
 
                 if ($row['num'] == 0) {// error language not found!
                     return ['type' => 'Error', 'language' => $language];
@@ -565,8 +567,8 @@ class DBInterfaceBase
         $resultSet = $prepare->executeQuery();
         $rows=$resultSet->fetchAllAssociative();
         return $rows;
-        //$prepare->execute();
-        //return $prepare->fetchAll();
+        //$prepare->executeStatement();
+        //return $prepare->fetchAllAssociative();
     }
 
     public function deleteCache($memcache_key)
@@ -600,7 +602,7 @@ class DBInterfaceBase
                 $mc = new \Memcached;
                 $mc->setOption(\Memcached::OPT_COMPRESSION, true);
                 $memcacheAvailable = $mc->addServer('localhost', 11211);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 return false;
             }
         } elseif (extension_loaded('Memcache')) {
@@ -608,7 +610,7 @@ class DBInterfaceBase
             try {
                 $mc = new \Memcache;
                 $memcacheAvailable = $mc->connect('localhost', 11211);
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 return false;
             }
         } else {
@@ -629,7 +631,7 @@ class DBInterfaceBase
         if ('' == $url) {
             return $url;
         }
-        $url = trim($url);
+        $url = trim((string) $url);
         $url = strip_tags($url);
 
         $search = array(
@@ -663,7 +665,7 @@ class DBInterfaceBase
         $url = str_replace(';//', '://', $url);
         $url = preg_replace('/&([^#])(?![a-z]{2,8};)/', '&#038;$1', $url);
 
-        $url = strtolower($url);
+        $url = strtolower((string) $url);
 
         //ultims canvis
         $url = trim(str_replace("[^ A-Za-z0-9_-]", "", $url));
@@ -1003,8 +1005,8 @@ class DBInterfaceBase
         // $num can be only integer or with syntax 10/3 (give 10 elements in page 3 (elements from 31 to 40)
         $default = 100000000;
         if ($num != null) {
-            if (stripos($num, '/')) {
-                $pagination_array = explode("/", $num);
+            if (stripos((string) $num, '/')) {
+                $pagination_array = explode("/", (string) $num);
                 if (isset($pagination_array[0]) && isset($pagination_array[1]) && is_numeric($pagination_array[0]) && is_numeric($pagination_array[1]) && $pagination_array[1] > 0) {
                     $limit = $pagination_array[0];
                     $offset = ($pagination_array[1] - 1) * $limit;

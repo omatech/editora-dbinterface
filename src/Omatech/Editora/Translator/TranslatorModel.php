@@ -4,7 +4,17 @@
 
 namespace Omatech\Editora\Translator;
 
+#[\AllowDynamicProperties]
 class TranslatorModel extends AppModel {
+    public $destination_language;
+    public $excludeclasses;
+    public $excludeimporteddata;
+    public $from_version;
+    public $offsetlang;
+    public $onlyclasses;
+    public $since;
+    public $source_language;
+
 
 	function __construct($conn_from, $conn_to, $params=array(), $debug = false) {// requires doctrine dbal connection or array with data			
 		foreach ($params as $key => $val) {
@@ -46,7 +56,7 @@ class TranslatorModel extends AppModel {
 
 	function get_language_id($lang, $connection = 'conn_to') {
 		
-		$lengthoffsetlang = strlen($this->offsetlang)-1;
+		$lengthoffsetlang = strlen((string) $this->offsetlang)-1;
 		$sql = "select substring(min(id),1,length(min(id))-$lengthoffsetlang) id, language
 		from omp_attributes 
 		where language!='ALL'

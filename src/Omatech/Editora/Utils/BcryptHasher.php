@@ -27,7 +27,7 @@ class BcryptHasher
         ]);
 
         if ($hash === false) {
-            throw new RuntimeException('Bcrypt hashing not supported.');
+            throw new \RuntimeException('Bcrypt hashing not supported.');
         }
 
         return $hash;

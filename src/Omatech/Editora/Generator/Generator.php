@@ -731,7 +731,7 @@ class Generator extends DBInterfaceBase
             }
 
             foreach ($lookups as $lookup_key => $lookup) {
-                $arr_lookup_info = explode(',', $lookup_key);
+                $arr_lookup_info = explode(',', (string) $lookup_key);
                 $lookup_id = $arr_lookup_info[0];
                 $lookup_name = $arr_lookup_info[1];
 
@@ -754,13 +754,13 @@ class Generator extends DBInterfaceBase
                 if (is_array($val)) {
                     $tag = $val[0];
                     array_shift($val);
-                    $arr_val = explode(',', $tag);
+                    $arr_val = explode(',', (string) $tag);
                     $lookup_name = $arr_val[0];
                     $lookup_id = $arr_val[1];
 
                     $this->create_attribute($key, $lookup_name, 'L', 0, 'ALL', $lookup_id, $val);
                 } else {
-                    $arr_val = explode(',', $val);
+                    $arr_val = explode(',', (string) $val);
                     $lookup_name = $arr_val[0];
                     $lookup_id = $arr_val[1];
                     $this->create_attribute($key, $lookup_name, 'L', 0, 'ALL', $lookup_id);
@@ -1029,7 +1029,7 @@ class Generator extends DBInterfaceBase
             }
 
             foreach ($images_sizes as $key_size => $size) {
-                $arr_sizes = explode('x', $size);
+                $arr_sizes = explode('x', (string) $size);
                 if (isset($arr_sizes[0]) && !empty($arr_sizes[0])) {
                     array_push($this->queries, "update omp_attributes set img_width=" . $arr_sizes[0] . " where id=$key_size;");
                 }
@@ -1112,7 +1112,7 @@ class Generator extends DBInterfaceBase
                     $filas[$key_lang] = 2;
                 }
 
-                $attributes_in_class = explode(',', $val);
+                $attributes_in_class = explode(',', (string) $val);
                 foreach ($attributes_in_class as $atri_id) {
                     $atri_ids = explode('-', $atri_id);
                     $atri_id = $atri_ids[0];
@@ -1160,7 +1160,7 @@ class Generator extends DBInterfaceBase
             }
 
             foreach ($relations as $key => $val) {
-                $arr_ids = explode(',', $val);
+                $arr_ids = explode(',', (string) $val);
                 $parent = array_shift($arr_ids);
                 $name = $this->get_relation_name($key, $parent, $arr_ids);
                 $childs = implode(',', $arr_ids);
@@ -1320,7 +1320,7 @@ class Generator extends DBInterfaceBase
 
     public function create_relation($id, $parent, $children, $name)
     {
-        $children = trim($children);
+        $children = trim((string) $children);
         if (is_array($name)) {
             $nice_name = $name[0];
             $nice_name_ca = isset($name[2]) ? $name[2] : $name[0];
@@ -1347,7 +1347,6 @@ class Generator extends DBInterfaceBase
     {
         $id = $key;
         $parent = $class_id;
-        $name = $params['caption'];
         $children = trim($params['childs']);
 
         $name = $params[0];
@@ -1385,7 +1384,7 @@ class Generator extends DBInterfaceBase
         $other_classes = $this->data['other_classes'];
         $relation_names = $this->data['relation_names'];
 
-        if (array_key_exists($rel_id, $relation_names)) {
+        if (array_key_exists((string) $rel_id, $relation_names)) {
             if (is_array($relation_names[$rel_id])) {
                 $name[0] = $relation_names[$rel_id][0];
                 $name[1] = $relation_names[$rel_id][1];
@@ -1549,7 +1548,7 @@ class Generator extends DBInterfaceBase
             $this->data['original_localized_attributes'][$original_id] = $id;
             $localized_attributes[$id] = $language_id;
         } else {
-            if (array_key_exists($id, $simple_attributes)) {
+            if (array_key_exists((string) $id, $simple_attributes)) {
                 echo "Attribute $id already exists!!!!\n";
                 print_r($simple_attributes);
                 die;
@@ -1655,7 +1654,7 @@ class Generator extends DBInterfaceBase
             $this->data['original_localized_attributes'][$original_id] = $id;
             $localized_attributes[$id] = $language_id;
         } else {
-            if (array_key_exists($id, $simple_attributes)) {
+            if (array_key_exists((string) $id, $simple_attributes)) {
                 echo "Attribute $id already exists!!!!\n";
                 print_r($simple_attributes);
                 die;
@@ -1715,7 +1714,7 @@ class Generator extends DBInterfaceBase
     public function title_to_key($key)
     {
         $str = $this->clean_characters($key);
-        $str = ucwords($str);
+        $str = ucwords((string) $str);
         $str = str_replace(' ', '', $str);
         return $str;
     }
