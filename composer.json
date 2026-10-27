@@ -4,7 +4,7 @@
 	"minimum-stability":"dev",
     "require": {
       "doctrine/orm": "^2.19.5",
-      "phpoffice/phpspreadsheet": "1.*",
+      "phpoffice/phpspreadsheet": "1.* || ^5.10",
       "jawira/plantuml-encoding": "^1.0"
     },
     "require-dev": {
