@@ -22,7 +22,7 @@ use \Omatech\Editora\Extractor\Extractor;
 ini_set("memory_limit", "5000M");
 set_time_limit(0);
 
-$options_array = getopt(null, ['from::', 'to::'
+$options_array = getopt('', ['from::', 'to::'
 	, 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:'
 	, 'outputformat:', 'outputfile:'
 	, 'lang:', 'help', 'debug']);
@@ -80,7 +80,7 @@ if ($options_array['to'] != 'file' && $options_array['to'] != 'output'  && $opti
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
 if (isset($options_array['debug'])) {
-	$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+	\Omatech\Editora\Utils\EchoSqlLogger::enable($dbal_config);
 	$params['debug'] = true;
 }
 

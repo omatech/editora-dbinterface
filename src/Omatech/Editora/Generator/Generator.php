@@ -73,7 +73,7 @@ class Generator extends DBInterfaceBase
     public function modernize()
     {
         $this->conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
-        $sm = $this->conn->getSchemaManager();
+        $sm = $this->conn->createSchemaManager();
         $changes = 0;
 
         echo "Testing omp_attributes table\n";
@@ -280,7 +280,7 @@ class Generator extends DBInterfaceBase
     public function resetPasswords($length = 8)
     {
         $this->conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
-        $sm = $this->conn->getSchemaManager();
+        $sm = $this->conn->createSchemaManager();
         $columns = $sm->listTableColumns('omp_users');
         $passwordColumn = $columns['password'];
         $hashedPasswordColumn = $columns['hashed_password'];
@@ -298,7 +298,7 @@ class Generator extends DBInterfaceBase
         }
 
         if ($sqlAlterTable != '') {
-            $this->conn->exec($sqlAlterTable);
+            $this->conn->executeStatement($sqlAlterTable);
         }
 
         $sql = "select username, id from omp_users";
@@ -324,7 +324,7 @@ class Generator extends DBInterfaceBase
     public function encryptPasswords()
     {
         $this->conn->getDatabasePlatform()->registerDoctrineTypeMapping('enum', 'string');
-        $sm = $this->conn->getSchemaManager();
+        $sm = $this->conn->createSchemaManager();
         $columns = $sm->listTableColumns('omp_users');
         $passwordColumn = $columns['password'];
         $hashedPasswordColumn = $columns['hashed_password'];
@@ -342,7 +342,7 @@ class Generator extends DBInterfaceBase
         }
 
         if ($sqlAlterTable != '') {
-            $this->conn->exec($sqlAlterTable);
+            $this->conn->executeStatement($sqlAlterTable);
         }
 
         $sql = "select username, password, id from omp_users where hashed_password = 0";

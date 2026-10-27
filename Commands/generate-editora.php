@@ -71,7 +71,7 @@ if ($options_array['from'] == 'db5') {
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
 if (isset($options_array['debug'])) {
-    $dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+    \Omatech\Editora\Utils\EchoSqlLogger::enable($dbal_config);
     $params['debug'] = true;
 }
 

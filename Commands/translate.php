@@ -21,7 +21,7 @@ use Google\Cloud\Translate\TranslateClient;
 ini_set("memory_limit", "5000M");
 set_time_limit(0);
 
-$options_array = getopt(null, ['from::', 'to::'
+$options_array = getopt('', ['from::', 'to::'
 	, 'dbfromhost:', 'dbfromuser:', 'dbfrompass:', 'dbfromname:', 'sourcelanguage:'
 	, 'dbtohost:', 'dbtouser:', 'dbtopass:', 'dbtoname:', 'destinationlanguage:'
 	, 'help', 'googlecloudprojectid:', 'costestimationonly', 'debug']);
@@ -81,7 +81,7 @@ if ($options_array['from'] == 'db5' || $options_array['from'] == 'editora5file' 
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
 if (isset($options_array['debug'])) {
-	$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+	\Omatech\Editora\Utils\EchoSqlLogger::enable($dbal_config);
 	$params['debug'] = true;
 }
 

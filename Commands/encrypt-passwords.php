@@ -18,7 +18,7 @@ use \Omatech\Editora\Generator\Generator;
 ini_set("memory_limit", "5000M");
 set_time_limit(0);
 
-$options_array = getopt(null, ['to::'
+$options_array = getopt('', ['to::'
 	, 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:'
 	, 'length:'
 	, 'help', 'debug']);
@@ -63,7 +63,7 @@ if ($to_version != 4) {
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
 if (isset($options_array['debug'])) {
-	$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+	\Omatech\Editora\Utils\EchoSqlLogger::enable($dbal_config);
 	$params['debug'] = true;
 }
 

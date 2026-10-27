@@ -17,7 +17,7 @@ use \Omatech\Editora\Extractor\Extractor;
 ini_set("memory_limit", "5000M");
 set_time_limit(0);
 
-$options_array = getopt(null, ['from::', 'to::'
+$options_array = getopt('', ['from::', 'to::'
 	, 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:'
 	, 'outputformat:', 'outputfile:'
 	, 'class_id:', 'lang:', 'limit:'
@@ -76,7 +76,7 @@ $to=$options_array['to'];
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
 if (isset($options_array['debug'])) {
-	$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+	\Omatech\Editora\Utils\EchoSqlLogger::enable($dbal_config);
 	$params['debug'] = true;
 }
 
@@ -112,7 +112,7 @@ if ($conn_to) {
     $extractor = new Extractor($conn_to, $params);
 
     $sql="select id from omp_instances limit $limit";
-	$rows=$conn_to->fetchAll($sql);
+	$rows=$conn_to->fetchAllAssociative($sql);
 	
 	echo "Caching Class Attributes\n";
 	$class_attributes=$extractor->getAllClassAttributes();

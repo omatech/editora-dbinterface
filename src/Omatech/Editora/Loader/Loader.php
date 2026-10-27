@@ -75,7 +75,7 @@ class Loader extends DBInterfaceBase
                 $sql = substr($sql, 0, -1); // eliminem la ultima ,
                 echo $i;
                 //echo PHP_EOL . $i . ' - ' . $sql . PHP_EOL;
-                $this->conn->query($sql);
+                $this->conn->executeStatement($sql);
                 $sql = $initial_sql;
             } else {
                 echo '.';
@@ -86,7 +86,7 @@ class Loader extends DBInterfaceBase
         echo "$i\n";
         //echo "$sql\n";
         //$this->last_massive_sql = $sql;
-        $this->conn->query($sql);
+        $this->conn->executeStatement($sql);
         return $i;
     }
 
@@ -95,8 +95,8 @@ class Loader extends DBInterfaceBase
         $sql = "delete from omp_relation_instances where batch_id=:batch_id";
         $statement = $this->conn->prepare($sql);
         $statement->bindValue('batch_id', $batch_id);
-        $statement->execute();
-        echo $statement->rowCount() . " relation instances deleted\n";
+        $affected = $statement->executeStatement();
+        echo $affected . " relation instances deleted\n";
     }
 
     public function delete_instances_in_batch($batch_id)
@@ -140,8 +140,8 @@ class Loader extends DBInterfaceBase
         $statement->bindValue('parent_inst_id', $parent_inst_id);
         $statement->bindValue('child_inst_id', $child_inst_id);
         $statement->bindValue('external_id', $external_id);
-        $statement->execute();
-        echo $statement->rowCount() . " relation instances deleted\n";
+        $affected = $statement->executeStatement();
+        echo $affected . " relation instances deleted\n";
     }
 
     public function deleteRelationInstancesWithExternalID($external_id, $rel_id)
@@ -150,8 +150,8 @@ class Loader extends DBInterfaceBase
         $statement = $this->conn->prepare($sql);
         $statement->bindValue('external_id', $external_id);
         $statement->bindValue('rel_id', $rel_id);
-        $statement->execute();
-        echo $statement->rowCount() . " relation instances deleted\n";
+        $affected = $statement->executeStatement();
+        echo $affected . " relation instances deleted\n";
     }
     
     public function delete_instance($inst_id)

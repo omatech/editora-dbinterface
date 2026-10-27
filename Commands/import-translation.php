@@ -19,7 +19,7 @@ use \PhpOffice\PhpSpreadsheet\IOFactory;
 ini_set("memory_limit", "5000M");
 set_time_limit(0);
 
-$options_array = getopt(null, ['from::', 'to::'
+$options_array = getopt('', ['from::', 'to::'
     , 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:', 'sourcelanguage:', 'destinationlanguage:'
     , 'inputformat:', 'fromfilename:', 'offsetlang:', 'debug'
     , 'help', 'avoiddbbackup']);
@@ -78,7 +78,7 @@ if ($options_array['to'] == 'db5') {
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
 if (isset($options_array['debug'])) {
-    $dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+    \Omatech\Editora\Utils\EchoSqlLogger::enable($dbal_config);
     $params['debug'] = true;
 }
 

@@ -58,7 +58,7 @@ class Clear extends DBInterfaceBase
     {
         $database_name = $this->conn->getDatabase();
 
-        $tables = $this->conn->query("SELECT concat('DROP TABLE IF EXISTS ', table_name, ';') FROM information_schema.tables WHERE table_schema = '$database_name';")->fetchAll();
+        $tables = $this->conn->executeQuery("SELECT concat('DROP TABLE IF EXISTS ', table_name, ';') FROM information_schema.tables WHERE table_schema = '$database_name';")->fetchAllAssociative();
 
         $queries = "SET FOREIGN_KEY_CHECKS=0;\n";
 

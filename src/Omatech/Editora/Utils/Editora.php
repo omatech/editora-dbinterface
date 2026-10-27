@@ -2,8 +2,6 @@
 
 namespace Omatech\Editora\Utils;
 
-use PDO;
-
 class Editora {
 
 		private static $conn;
@@ -39,8 +37,8 @@ class Editora {
 			";
 
 			$prepare = self::$conn->prepare($sql);
-			$prepare->bindParam(':lang', $lang, PDO::PARAM_STR);
-			$prepare->bindParam(':inst_id', $inst_id, PDO::PARAM_INT);
+			$prepare->bindValue(':lang', $lang, \Doctrine\DBAL\ParameterType::STRING);
+			$prepare->bindValue(':inst_id', $inst_id, \Doctrine\DBAL\ParameterType::INTEGER);
 			$resultSet = $prepare->executeQuery();
 			$rows=$resultSet->fetchAllAssociative();
 			return $rows;
@@ -68,10 +66,10 @@ class Editora {
 				and i.class_id = c.id";
 
 				$prepare = self::$conn->prepare($sql);
-				$prepare->bindParam(':id', $id, PDO::PARAM_INT);
+				$prepare->bindValue(':id', $id, \Doctrine\DBAL\ParameterType::INTEGER);
 
 				$resultSet = $prepare->executeQuery();
-				$row=$resultSet->fetch();
+				$row=$resultSet->fetchAssociative();
 
 				if ($row) {
 						return $row['tag'];
@@ -93,10 +91,10 @@ class Editora {
 				$sql = "select niceurl as id from omp_niceurl n, omp_instances i where i.id=inst_id and inst_id=:id and language=:language";
 
 				$prepare = self::$conn->prepare($sql);
-				$prepare->bindParam(':id', $id, PDO::PARAM_INT);
-				$prepare->bindParam(':language', $lg, PDO::PARAM_STR);
+				$prepare->bindValue(':id', $id, \Doctrine\DBAL\ParameterType::INTEGER);
+				$prepare->bindValue(':language', $lg, \Doctrine\DBAL\ParameterType::STRING);
 				$resultSet = $prepare->executeQuery();
-				$row=$resultSet->fetch();
+				$row=$resultSet->fetchAssociative();
 
 				if (isset($row['id']))
 						return $row['id'];
@@ -123,10 +121,10 @@ class Editora {
 								$sql.=" and i.status = 'O'";
 
 						$prepare = self::$conn->prepare($sql);
-						$prepare->bindParam(':url', $url, PDO::PARAM_STR);
-						$prepare->bindParam(':language', $lg, PDO::PARAM_STR);
+						$prepare->bindValue(':url', $url, \Doctrine\DBAL\ParameterType::STRING);
+						$prepare->bindValue(':language', $lg, \Doctrine\DBAL\ParameterType::STRING);
 						$resultSet = $prepare->executeQuery();
-						$row=$resultSet->fetch();
+						$row=$resultSet->fetchAssociative();
 
 						if ($row) {
 								// Permanent redirection
@@ -141,9 +139,9 @@ class Editora {
 								$sql.=" and status = 'O'";
 
 						$prepare = self::$conn->prepare($sql);
-						$prepare->bindParam(':url', $url, PDO::PARAM_STR);
+						$prepare->bindValue(':url', $url, \Doctrine\DBAL\ParameterType::STRING);
 						$resultSet = $prepare->executeQuery();
-						$row=$resultSet->fetch();
+						$row=$resultSet->fetchAssociative();
 
 						if ($row) {
 								$_REQUEST['inst_id_from_url'] = $row['id'];
@@ -158,10 +156,10 @@ class Editora {
 
 
 				$prepare = self::$conn->prepare($sql);
-				$prepare->bindParam(':url', $url, PDO::PARAM_STR);
+				$prepare->bindValue(':url', $url, \Doctrine\DBAL\ParameterType::STRING);
 
 				$resultSet = $prepare->executeQuery();
-				$row=$resultSet->fetch();;
+				$row=$resultSet->fetchAssociative();;
 
 				if ($row) {
 						$_REQUEST['inst_id_from_url'] = $row['id'];
@@ -232,9 +230,9 @@ class Editora {
             }
 
             $prepare = self::$conn->prepare($sql);
-            $prepare->bindParam(':url', $url, PDO::PARAM_STR);
+            $prepare->bindValue(':url', $url, \Doctrine\DBAL\ParameterType::STRING);
 						$resultSet = $prepare->executeQuery();
-						$row=$resultSet->fetch();
+						$row=$resultSet->fetchAssociative();
 
             if ($row) {
                 $_REQUEST['class_from_url'] = $row['class'];
@@ -250,9 +248,9 @@ class Editora {
 
 
         $prepare = self::$conn->prepare($sql);
-        $prepare->bindParam(':url', $url, PDO::PARAM_STR);
+        $prepare->bindValue(':url', $url, \Doctrine\DBAL\ParameterType::STRING);
 				$resultSet = $prepare->executeQuery();
-				$row=$resultSet->fetch();
+				$row=$resultSet->fetchAssociative();
 
         if ($row) {
             $_REQUEST['class_from_url'] = $row['class'];

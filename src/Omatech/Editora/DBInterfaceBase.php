@@ -46,7 +46,7 @@ class DBInterfaceBase
         if (is_array($conn)) {
             $config = new \Doctrine\DBAL\Configuration();
             if ($this->debug) {
-                $config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+                \Omatech\Editora\Utils\EchoSqlLogger::enable($config);
             }
             //print_r($conn);
             $conn = \Doctrine\DBAL\DriverManager::getConnection($conn, $config);
@@ -177,26 +177,17 @@ class DBInterfaceBase
 
     protected function fetchAssoc($sql)
     {
-        if (method_exists($this->conn, 'fetchAssoc')) {
-            return $this->conn->fetchAssoc($sql);
-        } else {
-            return $this->conn->query($sql)->fetchAssociative();
-        }
+        return $this->conn->fetchAssociative($sql);
     }
 
     protected function fetchAll($sql)
     {
-        if (method_exists($this->conn, 'fetchAll')) {
-            return $this->conn->fetchAll($sql);
-        } else {
-            return $this->conn->query($sql)->fetchAll();
-        }
+        return $this->conn->fetchAllAssociative($sql);
     }
 
     protected function fetchColumn($sql)
     {
-        $row=$this->fetchAssoc($sql);
-        return $row[key($row)];
+        return $this->conn->fetchOne($sql);
     }
 
     public function getAllClasses($include = '', $exclude = '')
@@ -544,8 +535,7 @@ class DBInterfaceBase
 
                                         $prepare = $this->conn->prepare($sql);
                                         $prepare->bindValue('nice_url', $nice_url);
-                                        $prepare->execute();
-                                        $rows = $prepare->fetchAll();
+                                        $rows = $prepare->executeQuery()->fetchAllAssociative();
                                         foreach ($rows as $multilang_url_row) {
                                             $result['multilang_urls'][$multilang_url_row['language']] = $multilang_url_row['niceurl'];
                                         }

@@ -70,19 +70,19 @@ class AppModel {
 	
 	function fetchAll ($sql, $connection='conn_from')
 	{
-		$rows=$this->$connection->fetchAll($sql);
+		$rows=$this->$connection->fetchAllAssociative($sql);
 		return $rows;		
 	}
 	
 	function fetchColumn ($sql, $connection='conn_from')
 	{
-		$rows=$this->$connection->fetchColumn($sql);
+		$rows=$this->$connection->fetchOne($sql);
 		return $rows;		
 	}
 
 	function get_one ($sql, $connection='conn_from')
 	{
-		$rows=$this->$connection->fetchAll($sql);
+		$rows=$this->$connection->fetchAllAssociative($sql);
 		if ($rows && $rows[0]) return $rows[0];
 		return false;
 	}
@@ -105,6 +105,6 @@ class AppModel {
 	
 	function executeUpdate ($sql, $connection='conn_from')
 	{
-		return $this->$connection->executeUpdate($sql);
+		return $this->$connection->executeStatement($sql);
 	}
 }

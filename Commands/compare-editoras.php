@@ -15,7 +15,7 @@ use \Doctrine\DBAL\Configuration;
 ini_set("memory_limit", "5000M");
 set_time_limit(0);
 
-$options_array = getopt(null, ['dbpass:', 'dbfromname:', 'dbtoname:'
+$options_array = getopt('', ['dbpass:', 'dbfromname:', 'dbtoname:'
 	, 'help']);
 //print_r($options_array);
 if (isset($options_array['help'])) {

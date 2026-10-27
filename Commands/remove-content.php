@@ -19,7 +19,7 @@ use \Omatech\Editora\Clear\Clear;
 ini_set("memory_limit", "5000M");
 set_time_limit(0);
 
-$options_array = getopt(null, ['to::', 'batch_id::'
+$options_array = getopt('', ['to::', 'batch_id::'
 	, 'dbhost:', 'dbuser:', 'dbpass:', 'dbname:'
 	, 'help', 'debug', 'delete_previous_data']);
 //print_r($options_array);
@@ -78,7 +78,7 @@ if ($to_version != 4) {
 
 $dbal_config = new \Doctrine\DBAL\Configuration();
 if (isset($options_array['debug'])) {
-	$dbal_config->setSQLLogger(new \Doctrine\DBAL\Logging\EchoSQLLogger());
+	\Omatech\Editora\Utils\EchoSqlLogger::enable($dbal_config);
 	$params['debug'] = true;
 }
 

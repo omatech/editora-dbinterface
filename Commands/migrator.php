@@ -22,7 +22,7 @@ $input_action = '';
 $output_action = '';
 $data_transfered = false;
 
-$options_array = getopt(null, ['from::', 'to::'
+$options_array = getopt('', ['from::', 'to::'
 	, 'dbfromuser:', 'dbfrompass:', 'dbfromhost:', 'dbfromname:', 'fromfile:'
 	, 'dbtouser:', 'dbtopass:', 'dbtohost:', 'dbtoname:'
 	, 'help', 'transferdata']);
