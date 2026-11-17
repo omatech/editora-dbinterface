@@ -1073,9 +1073,9 @@ class Generator extends DBInterfaceBase
                     foreach ($group_val as $key => $val) {
                         if (is_array($val)) {
                             $caption = null;
-                            $caption_ca = $this->key_to_title(isset($val[1]) ? $val[1] : $val[0]);
-                            $caption_es = $this->key_to_title(isset($val[2]) ? $val[2] : $val[0]);
-                            $caption_en = $this->key_to_title(isset($val[3]) ? $val[3] : $val[0]);
+                            $caption_ca = $val[1] ?? $this->key_to_title($val[0]);
+                            $caption_es = $val[2] ?? $caption_ca;
+                            $caption_en = $val[3] ?? $caption_ca;
                             //$val = $this->key_to_title($val[0]);
 
                             $this->create_class($key, $val[0], $groups[$group_key], $i++, $caption, $caption_ca, $caption_es, $caption_en);
@@ -1191,11 +1191,12 @@ class Generator extends DBInterfaceBase
 
 
         
+        $truncate_users = $data['truncate_users'] ?? false;
         $create_users=true;
         if (isset($data['create_users']) && $data['create_users']==false) {
             $create_users=false;
         }
-        if ($data['truncate_users']==false)
+        if ($truncate_users==false)
         {// si no volem truncar la taula users es que no els volem recrear
             $create_users=false;
         }
@@ -1218,7 +1219,7 @@ class Generator extends DBInterfaceBase
 
         //Clear generic tables
         $Clear = new Clear($this->conn, array());
-        $Clear->truncateTables($data['truncate_users']);
+        $Clear->truncateTables($truncate_users);
 
         $this->startTransaction();
 

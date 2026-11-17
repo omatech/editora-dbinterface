@@ -14,14 +14,14 @@ class GeneratorTest extends TestCaseBase
 {
     protected $Generator;
 
-    protected function setUp()
+    protected function setUp(): void
     {
+        parent::setUp();
         $Clear = new Clear($this->conn, array());
         $Clear->dropAllData();
 
         $this->Generator = new Generator($this->conn, array());
 
-        parent::setUp();
     }
 
     private function getTestData()
@@ -194,7 +194,7 @@ class GeneratorTest extends TestCaseBase
             'omp_users',
             'omp_values'
         );
-        $sql = "SELECT table_name FROM information_schema.tables WHERE table_schema = '$dbname';";
+        $sql = "SELECT table_name AS table_name FROM information_schema.tables WHERE table_schema = '$dbname';";
 
         $query_result = $this->fetchAll($sql);
 
@@ -465,9 +465,9 @@ class GeneratorTest extends TestCaseBase
         $query_result = $this->fetchAll("select * from omp_classes where id=$class_id;");
 
         $this->assertTrue(isset($query_result[0]));
-        $this->assertTrue($query_result[0]['name_ca'] == $name_ca);
-        $this->assertTrue($query_result[0]['name_es'] == $name_es);
-        $this->assertTrue($query_result[0]['name_en'] == $name_en);
+        $this->assertSame($name_ca, $query_result[0]['name_ca']);
+        $this->assertSame($name_es, $query_result[0]['name_es']);
+        $this->assertSame($name_en, $query_result[0]['name_en']);
     }
 
     //validation data
@@ -479,7 +479,8 @@ class GeneratorTest extends TestCaseBase
 
         $generated = $this->Generator->createEditora($data);
 
-        $this->assertTrue($generated);
+        $this->assertFalse($generated);
+        $this->assertSame(0, (int) $this->conn->fetchOne('SELECT COUNT(*) FROM omp_users'));
     }
 
 //    public function testGenerateEditoraWithUserOmatech()
@@ -526,11 +527,6 @@ class GeneratorTest extends TestCaseBase
 
         $query_result = $this->fetchAll("select * from omp_users WHERE username='omatech';");
 
-        foreach ($query_result as $anUser) {
-            if ($anUser['username'] == 'omatech') {
-                $this->assertTrue(true);
-                break;
-            }
-        }
+        $this->assertSame([], $query_result, 'Never restore the historical implicit omatech account.');
     }
 }

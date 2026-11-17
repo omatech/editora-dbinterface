@@ -12,12 +12,12 @@ class ClearTest extends TestCaseBase
 {
     protected $Clear;
 
-    protected function setUp()
+    protected function setUp(): void
     {
+        parent::setUp();
         $this->Clear = new Clear($this->conn, array());
         $this->Clear->dropAllData();
 
-        parent::setUp();
     }
 
     public function testTruncateTablesSuccessfully()

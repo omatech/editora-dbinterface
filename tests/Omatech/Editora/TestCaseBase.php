@@ -12,15 +12,16 @@
 
 use PHPUnit\Framework\TestCase;
 
-class TestCaseBase extends PHPUnit_Framework_TestCase
+class TestCaseBase extends TestCase
 {
     protected $conn;
 
-    public function __construct($name = null, array $data = array(), $dataName = '')
+    protected function setUp(): void
     {
-        global $conn;
-        $this->conn = $conn;
-        parent::__construct($name, $data, $dataName);
+        parent::setUp();
+        $this->conn = $GLOBALS['conn'] ?? throw new RuntimeException('The MySQL suite requires tests/mysql-check.sh.');
+        (new \Omatech\Editora\Clear\Clear($this->conn))->dropAllData();
+        $this->conn->insert('omp_classes', ['id' => 1, 'name' => 'Global', 'tag' => 'global']);
     }
 
     protected function fetchAssoc($sql)
@@ -28,7 +29,7 @@ class TestCaseBase extends PHPUnit_Framework_TestCase
         if (method_exists($this->conn, 'fetchAssoc')) {
             return $this->conn->fetchAssoc($sql);
         } else {
-            return $this->conn->query($sql)->fetchAssociative();
+            return $this->conn->executeQuery($sql)->fetchAssociative();
         }
     }
 
@@ -37,7 +38,7 @@ class TestCaseBase extends PHPUnit_Framework_TestCase
         if (method_exists($this->conn, 'fetchAll')) {
             return $this->conn->fetchAll($sql);
         } else {
-            return $this->conn->query($sql)->fetchAll();
+            return $this->conn->executeQuery($sql)->fetchAllAssociative();
         }
     }
 
