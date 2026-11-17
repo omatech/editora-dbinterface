@@ -5,3 +5,5 @@ composer.lock
 .history
 /.phpunit.cache/
 /.docker/evidence/
+
+!/composer.lock
