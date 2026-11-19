@@ -21,6 +21,27 @@ class DBInterfaceBase
     protected $default_language_to_remove_from_url=null;
     protected $sql_select_instances = 'select i.*, c.name class_name, c.tag class_tag, c.id class_id, i.key_fields nom_intern, i.update_date, ifnull(unix_timestamp(i.update_date),0) update_timestamp';
 
+    /** Listed instances whose rows one query reads together, at most. */
+    protected const READ_TOGETHER = 100;
+
+    /** Nesting of readingInstances() calls: while above zero, what was read for one instance serves the others. */
+    private $reading_instances = 0;
+
+    /** Whether omp_niceurl has full_niceurl, once read during readingInstances(). */
+    private $niceurl_has_full_niceurl = null;
+
+    /** Instances listed by readingInstances() whose omp_niceurl rows are still to be read: [language][inst_id] => true. */
+    private $niceurls_to_read = [];
+
+    /** omp_niceurl rows read for listed instances: [language][inst_id] => ['count' => n, 'row' => first row or null]. */
+    private $niceurls_read = [];
+
+    /** class_id of the instances whose rows readingInstances() was given: [inst_id] => class_id. */
+    private $classes_of_instances = [];
+
+    /** Results of the omp_relations queries asked during readingInstances(), by method and SQL. */
+    private $relations_read = [];
+
     public function getParams()
     {
         return $this->params;
@@ -216,8 +237,12 @@ class DBInterfaceBase
 
     public function findClassIDFromInstID($inst_id)
     {
+        $known = $this->reading_instances > 0 ? self::integerId($inst_id) : null;
         $inst_id = $this->conn->quote($inst_id);
         $this->debug("Extractor::findClassIDFromInstID inst_id=$inst_id\n");
+        if ($known !== null && isset($this->classes_of_instances[$known])) {
+            return $this->classes_of_instances[$known];
+        }
         $sql = "select class_id from omp_instances where id=$inst_id";
         return $this->fetchColumn($sql);
     }
@@ -274,7 +299,7 @@ class DBInterfaceBase
 				";
 
         $this->debug($sql);
-        $row = $this->fetchAssoc($sql);
+        $row = $this->readRelations('fetchAssoc', $sql);
         if (!$row) {
             return null;
         }
@@ -295,7 +320,7 @@ class DBInterfaceBase
 				";
 
         $this->debug($sql);
-        $row = $this->fetchAssoc($sql);
+        $row = $this->readRelations('fetchAssoc', $sql);
         if (!$row) {
             return null;
         }
@@ -397,24 +422,153 @@ class DBInterfaceBase
         return $row;
     }
 
+    /**
+     * Runs $read, an extraction of the instances of $rows (rows as $sql_select_instances selects them) and of what it
+     * reaches from them. Until the outermost call returns, what one instance asks the database is not asked again for
+     * the next: whether omp_niceurl has full_niceurl, the omp_relations rows of a class, the class of an instance whose
+     * row is at hand. The omp_niceurl rows of the listed instances are read together, at most READ_TOGETHER per query,
+     * when the first of them is needed.
+     */
+    protected function readingInstances(callable $read, array $rows = [])
+    {
+        $lang = (string) $this->lang;
+        $listed = [];
+        foreach ($rows as $row) {
+            $inst_id = (int) (isset($row['inst_id']) ? $row['inst_id'] : $row['id']);
+            if (isset($row['class_id'])) {
+                $this->classes_of_instances[$inst_id] = $row['class_id'];
+            }
+            if (!isset($this->niceurls_to_read[$lang][$inst_id]) && !isset($this->niceurls_read[$lang][$inst_id])) {
+                $this->niceurls_to_read[$lang][$inst_id] = true;
+                $listed[] = $inst_id;
+            }
+        }
+        $this->reading_instances++;
+        try {
+            return $read();
+        } finally {
+            foreach ($listed as $inst_id) {
+                unset($this->niceurls_to_read[$lang][$inst_id], $this->niceurls_read[$lang][$inst_id]);
+            }
+            if (--$this->reading_instances === 0) {
+                $this->niceurl_has_full_niceurl = null;
+                $this->niceurls_to_read = [];
+                $this->niceurls_read = [];
+                $this->classes_of_instances = [];
+                $this->relations_read = [];
+            }
+        }
+    }
+
+    /** $this->$fetch($sql), a query of omp_relations, asked once during readingInstances(). */
+    protected function readRelations($fetch, $sql)
+    {
+        if ($this->reading_instances === 0) {
+            return $this->$fetch($sql);
+        }
+        $key = $fetch . ':' . $sql;
+        if (!array_key_exists($key, $this->relations_read)) {
+            $this->relations_read[$key] = $this->$fetch($sql);
+        }
+
+        return $this->relations_read[$key];
+    }
+
+    /** An id given as an int or as the decimal digits of one; null otherwise. */
+    protected static function integerId($id)
+    {
+        if (is_int($id)) {
+            return $id;
+        }
+        if (is_string($id) && preg_match('/^(0|-?[1-9][0-9]*)$/D', $id) && (string) (int) $id === $id) {
+            return (int) $id;
+        }
+
+        return null;
+    }
+
+    private function niceurlHasFullNiceurl()
+    {
+        if ($this->reading_instances > 0 && $this->niceurl_has_full_niceurl !== null) {
+            return $this->niceurl_has_full_niceurl;
+        }
+        $sql = "SHOW COLUMNS FROM omp_niceurl LIKE 'full_niceurl'";
+        $has_full_niceurl = (bool) $this->fetchAssoc($sql);
+        if ($this->reading_instances > 0) {
+            $this->niceurl_has_full_niceurl = $has_full_niceurl;
+        }
+
+        return $has_full_niceurl;
+    }
+
+    /**
+     * The omp_niceurl rows in this language of an instance listed by readingInstances(): ['count' => n, 'row' => the
+     * first, with the columns getInstanceLink() selects]. Null if it is not listed; the database answers then.
+     */
+    private function niceurlsReadWithList($inst_id)
+    {
+        $lang = (string) $this->lang;
+        $inst_id = self::integerId($inst_id);
+        if ($inst_id === null || $this->reading_instances === 0) {
+            return null;
+        }
+        if (isset($this->niceurls_read[$lang][$inst_id])) {
+            return $this->niceurls_read[$lang][$inst_id];
+        }
+        if (!isset($this->niceurls_to_read[$lang][$inst_id])) {
+            return null;
+        }
+
+        $inst_ids = [$inst_id];
+        foreach ($this->niceurls_to_read[$lang] as $listed => $to_read) {
+            if (count($inst_ids) >= self::READ_TOGETHER) {
+                break;
+            }
+            if ($listed !== $inst_id) {
+                $inst_ids[] = $listed;
+            }
+        }
+        $select = $this->niceurlHasFullNiceurl() ? 'niceurl, full_niceurl' : 'niceurl';
+        $read = array_fill_keys($inst_ids, ['count' => 0, 'row' => null]);
+        foreach ($this->fetchAll("select inst_id, $select
+				from omp_niceurl
+				where inst_id in (" . implode(',', $inst_ids) . ")
+				and language='" . $this->lang . "'") as $row) {
+            $listed = (int) $row['inst_id'];
+            unset($row['inst_id']);
+            if ($read[$listed]['count']++ === 0) {
+                $read[$listed]['row'] = $row;
+            }
+        }
+        foreach ($read as $listed => $niceurls) {
+            unset($this->niceurls_to_read[$lang][$listed]);
+            $this->niceurls_read[$lang][$listed] = $niceurls;
+        }
+
+        return $read[$inst_id];
+    }
+
     public function getInstanceLink($inst_id, $lang = null)
     {
-        $sql = "SHOW COLUMNS FROM omp_niceurl LIKE 'full_niceurl'";
-        $row = $this->fetchAssoc($sql);
         $select = 'niceurl';
 
-        if ($row) {
+        if ($this->niceurlHasFullNiceurl()) {
             $select .= ', full_niceurl ';
         }
         $this->lang = $this->lang ?? $lang;
+        $niceurls = $this->niceurlsReadWithList($inst_id);
         $inst_id = $this->conn->quote($inst_id);
-        $sql = "select $select
+        if ($niceurls !== null && $niceurls['count'] <= 1) {
+            $niceurl_row = $niceurls['count'] === 1 ? $niceurls['row'] : false;
+        } else {// several rows: the one "the first" is, is the database's choice
+            $sql = "select $select
 				from omp_niceurl
 				where inst_id=$inst_id
 				and language='" . $this->lang . "'";
-        //$this->debug("SQL a getLink\n");
-        //$this->debug($sql);
-        $niceurl_row = $this->fetchAssoc($sql);
+            //$this->debug("SQL a getLink\n");
+            //$this->debug($sql);
+            $niceurl_row = $this->fetchAssoc($sql);
+        }
         if ($niceurl_row) {
             if ($this->lang == 'ALL') {
                 $link = '/' . ($niceurl_row['full_niceurl'] ?? $niceurl_row['niceurl']);
@@ -438,6 +592,10 @@ class DBInterfaceBase
 
     public function getHasUrlnice($inst_id)
     {
+        $niceurls = $this->niceurlsReadWithList($inst_id);
+        if ($niceurls !== null) {
+            return $niceurls['count'] > 0;
+        }
         $inst_id = $this->conn->quote($inst_id);
         $sql = "select niceurl
 				from omp_niceurl

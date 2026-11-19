@@ -13,6 +13,33 @@ class Extractor extends DBInterfaceBase
     protected $paginator = null;
     public $last_updated_timestamp=0;
 
+    /**
+     * Instances of the lists being extracted whose values are still to be read, by language and instance id.
+     * The first one getInstanceValues() needs reads them together; see prepareInstanceResultStructures().
+     */
+    private $values_to_read = [];
+
+    /** Values read together that getInstanceValues() has not used yet: [language][inst_id][atri_id] => row, or false for a repeated pair. */
+    private $values_read_ahead = [];
+
+    /**
+     * Instances of the lists being extracted whose attribute rows (the first query of getInstanceValues()) are still
+     * to be read, by language and filter: ["lang\nfilter"][inst_id] => true.
+     */
+    private $attributes_to_read = [];
+
+    /** Attribute rows read together that getInstanceValues() has not used yet: ["lang\nfilter"][inst_id] => rows. */
+    private $attributes_read_ahead = [];
+
+    /** The instance prepareInstanceResultStructure() is asking getInstanceValues() for, while it asks. */
+    private $attributes_for = null;
+
+    /**
+     * While getInstanceValues() resolves an instance: ['inst_id' => int, 'atri_ids' => [atri_id => true], 'rows' =>
+     * [atri_id => row, or false for a repeated pair], or null until getValueRowOrNullArray() first needs them].
+     */
+    private $values_in_hand = null;
+
     ///
     /// MAIN FUNCTIONS
     ///
@@ -161,13 +188,17 @@ class Extractor extends DBInterfaceBase
             return array();
         }
 
-        $result = $this->prepareInstanceResultStructure($row, $params, $callback);
+        $result = $this->readingInstances(function () use ($row, $params, $callback, $inst_id, $num, $level) {
+            $result = $this->prepareInstanceResultStructure($row, $params, $callback);
 
-        //All relations
-        $all_relations = $this->findChildrenInstancesAll($inst_id, $num, $params, $level);
-        if (isset($all_relations) && !empty($all_relations)) {
-            $result['relations'] = $all_relations;
-        }
+            //All relations
+            $all_relations = $this->findChildrenInstancesAll($inst_id, $num, $params, $level);
+            if (isset($all_relations) && !empty($all_relations)) {
+                $result['relations'] = $all_relations;
+            }
+
+            return $result;
+        }, [$row]);
 
         // put info into the cache before returning
         $this->putInExtractionCache($result, $params);
@@ -211,8 +242,8 @@ class Extractor extends DBInterfaceBase
 
                 $rows = $this->fetchAll($sql);
 
-                foreach ($rows as $row) {
-                    $result[$tag]['instances'][] = $this->prepareInstanceResultStructure($row, $params, $callback);
+                foreach ($this->prepareInstanceResultStructures($rows, $params, $callback) as $instance) {
+                    $result[$tag]['instances'][] = $instance;
                 }
                 if ($this->metadata) {
                     $result[$tag]['metadata'] = $rel_row;
@@ -254,7 +285,7 @@ class Extractor extends DBInterfaceBase
 
         $this->debug("SQL a findChildRelationAll\n");
         $this->debug($sql);
-        $rows = $this->fetchAll($sql);
+        $rows = $this->readRelations('fetchAll', $sql);
 
         if (!$rows) {
             return null;
@@ -290,7 +321,7 @@ class Extractor extends DBInterfaceBase
             return array();
         }
 
-        $result = $this->prepareInstanceResultStructure($row, $params, $callback);
+        $result = $this->prepareInstanceResultStructures([$row], $params, $callback)[0];
 
         // put info into the cache before returning
         $this->putInExtractionCache($result, $params);
@@ -356,10 +387,7 @@ class Extractor extends DBInterfaceBase
         $this->debug($sql);
         //$row=Model::get_one($sql);
         $rows = $this->fetchAll($sql);
-        $result = array();
-        foreach ($rows as $row) {
-            $result[] = $this->prepareInstanceResultStructure($row, $params, $callback);
-        }
+        $result = $this->prepareInstanceResultStructures($rows, $params, $callback);
 
         // put info into the cache before returning
         $this->putInExtractionCache($result, $params);
@@ -408,10 +436,7 @@ class Extractor extends DBInterfaceBase
         $this->debug($sql);
         //$row=Model::get_one($sql);
         $rows = $this->fetchAll($sql);
-        $result = array();
-        foreach ($rows as $row) {
-            $result[] = $this->prepareInstanceResultStructure($row, $params, $callback);
-        }
+        $result = $this->prepareInstanceResultStructures($rows, $params, $callback);
 
         // put info into the cache before returning
         $this->putInExtractionCache($result, $params);
@@ -453,10 +478,7 @@ class Extractor extends DBInterfaceBase
         $this->debug($sql);
         //$row=Model::get_one($sql);
         $rows = $this->fetchAll($sql);
-        $result = array();
-        foreach ($rows as $row) {
-            $result[] = $this->prepareInstanceResultStructure($row, $params, $callback);
-        }
+        $result = $this->prepareInstanceResultStructures($rows, $params, $callback);
         // put info into the cache before returning
         $this->putInExtractionCache($result, $params);
         return $result;
@@ -529,8 +551,8 @@ class Extractor extends DBInterfaceBase
         //print_r($rows);die;
         $result = array();
 
-        foreach ($rows as $row) {
-            $result[$tag]['instances'][] = $this->prepareInstanceResultStructure($row, $params, $callback);
+        foreach ($this->prepareInstanceResultStructures($rows, $params, $callback) as $instance) {
+            $result[$tag]['instances'][] = $instance;
         }
         if ($this->metadata) {
             $result[$tag]['metadata'] = $relation_row;
@@ -597,8 +619,8 @@ class Extractor extends DBInterfaceBase
         //print_r($rows);die;
         $result = array();
 
-        foreach ($rows as $row) {
-            $result[$tag]['instances'][] = $this->prepareInstanceResultStructure($row, $params, $callback);
+        foreach ($this->prepareInstanceResultStructures($rows, $params, $callback) as $instance) {
+            $result[$tag]['instances'][] = $instance;
         }
 
         if ($this->metadata) {
@@ -798,7 +820,7 @@ class Extractor extends DBInterfaceBase
 				";
 
         $this->debug("Extractor::getRelationDirection sql=$sql\n");
-        $num = $this->fetchColumn($sql);
+        $num = $this->readRelations('fetchColumn', $sql);
         if ($num > 0) {// La class es filla, retornem parent
             return 'parent';
         }
@@ -810,13 +832,55 @@ class Extractor extends DBInterfaceBase
 				" . $this->getRelationFilter($relation) . "
 				";
         $this->debug("Extractor::getRelationDirection sql=$sql\n");
-        $num = $this->fetchColumn($sql);
+        $num = $this->readRelations('fetchColumn', $sql);
         if ($num > 0) {// La class es pare, retornem child
             return 'child';
         }
         return null;
     }
 
+    /**
+     * prepareInstanceResultStructure() for each row, in order. The values of a list's instances are read together, at
+     * most READ_TOGETHER per query, when getInstanceValues() needs the first of them (never if the cache has them).
+     */
+    private function prepareInstanceResultStructures(array $rows, $params, ?callable $callback): array
+    {
+        $lang = (string) $this->lang;
+        $filter = isset($params['filter']) ? $params['filter'] : 'all';
+        $attributes = is_string($filter) ? $lang . "\n" . $filter : null;
+        $listed = [];
+        $listed_attributes = [];
+        if ($this->extract_values) {
+            foreach ($rows as $row) {
+                $inst_id = (int) (isset($row['inst_id']) ? $row['inst_id'] : $row['id']);
+                if (!isset($this->values_to_read[$lang][$inst_id]) && !isset($this->values_read_ahead[$lang][$inst_id])) {
+                    $this->values_to_read[$lang][$inst_id] = true;
+                    $listed[] = $inst_id;
+                }
+                if ($attributes !== null && !isset($this->attributes_to_read[$attributes][$inst_id]) && !isset($this->attributes_read_ahead[$attributes][$inst_id])) {
+                    $this->attributes_to_read[$attributes][$inst_id] = true;
+                    $listed_attributes[] = $inst_id;
+                }
+            }
+        }
+
+        return $this->readingInstances(function () use ($rows, $params, $callback, $lang, $listed, $attributes, $listed_attributes) {
+            try {
+                $instances = [];
+                foreach ($rows as $row) {
+                    $instances[] = $this->prepareInstanceResultStructure($row, $params, $callback);
+                }
+                return $instances;
+            } finally {
+                foreach ($listed as $inst_id) {
+                    unset($this->values_to_read[$lang][$inst_id], $this->values_read_ahead[$lang][$inst_id]);
+                }
+                foreach ($listed_attributes as $inst_id) {
+                    unset($this->attributes_to_read[$attributes][$inst_id], $this->attributes_read_ahead[$attributes][$inst_id]);
+                }
+            }
+        }, $rows);
+    }
 
     private function prepareInstanceResultStructure($row, $params = null, ?callable $callback = null, $start = null)
     {
@@ -879,7 +943,12 @@ class Extractor extends DBInterfaceBase
         }
 
         if ($this->extract_values) {
-            $values = $this->getInstanceValues($inst_id, $row['update_timestamp'], $params);
+            $this->attributes_for = self::integerId($inst_id);
+            try {
+                $values = $this->getInstanceValues($inst_id, $row['update_timestamp'], $params);
+            } finally {
+                $this->attributes_for = null;
+            }
 
             foreach ($values as $attrs_array_key => $full_value) {
                 if (!is_array($full_value)) {
@@ -949,13 +1018,20 @@ class Extractor extends DBInterfaceBase
             $filter = $params['filter'];
         }
 
-        $memcache_key = $this->conn->getDatabase() . ":dbinterface:$this->lang:$inst_id:$filter";
-        $this->debug("MEMCACHE:: using key $memcache_key instance update_timestamp=$update_timestamp\n");
+        // The key costs a query (DBAL asks the server for the database name): build it only for the trace or the cache.
+        $memcache_key = null;
+        if ($this->debug) {
+            $memcache_key = $this->conn->getDatabase() . ":dbinterface:$this->lang:$inst_id:$filter";
+            $this->debug("MEMCACHE:: using key $memcache_key instance update_timestamp=$update_timestamp\n");
+        }
         if (!$this->avoid_cache) {
             $this->debug("CACHE:: avoid_cache desactivado\n");
             if (!$this->preview) {// si no estem fent preview, mirem si esta activada la memcache i si existeix la key
                 $this->debug("CACHE:: preview desactivado\n");
                 if ($this->setupCache()) {
+                    if ($memcache_key === null) {
+                        $memcache_key = $this->conn->getDatabase() . ":dbinterface:$this->lang:$inst_id:$filter";
+                    }
                     $this->debug("CACHE:: setupCache OK\n");
                     $memcache_value = $this->mc->get($memcache_key);
                     if ($memcache_value) {// existe, retornamos directamente si la info esta actualizada
@@ -1041,102 +1117,121 @@ class Extractor extends DBInterfaceBase
         $tags_with_value = [];
         $images_ids=[];
 
-        $attrs = $this->fetchAll($sql);
-        foreach ($attrs as $attr_key => $attr_val) {
-            if (is_array($attr_val)) {
-                $value_row_or_null_array = $this->getValueRowOrNullArray($attrs[$attr_key]['inst_id'], $attrs[$attr_key]['atri_id'], $attrs[$attr_key]['atri_type']);
-                //echo '!!! atri_id='.$attrs[$attr_key]['atri_id'].' amb tag '.$attrs[$attr_key]['atri_tag'].' amb valor '.$value_row_or_null_array['text_val']."\n";
-//				if (!isset($attrs[$attr_key]['tag']) || (isset($attrs[$attr_key]['tag'])) && $attrs[$attr_key]['tag']==null)
-                if (!in_array($attrs[$attr_key]['atri_tag'], $tags_with_value)) {// caso en que no tenemos el tag del atributo previamente del idioma ALL o lo tenemos a null
-                    if ($value_row_or_null_array['id'] != null) {
-                        $tags_with_value[] = $attrs[$attr_key]['atri_tag'];
-                    }
-                    //echo "Hasta ahora tenemos:\n";
-                    //print_r($tags_with_value);
-                    //echo "\n";
+        // For an instance of a list that prepareInstanceResultStructure() extracts, one query reads these rows for several
+        // instances. Never for what goes to the cache: rows tied in the order (an attribute twice in a class) may swap.
+        $attrs = null;
+        if (!$insert_in_cache && $this->attributes_for !== null && $this->attributes_for === self::integerId($inst_id) && is_string($filter)) {
+            $attrs = $this->attributesReadWithList($this->attributes_for, $filter, $add_sql);
+        }
+        $this->attributes_for = null;
+        if ($attrs === null) {
+            $attrs = $this->fetchAll($sql);
+        }
+        // One query reads the values of every attribute when getValueRowOrNullArray() first needs one; it resolves the others in memory.
+        $values_in_hand = $this->values_in_hand;
+        $this->values_in_hand = ['inst_id' => (int) $inst_id, 'atri_ids' => [], 'rows' => null];
+        foreach ($attrs as $attr) {
+            $this->values_in_hand['atri_ids'][(int) $attr['atri_id']] = true;
+        }
+        try {
+            foreach ($attrs as $attr_key => $attr_val) {
+                if (is_array($attr_val)) {
+                    $value_row_or_null_array = $this->getValueRowOrNullArray($attrs[$attr_key]['inst_id'], $attrs[$attr_key]['atri_id'], $attrs[$attr_key]['atri_type']);
+                    //echo '!!! atri_id='.$attrs[$attr_key]['atri_id'].' amb tag '.$attrs[$attr_key]['atri_tag'].' amb valor '.$value_row_or_null_array['text_val']."\n";
+    //				if (!isset($attrs[$attr_key]['tag']) || (isset($attrs[$attr_key]['tag'])) && $attrs[$attr_key]['tag']==null)
+                    if (!in_array($attrs[$attr_key]['atri_tag'], $tags_with_value)) {// caso en que no tenemos el tag del atributo previamente del idioma ALL o lo tenemos a null
+                        if ($value_row_or_null_array['id'] != null) {
+                            $tags_with_value[] = $attrs[$attr_key]['atri_tag'];
+                        }
+                        //echo "Hasta ahora tenemos:\n";
+                        //print_r($tags_with_value);
+                        //echo "\n";
 
-                    $attrs[$attr_key]['id'] = $value_row_or_null_array['id'];
-                    $attrs[$attr_key]['text_val'] = $value_row_or_null_array['text_val'];
-                    $attrs[$attr_key]['num_val'] = $value_row_or_null_array['num_val'];
-                    $attrs[$attr_key]['date_val'] = $value_row_or_null_array['date_val'];
-                    $attrs[$attr_key]['img_info'] = $value_row_or_null_array['img_info'];
-                    if (isset($value_row_or_null_array['json_val'])) {
-                        $attrs[$attr_key]['json_val'] = $value_row_or_null_array['json_val'];
-                    }
-                    $attrs[$attr_key]['tag'] = $attrs[$attr_key]['atri_tag'];
+                        $attrs[$attr_key]['id'] = $value_row_or_null_array['id'];
+                        $attrs[$attr_key]['text_val'] = $value_row_or_null_array['text_val'];
+                        $attrs[$attr_key]['num_val'] = $value_row_or_null_array['num_val'];
+                        $attrs[$attr_key]['date_val'] = $value_row_or_null_array['date_val'];
+                        $attrs[$attr_key]['img_info'] = $value_row_or_null_array['img_info'];
+                        if (isset($value_row_or_null_array['json_val'])) {
+                            $attrs[$attr_key]['json_val'] = $value_row_or_null_array['json_val'];
+                        }
+                        $attrs[$attr_key]['tag'] = $attrs[$attr_key]['atri_tag'];
 
-                    foreach ($attr_val as $subkey => $subval) {// apliquem la transformació per canviar nls a brs
-//echo "key=$attr_key subkey=$subkey val=$subval\n";
-                        if ($subkey == 'atri_type') {// casos especials depenent del atri_type
-                            if ($subval == 'A') {
-                                $attrs[$attr_key]['text_val'] = str_replace(array("\r\n", "\r", "\n"), "<br />", $attrs[$attr_key]['text_val']);
-                            }
-                            if ($subval == 'L') {
-                                $attrs[$attr_key]['text_val'] = $this->getLookupValue($attrs[$attr_key]['num_val']);
-                            }
-                            if ($subval == 'D') {
-                                $attrs[$attr_key]['text_val'] = $attrs[$attr_key]['date_val'];
-                            }
-                            if (($subval == 'F' || $subval == 'I' || $subval == 'H') && isset($attrs[$attr_key]['text_val']) && substr($attrs[$attr_key]['text_val'], 0, 8) == 'uploads/') {// Backwards compatibility with editoras that save uploads/ instead of /uploads/
-                                $attrs[$attr_key]['text_val'] = '/' . $attrs[$attr_key]['text_val'];
-                            }
-                            if ($subval == 'I' || $subval == 'H') {
-                                $tag=$attrs[$attr_key]['tag'];
-                                $attrs[$tag.'_imgid']['tag'] = $tag.'_imgid';
-                                $attrs[$tag.'_imgid']['text_val'] = $attrs[$attr_key]['id'];
-
-                                $attrs[$tag.'_imghash']['tag'] = $tag.'_imghash';
-                                $hash_key='';
-                                $file_info=['jpg'];
-                                if (isset($attrs[$attr_key]['text_val']))
-                                {
-                                    $hash_key=$attrs[$attr_key]['text_val'];
-                                    $file_info = explode('.', $attrs[$attr_key]['text_val']);
+                        foreach ($attr_val as $subkey => $subval) {// apliquem la transformació per canviar nls a brs
+    //echo "key=$attr_key subkey=$subkey val=$subval\n";
+                            if ($subkey == 'atri_type') {// casos especials depenent del atri_type
+                                if ($subval == 'A') {
+                                    $attrs[$attr_key]['text_val'] = str_replace(array("\r\n", "\r", "\n"), "<br />", $attrs[$attr_key]['text_val']);
                                 }
-                                $attrs[$tag.'_imghash']['text_val'] = md5($hash_key).'_'.$attrs[$attr_key]['id'];
-                                $attrs[$tag.'_imgextension']['tag'] = $tag.'_imgextension';
-                                $attrs[$tag.'_imgextension']['text_val'] = end($file_info);
+                                if ($subval == 'L') {
+                                    $attrs[$attr_key]['text_val'] = $this->getLookupValue($attrs[$attr_key]['num_val']);
+                                }
+                                if ($subval == 'D') {
+                                    $attrs[$attr_key]['text_val'] = $attrs[$attr_key]['date_val'];
+                                }
+                                if (($subval == 'F' || $subval == 'I' || $subval == 'H') && isset($attrs[$attr_key]['text_val']) && substr($attrs[$attr_key]['text_val'], 0, 8) == 'uploads/') {// Backwards compatibility with editoras that save uploads/ instead of /uploads/
+                                    $attrs[$attr_key]['text_val'] = '/' . $attrs[$attr_key]['text_val'];
+                                }
+                                if ($subval == 'I' || $subval == 'H') {
+                                    $tag=$attrs[$attr_key]['tag'];
+                                    $attrs[$tag.'_imgid']['tag'] = $tag.'_imgid';
+                                    $attrs[$tag.'_imgid']['text_val'] = $attrs[$attr_key]['id'];
 
-				if (isset($attrs[$attr_key]['img_info'])) {
-
-                                    $attrs[$tag.'_container_height']['tag'] = $tag.'_container_height';
-                                    $attrs[$tag.'_container_height']['text_val'] = $attrs[$attr_key]['atri_img_height'] ?? null;
-
-                                    $attrs[$tag.'_container_width']['tag'] = $tag.'_container_width';
-                                    $attrs[$tag.'_container_width']['text_val'] = $attrs[$attr_key]['atri_img_width'] ?? null;
-
-                                    $img_info = $attrs[$attr_key]['img_info'] ?? '';
-                                    $size = explode('.', $img_info);
-                                    $attrs[$tag.'_height']['tag'] = $tag.'_height';
-                                    $attrs[$tag.'_height']['text_val'] = (int) $size[1] ?? null;
-                                    $attrs[$tag.'_width']['tag'] = $tag.'_width';
-                                    $attrs[$tag.'_width']['text_val'] = (int) $size[0] ?? null;
-
-                                    $width = $attrs[$attr_key]['atri_img_width'];
-                                    $height = $attrs[$attr_key]['atri_img_height'];
-
-                                    if($width && $height && $width > 0 && $height > 0 && extension_loaded('gmp')) {
-                                        $divisor = ($width % $height) ? gmp_gcd($height, $width % $height) : $height;
-                                        $aspectRatio = $width / $divisor . ':' . $height / $divisor;
-                                        $attrs[$tag.'_aspect_ratio']['tag'] = $tag.'_aspect_ratio';
-                                        $attrs[$tag.'_aspect_ratio']['text_val'] = $aspectRatio;
+                                    $attrs[$tag.'_imghash']['tag'] = $tag.'_imghash';
+                                    $hash_key='';
+                                    $file_info=['jpg'];
+                                    if (isset($attrs[$attr_key]['text_val']))
+                                    {
+                                        $hash_key=$attrs[$attr_key]['text_val'];
+                                        $file_info = explode('.', $attrs[$attr_key]['text_val']);
                                     }
+                                    $attrs[$tag.'_imghash']['text_val'] = md5($hash_key).'_'.$attrs[$attr_key]['id'];
+                                    $attrs[$tag.'_imgextension']['tag'] = $tag.'_imgextension';
+                                    $attrs[$tag.'_imgextension']['text_val'] = end($file_info);
+
+    				if (isset($attrs[$attr_key]['img_info'])) {
+
+                                        $attrs[$tag.'_container_height']['tag'] = $tag.'_container_height';
+                                        $attrs[$tag.'_container_height']['text_val'] = $attrs[$attr_key]['atri_img_height'] ?? null;
+
+                                        $attrs[$tag.'_container_width']['tag'] = $tag.'_container_width';
+                                        $attrs[$tag.'_container_width']['text_val'] = $attrs[$attr_key]['atri_img_width'] ?? null;
+
+                                        $img_info = $attrs[$attr_key]['img_info'] ?? '';
+                                        $size = explode('.', $img_info);
+                                        $attrs[$tag.'_height']['tag'] = $tag.'_height';
+                                        $attrs[$tag.'_height']['text_val'] = (int) $size[1] ?? null;
+                                        $attrs[$tag.'_width']['tag'] = $tag.'_width';
+                                        $attrs[$tag.'_width']['text_val'] = (int) $size[0] ?? null;
+
+                                        $width = $attrs[$attr_key]['atri_img_width'];
+                                        $height = $attrs[$attr_key]['atri_img_height'];
+
+                                        if($width && $height && $width > 0 && $height > 0 && extension_loaded('gmp')) {
+                                            $divisor = ($width % $height) ? gmp_gcd($height, $width % $height) : $height;
+                                            $aspectRatio = $width / $divisor . ':' . $height / $divisor;
+                                            $attrs[$tag.'_aspect_ratio']['tag'] = $tag.'_aspect_ratio';
+                                            $attrs[$tag.'_aspect_ratio']['text_val'] = $aspectRatio;
+                                        }
+                                    }
+
                                 }
+                                if ($subval == 'Y' && isset($attrs[$attr_key]['json_val'])) {
+                                    $tag=$attrs[$attr_key]['tag'];
 
-                            }
-                            if ($subval == 'Y' && isset($attrs[$attr_key]['json_val'])) {
-                                $tag=$attrs[$attr_key]['tag'];
-
-                                $attrs[$tag.'_json_val']['tag'] = $tag.'_json_val';
-                                $attrs[$tag.'_json_val']['text_val'] = $attrs[$attr_key]['json_val'];
+                                    $attrs[$tag.'_json_val']['tag'] = $tag.'_json_val';
+                                    $attrs[$tag.'_json_val']['text_val'] = $attrs[$attr_key]['json_val'];
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            //echo "El array de resultado tiene:\n";
-//print_r($attrs);
+                //echo "El array de resultado tiene:\n";
+    //print_r($attrs);
+            }
+        } finally {
+            $this->values_in_hand = $values_in_hand;
         }
 
         foreach ($attrs as $key => $attr) {// Eliminamos los elementos que no han conseguido tener tag
@@ -1177,14 +1272,17 @@ class Extractor extends DBInterfaceBase
 
     public function getValueRowOrNullArray($inst_id, $atri_id, $type)
     {
-        $sql = "select *
+        $values = $this->valueRowInHand($inst_id, $atri_id);
+        if ($values === null) {
+            $sql = "select *
 			from omp_values
 			where inst_id=$inst_id
 			and atri_id=$atri_id
 			limit 1
 			";
-        //$this->debug($sql);
-        $values = $this->fetchAssoc($sql);
+            //$this->debug($sql);
+            $values = $this->fetchAssoc($sql);
+        }
         if (!$values) {
             $values=[];
             $values['id'] = null;
@@ -1211,6 +1309,150 @@ class Extractor extends DBInterfaceBase
                 $values['num_val'] = $lookup_id;
             }
         }
+        return $values;
+    }
+
+    /**
+     * The omp_values row of an attribute getInstanceValues() is resolving, false if it has none, or null when the
+     * database must answer as before: another instance or attribute, an id not written as an integer, or a pair with
+     * several rows (which one "limit 1" returns is the database's choice).
+     */
+    private function valueRowInHand($inst_id, $atri_id)
+    {
+        $in_hand = $this->values_in_hand;
+        $inst_id = self::integerId($inst_id);
+        $atri_id = self::integerId($atri_id);
+        if ($in_hand === null || $inst_id !== $in_hand['inst_id'] || $atri_id === null || !isset($in_hand['atri_ids'][$atri_id])) {
+            return null;
+        }
+        if ($in_hand['rows'] === null) {
+            $in_hand['rows'] = $this->values_in_hand['rows'] = $this->readInstanceValues($inst_id, $in_hand['atri_ids']);
+        }
+        if (!array_key_exists($atri_id, $in_hand['rows'])) {
+            return false;
+        }
+
+        return $in_hand['rows'][$atri_id] === false ? null : $in_hand['rows'][$atri_id];
+    }
+
+    /**
+     * The rows of the first query of getInstanceValues() for an instance listed by prepareInstanceResultStructures(),
+     * read with up to READ_TOGETHER - 1 others still to read, or null if it is not listed.
+     */
+    private function attributesReadWithList($inst_id, $filter, $add_sql)
+    {
+        $listed_as = (string) $this->lang . "\n" . $filter;
+        if (isset($this->attributes_read_ahead[$listed_as][$inst_id])) {
+            $rows = $this->attributes_read_ahead[$listed_as][$inst_id];
+            unset($this->attributes_read_ahead[$listed_as][$inst_id]);
+            return $rows;
+        }
+        if (!isset($this->attributes_to_read[$listed_as][$inst_id])) {
+            return null;
+        }
+
+        $inst_ids = [$inst_id];
+        foreach ($this->attributes_to_read[$listed_as] as $listed => $to_read) {
+            if (count($inst_ids) >= self::READ_TOGETHER) {
+                break;
+            }
+            if ($listed !== $inst_id) {
+                $inst_ids[] = $listed;
+            }
+        }
+        $rows = array_fill_keys($inst_ids, []);
+        foreach ($this->fetchAll("select i.id inst_id, a.id atri_id, a.name atri_name, a.tag atri_tag, a.type atri_type, a.language atri_language, a.img_width atri_img_width, a.img_height atri_img_height, ca.detail is_detail, i.update_date, ifnull(unix_timestamp(i.update_date),0) update_timestamp
+				from omp_attributes a
+				, omp_class_attributes ca
+				, omp_instances i
+				where i.id in (" . implode(',', $inst_ids) . ")
+				and a.language in ('ALL', '" . $this->lang . "')
+				and i.class_id=ca.class_id
+				and a.id=ca.atri_id
+				$add_sql
+				order by i.id, if(a.language='ALL',1,0), atri_id
+				") as $row) {
+            $rows[(int) $row['inst_id']][] = $row;
+        }
+        foreach ($inst_ids as $listed) {
+            unset($this->attributes_to_read[$listed_as][$listed]);
+            if ($listed !== $inst_id) {
+                $this->attributes_read_ahead[$listed_as][$listed] = $rows[$listed];
+            }
+        }
+
+        return $rows[$inst_id];
+    }
+
+    /** The values of an instance for (at least) these attributes: those read with its list, or one query. */
+    private function readInstanceValues($inst_id, array $atri_ids)
+    {
+        $rows = $this->valuesReadWithList($inst_id);
+        if ($rows === null) {
+            $rows = $this->readValueRows("select *
+				from omp_values
+				where inst_id=$inst_id
+				and atri_id in (" . implode(',', array_keys($atri_ids)) . ")
+				");
+            $rows = isset($rows[$inst_id]) ? $rows[$inst_id] : [];
+        }
+
+        return $rows;
+    }
+
+    /**
+     * The values in this language of an instance listed by prepareInstanceResultStructures(), read with up to
+     * READ_TOGETHER - 1 others still to read, or null if it is not listed.
+     */
+    private function valuesReadWithList($inst_id)
+    {
+        $lang = (string) $this->lang;
+        if (isset($this->values_read_ahead[$lang][$inst_id])) {
+            $rows = $this->values_read_ahead[$lang][$inst_id];
+            unset($this->values_read_ahead[$lang][$inst_id]);
+            return $rows;
+        }
+        if (!isset($this->values_to_read[$lang][$inst_id])) {
+            return null;
+        }
+
+        $inst_ids = [$inst_id];
+        foreach ($this->values_to_read[$lang] as $listed => $to_read) {
+            if (count($inst_ids) >= self::READ_TOGETHER) {
+                break;
+            }
+            if ($listed !== $inst_id) {
+                $inst_ids[] = $listed;
+            }
+        }
+        // Every attribute in this language or in ALL, as getInstanceValues() reads them.
+        $rows = $this->readValueRows("select v.*
+				from omp_values v
+				, omp_attributes a
+				where v.inst_id in (" . implode(',', $inst_ids) . ")
+				and a.id=v.atri_id
+				and a.language in ('ALL', '" . $this->lang . "')
+				");
+        foreach ($inst_ids as $listed) {
+            unset($this->values_to_read[$lang][$listed]);
+            if ($listed !== $inst_id) {
+                $this->values_read_ahead[$lang][$listed] = isset($rows[$listed]) ? $rows[$listed] : [];
+            }
+        }
+
+        return isset($rows[$inst_id]) ? $rows[$inst_id] : [];
+    }
+
+    /** omp_values rows by inst_id and atri_id; false marks a pair with several rows. */
+    private function readValueRows($sql)
+    {
+        $values = [];
+        foreach ($this->fetchAll($sql) as $row) {
+            $inst_id = (int) $row['inst_id'];
+            $atri_id = (int) $row['atri_id'];
+            $values[$inst_id][$atri_id] = isset($values[$inst_id]) && array_key_exists($atri_id, $values[$inst_id]) ? false : $row;
+        }
+
         return $values;
     }
 
